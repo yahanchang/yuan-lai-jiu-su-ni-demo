@@ -530,7 +530,7 @@ function App() {
   }
 
   const appState = { profile, setProfile, isAuthed, setIsAuthed, communities, setCommunities, conversations, activeChatId, setActiveChatId, inviteMentor, sendChatMessage, navigate, notify, logout }
-  const authedRoutes = ['/dashboard', '/mentors', '/communities', '/learning', '/projects', '/knowledge', '/profile']
+  const authedRoutes = ['/dashboard', '/mentors', '/chat', '/communities', '/learning', '/projects', '/knowledge', '/profile']
   const isMentorDetail = route.startsWith('/mentor/')
   const isCommunityDetail = route.startsWith('/community/')
   const showShell = isAuthed && (authedRoutes.includes(route) || isMentorDetail || isCommunityDetail)
@@ -555,6 +555,7 @@ function Router({ route, appState }) {
   if (route === '/dashboard') return <Dashboard {...appState} />
   if (route === '/mentors') return <MentorsPage {...appState} />
   if (route.startsWith('/mentor/')) return <MentorDetail id={route.split('/').pop()} {...appState} />
+  if (route === '/chat') return <ChatPage {...appState} />
   if (route === '/communities') return <CommunitiesPage {...appState} />
   if (route.startsWith('/community/')) return <CommunityDetail id={route.split('/').pop()} {...appState} />
   if (route === '/learning') return <LearningPage {...appState} />
@@ -579,9 +580,9 @@ function Landing({ navigate }) {
         <div className="absolute bottom-[-6rem] left-[-5rem] h-72 w-72 rounded-full bg-skysoft blur-3xl" />
         <div className="mx-auto grid max-w-7xl gap-10 px-5 py-16 lg:grid-cols-[1.1fr_.9fr] lg:items-center lg:py-24">
           <div className="relative z-10">
-            <p className="mb-5 inline-flex rounded-full border border-white/80 bg-white/70 px-4 py-2 text-sm font-semibold text-navy shadow-card">台塑企業員工共學共創社群平台</p>
-            <h1 className="max-w-3xl text-5xl font-black leading-tight tracking-tight text-ink sm:text-6xl lg:text-7xl">讓專長被看見，讓知識流動，讓合作發生</h1>
-            <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-600">緣來就「塑」你協助員工跨越公司、部門、職位、世代與工作地點的限制，透過契合度推薦、主題社群、員工互學課程、Office Hour 與共創專案，把交流轉化為學習與工作改善。</p>
+            <p className="mb-5 inline-flex rounded-full border border-white/80 bg-white/70 px-4 py-2 text-sm font-semibold text-navy shadow-card">台塑企業員工交流與共學共創平台</p>
+            <h1 className="max-w-3xl text-5xl font-black leading-tight tracking-tight text-ink sm:text-6xl lg:text-7xl">找到適合的人、加入有興趣的社群</h1>
+            <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-600">緣來就「塑」你透過契合度推薦、聊天室、主題社群、塑學共創中心與個人檔案，協助員工跨越公司、部門、職位、世代與工作地點的限制，讓知識交流與合作自然發生。</p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <button onClick={() => navigate('/register')} className="btn-primary h-13 justify-center px-8 text-base">開始共學</button>
               <button onClick={() => navigate('/login')} className="btn-secondary h-13 justify-center px-8 text-base">登入平台</button>
@@ -599,10 +600,10 @@ function Landing({ navigate }) {
                 </div>
                 <p className="mt-8 text-2xl font-bold leading-snug">把想學、能分享、想共創，都放進工作時間裡。</p>
                 <div className="mt-8 grid grid-cols-2 gap-3">
-                  {['Connect', 'Learn', 'Share', 'Build'].map((tag) => <span key={tag} className="pill">{tag}</span>)}
+                  {['推薦', '聊天室', '社群', '塑學共創'].map((tag) => <span key={tag} className="pill">{tag}</span>)}
                 </div>
               </div>
-              <div className="floating-note">平台核心不是只找到彼此，而是建立從認識、交流、學習到共同解決問題的循環。</div>
+              <div className="floating-note">建立個人檔案 → 獲得契合度推薦 → 透過聊天室交流 → 加入社群 → 進入塑學共創中心學習、分享或共創。</div>
             </div>
           </div>
         </div>
@@ -610,13 +611,14 @@ function Landing({ navigate }) {
       <section className="mx-auto max-w-7xl px-5 py-16">
         <div className="mb-8 max-w-2xl">
           <p className="eyebrow">Core Features</p>
-          <h2 className="section-title">從找到彼此開始，把知識變成可被延續的組織資產</h2>
+          <h2 className="section-title">五個核心功能，讓交流從認識延伸到共學與合作</h2>
         </div>
-        <div className="grid gap-5 md:grid-cols-4">
-          <FeatureCard title="Connect" text="透過個人檔案、專長標籤與契合度推薦，認識共同興趣或互補能力的同仁。" />
-          <FeatureCard title="Learn" text="瀏覽員工課程、提出想學主題，或透過 Office Hour 向內部專家請益。" />
-          <FeatureCard title="Share" text="申請擔任內部講師、教練或分享者，讓實務經驗成為組織學習資源。" />
-          <FeatureCard title="Build" text="針對工作問題組成小型共創團隊，產出流程改善、工具原型或知識成果。" />
+        <div className="grid gap-5 md:grid-cols-5">
+          <FeatureCard title="契合度推薦" text="依專長、興趣、學習需求與互補能力，推薦適合認識、請益或合作的同仁。" />
+          <FeatureCard title="聊天室" text="讓推薦、社群、課程與共創專案能延續討論，支援一對一與小組交流。" />
+          <FeatureCard title="社群" text="依工作專業、職涯需求與生活興趣集中交流，累積熱門問題與學習需求。" />
+          <FeatureCard title="塑學共創" text="以我想學、我想分享、我想共創三入口，推動互學與工作改善。" />
+          <FeatureCard title="個人檔案" text="呈現專長、興趣、學習需求、可分享內容與參與紀錄，作為推薦基礎。" />
         </div>
       </section>
     </div>
@@ -773,7 +775,7 @@ function Dashboard({ profile, communities, conversations, activeChatId, setActiv
           <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 lg:min-w-[520px]">
             <QuickButton text="我想學" onClick={() => navigate('/learning')} />
             <QuickButton text="我能分享" onClick={() => navigate('/learning')} />
-            <QuickButton text="我想共創" onClick={() => navigate('/projects')} />
+            <QuickButton text="我想共創" onClick={() => navigate('/learning')} />
             <QuickButton text="找內部專家" onClick={() => navigate('/mentors')} />
           </div>
         </div>
@@ -798,7 +800,7 @@ function Dashboard({ profile, communities, conversations, activeChatId, setActiv
       )}
       <div className="mt-8 grid gap-8 xl:grid-cols-[1.15fr_.85fr]">
         <section>
-          <SectionHeader title="本週推薦同仁與內部專家" action="看更多" onAction={() => navigate('/mentors')} />
+          <SectionHeader title="本週契合度推薦" action="看更多" onAction={() => navigate('/mentors')} />
           <div className="grid gap-4 md:grid-cols-2">
             {recommendedMentors.map((mentor) => <MentorCard key={mentor.id} mentor={mentor} navigate={navigate} profile={profile} setProfile={setProfile} notify={notify} inviteMentor={inviteMentor} compact />)}
           </div>
@@ -824,7 +826,7 @@ function Dashboard({ profile, communities, conversations, activeChatId, setActiv
           </div>
         </section>
         <section>
-          <SectionHeader title="招募中的共創專案" action="看專案" onAction={() => navigate('/projects')} />
+          <SectionHeader title="招募中的共創專案" action="前往塑學共創" onAction={() => navigate('/learning')} />
           <div className="space-y-4">
             {projectSeed.slice(0, 3).map((project) => <ProjectCard key={project.id} project={project} notify={notify} compact />)}
           </div>
@@ -848,7 +850,7 @@ function MentorsPage({ profile, setProfile, navigate, notify, inviteMentor }) {
   }), [filters])
   return (
     <PageWrap>
-      <PageTitle eyebrow="Connect" title="探索同仁與內部專家" text="依照共同興趣、相似學習需求與互補專長，找到適合交流、請益或合作的同仁。" />
+      <PageTitle eyebrow="Recommendation" title="推薦" text="依照共同興趣、相似學習需求、互補專長、共同社群與跨部門多樣性，推薦適合認識、交流或合作的同仁。" />
       <div className="mb-6 rounded-card border border-line bg-white p-5 shadow-card">
         <div className="grid gap-3 md:grid-cols-3 xl:grid-cols-6">
           <Input label="部門" value={filters.department} onChange={(v) => setFilters({ ...filters, department: v })} dense />
@@ -882,7 +884,7 @@ function MentorDetail({ id, profile, setProfile, conversations, inviteMentor, se
   }
   return (
     <PageWrap>
-      <button className="mb-5 text-sm font-bold text-navy hover:underline" onClick={() => navigate('/mentors')}>返回探索同仁</button>
+      <button className="mb-5 text-sm font-bold text-navy hover:underline" onClick={() => navigate('/mentors')}>返回推薦</button>
       <section className="grid gap-6 lg:grid-cols-[.82fr_1.18fr]">
         <aside className="rounded-[28px] border border-line bg-white p-6 shadow-card">
           <div className="avatar-xl">{mentor.avatar}</div>
@@ -1001,10 +1003,57 @@ function CommunityDetail({ id, communities, setCommunities, profile, setProfile,
   )
 }
 
+function ChatPage({ conversations, activeChatId, setActiveChatId, sendChatMessage, navigate }) {
+  const activeConversation = conversations.find((conversation) => conversation.mentorId === activeChatId) || conversations[0]
+  const activeMentor = activeConversation ? mentorSeed.find((mentor) => mentor.id === activeConversation.mentorId) : null
+  const suggestedRooms = [
+    { id: 'room-community', title: 'AI 與自動化工具社群聊天室', meta: '社群小組 · 18 則未讀', tags: ['社群', '工具應用'] },
+    { id: 'room-course', title: 'Project Brief 工作坊課後討論', meta: '課程討論 · 6 則未讀', tags: ['課程', '專案管理'] },
+    { id: 'room-project', title: '報表自動化共創專案聊天室', meta: '共創專案 · 3 個待辦', tags: ['共創', '待辦'] },
+  ]
+
+  return (
+    <PageWrap>
+      <PageTitle eyebrow="Chat" title="聊天室" text="讓推薦、社群、課程與共創專案能延續討論。聊天室聚焦知識交流、學習問題、工作經驗分享與專案協作。" />
+      {activeConversation && activeMentor ? (
+        <ChatPanel
+          mentor={activeMentor}
+          conversation={activeConversation}
+          conversations={conversations}
+          setActiveChatId={setActiveChatId}
+          onSend={(text) => sendChatMessage(activeMentor.id, text)}
+        />
+      ) : (
+        <EmptyState title="尚未建立一對一聊天室" text="從推薦頁發送交流邀請後，聊天室會出現在這裡。" />
+      )}
+      <section className="mt-8">
+        <SectionHeader title="小組聊天室範例" />
+        <div className="grid gap-4 md:grid-cols-3">
+          {suggestedRooms.map((room) => (
+            <article key={room.id} className="rounded-card border border-line bg-white p-5 shadow-card">
+              <h3 className="text-xl font-black">{room.title}</h3>
+              <p className="mt-2 text-sm font-semibold text-slate-500">{room.meta}</p>
+              <div className="mt-4 flex flex-wrap gap-2">{room.tags.map((tag) => <span key={tag} className="pill">{tag}</span>)}</div>
+              <button className="btn-secondary mt-4 w-full justify-center" onClick={() => navigate('/communities')}>查看來源</button>
+            </article>
+          ))}
+        </div>
+      </section>
+      <section className="mt-8 rounded-card bg-white p-5 shadow-card">
+        <h2 className="text-xl font-black">聊天室使用原則</h2>
+        <div className="mt-4 grid gap-3 md:grid-cols-3">
+          {['聚焦專業知識交流與學習討論', '可分享平台內課程、文章與社群貼文', '不得商業推銷、私人交易或散播企業機密'].map((item) => <div key={item} className="rounded-card bg-mist p-4 font-bold text-navy">{item}</div>)}
+        </div>
+      </section>
+    </PageWrap>
+  )
+}
+
 function LearningPage({ notify }) {
   const [activeTab, setActiveTab] = useState('learn')
   const [requestText, setRequestText] = useState('')
   const [shareText, setShareText] = useState('')
+  const [idea, setIdea] = useState('')
   const submitNeed = () => {
     if (!requestText.trim()) {
       notify('先寫下你想學的主題吧。')
@@ -1021,10 +1070,18 @@ function LearningPage({ notify }) {
     setShareText('')
     notify('分享申請已送出，平台管理者會協助安排課程或 Office Hour。')
   }
+  const submitIdea = () => {
+    if (!idea.trim()) {
+      notify('先寫下想改善的工作問題吧。')
+      return
+    }
+    setIdea('')
+    notify('共創提案已送出，管理單位會協助確認範圍並媒合夥伴。')
+  }
 
   return (
     <PageWrap>
-      <PageTitle eyebrow="Learn & Share" title="共學中心" text="從我想學、我能分享到 Office Hour，讓員工互學成為可被安排、可被認列的工作時間。" />
+      <PageTitle eyebrow="Learning & Co-creation" title="塑學共創" text="整合我想學、我想分享、我想共創三個入口，讓線上交流進一步轉化為員工互學、知識傳承與工作改善成果。" />
       <section className="mb-6 rounded-[28px] bg-ink p-6 text-white shadow-card lg:p-8">
         <div className="grid gap-6 lg:grid-cols-[1.2fr_.8fr] lg:items-end">
           <div>
@@ -1042,8 +1099,9 @@ function LearningPage({ notify }) {
         {[
           ['learn', '我想學'],
           ['share', '我能分享'],
-          ['courses', '員工課程'],
-          ['office', 'Office Hour'],
+          ['build', '我想共創'],
+          ['courses', '課程與 Office Hour'],
+          ['knowledge', '知識成果'],
         ].map(([key, label]) => <button key={key} onClick={() => setActiveTab(key)} className={activeTab === key ? 'chip active whitespace-nowrap' : 'chip whitespace-nowrap'}>{label}</button>)}
       </div>
       {activeTab === 'learn' && (
@@ -1079,13 +1137,40 @@ function LearningPage({ notify }) {
         </div>
       )}
       {activeTab === 'courses' && (
-        <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-          {courseSeed.map((course) => <CourseCard key={course.id} course={course} notify={notify} />)}
+        <div className="space-y-8">
+          <section>
+            <SectionHeader title="員工互學課程" />
+            <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+              {courseSeed.map((course) => <CourseCard key={course.id} course={course} notify={notify} />)}
+            </div>
+          </section>
+          <section>
+            <SectionHeader title="Office Hour 與內部專家" />
+            <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+              {mentorSeed.slice(0, 6).map((mentor) => <OfficeHourCard key={mentor.id} mentor={mentor} notify={notify} />)}
+            </div>
+          </section>
         </div>
       )}
-      {activeTab === 'office' && (
+      {activeTab === 'build' && (
+        <div className="grid gap-6 lg:grid-cols-[.85fr_1.15fr]">
+          <section className="rounded-card bg-white p-5 shadow-card">
+            <h2 className="text-2xl font-black">提出工作問題或改善構想</h2>
+            <p className="mt-2 leading-7 text-slate-600">例如例行報表處理時間過長、部門間資訊傳遞不順、公司工具尚未被充分運用等。</p>
+            <textarea className="field min-h-32" value={idea} onChange={(e) => setIdea(e.target.value)} placeholder="描述問題背景、改善目標、所需專長、希望尋找的合作夥伴..." />
+            <button className="btn-primary mt-3 w-full justify-center" onClick={submitIdea}>送出共創提案</button>
+          </section>
+          <section>
+            <SectionHeader title="共創專案招募與進度" />
+            <div className="grid gap-4 md:grid-cols-2">
+              {projectSeed.map((project) => <ProjectCard key={project.id} project={project} notify={notify} />)}
+            </div>
+          </section>
+        </div>
+      )}
+      {activeTab === 'knowledge' && (
         <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-          {mentorSeed.slice(0, 6).map((mentor) => <OfficeHourCard key={mentor.id} mentor={mentor} notify={notify} />)}
+          {knowledgeSeed.map((item) => <KnowledgeCard key={item.id} item={item} notify={notify} />)}
         </div>
       )}
     </PageWrap>
@@ -1222,11 +1307,10 @@ function ProfilePage({ profile, setProfile, communities, navigate, notify }) {
 function AppNav({ route, navigate, logout }) {
   const items = [
     ['首頁', '/dashboard'],
-    ['探索同仁', '/mentors'],
+    ['推薦', '/mentors'],
+    ['聊天室', '/chat'],
     ['社群', '/communities'],
-    ['共學中心', '/learning'],
-    ['共創專案', '/projects'],
-    ['知識庫', '/knowledge'],
+    ['塑學共創', '/learning'],
     ['我的檔案', '/profile'],
   ]
   return (
@@ -1243,13 +1327,14 @@ function AppNav({ route, navigate, logout }) {
 function MobileTabs({ route, navigate }) {
   const items = [
     ['首頁', '/dashboard'],
-    ['探索', '/mentors'],
+    ['推薦', '/mentors'],
+    ['聊天', '/chat'],
     ['社群', '/communities'],
-    ['共學', '/learning'],
+    ['共創', '/learning'],
     ['我的', '/profile'],
   ]
   return (
-    <nav className="fixed inset-x-3 bottom-3 z-40 grid grid-cols-4 rounded-[22px] border border-line bg-white/95 p-2 shadow-soft backdrop-blur lg:hidden">
+    <nav className="fixed inset-x-3 bottom-3 z-40 grid grid-cols-5 rounded-[22px] border border-line bg-white/95 p-2 shadow-soft backdrop-blur lg:hidden">
       {items.map(([label, path]) => <button key={path} onClick={() => navigate(path)} className={`rounded-2xl px-2 py-3 text-sm font-bold ${route === path || route.startsWith(path + '/') ? 'bg-ink text-white' : 'text-slate-500'}`}>{label}</button>)}
     </nav>
   )
