@@ -469,7 +469,7 @@ function App() {
 
 function Router({ route, appState }) {
   if (route === '/') return <Landing {...appState} />
-  if (route === '/register') return <Register {...appState} />
+  if (route === '/register') return <Login {...appState} />
   if (route === '/login') return <Login {...appState} />
   if (route === '/onboarding') return <ProfileBuilder {...appState} />
   if (route === '/dashboard') return <Dashboard {...appState} />
@@ -489,7 +489,6 @@ function Landing({ navigate }) {
         <button onClick={() => navigate('/')} className="text-left text-2xl font-black tracking-wide text-navy">緣來就塑你</button>
         <div className="flex gap-3">
           <button onClick={() => navigate('/login')} className="btn-ghost">登入平台</button>
-          <button onClick={() => navigate('/register')} className="btn-primary hidden sm:inline-flex">開始交流</button>
         </div>
       </header>
       <section className="relative overflow-hidden border-y border-line bg-gradient-to-br from-white via-skysoft to-mist">
@@ -502,8 +501,8 @@ function Landing({ navigate }) {
             <p className="mt-4 max-w-3xl text-2xl font-black leading-tight text-ink sm:text-3xl">找到適合的人、加入有興趣的社群，讓知識交流與合作自然發生。</p>
             <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-600">緣來就「塑」你透過契合度推薦、聊天室、主題社群與個人檔案，協助員工跨越公司、部門、職位、世代與工作地點的限制，讓知識交流與合作自然發生。</p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <button onClick={() => navigate('/register')} className="btn-primary h-13 justify-center px-8 text-base">開始交流</button>
-              <button onClick={() => navigate('/login')} className="btn-secondary h-13 justify-center px-8 text-base">登入平台</button>
+              <button onClick={() => navigate('/login')} className="btn-primary h-13 justify-center px-8 text-base">登入平台</button>
+              <span className="flex items-center px-2 text-sm font-semibold text-slate-500">登入後再建立個人檔案</span>
             </div>
           </div>
           <div className="relative z-10">
@@ -600,7 +599,7 @@ function Register({ setProfile, setIsAuthed, navigate, notify }) {
     if (Object.keys(next).length) return
     setProfile({ ...form, favorites: [], joinedCommunities: ['c1'] })
     setIsAuthed(true)
-    notify('註冊完成，歡迎來到緣來就塑你。')
+    notify('個人檔案建立完成，歡迎來到緣來就塑你。')
     navigate('/dashboard')
   }
 
@@ -642,7 +641,7 @@ function Register({ setProfile, setIsAuthed, navigate, notify }) {
           <Input label="一句個人標籤" value={form.tagline} onChange={(v) => update('tagline', v)} error={errors.tagline} />
           <div className="grid gap-3 sm:grid-cols-2">
             <button className="btn-secondary justify-center" onClick={() => setStep(1)}>回上一步</button>
-            <button className="btn-primary justify-center" onClick={submit}>完成註冊</button>
+            <button className="btn-primary justify-center" onClick={submit}>完成個人檔案</button>
           </div>
         </div>
       )}
@@ -660,17 +659,17 @@ function Login({ profile, setIsAuthed, navigate, notify }) {
       return
     }
     setIsAuthed(true)
-    notify('登入成功，今天想認識哪一種經驗？')
-    navigate('/dashboard')
+    notify('登入成功，先建立你的個人檔案。')
+    navigate('/onboarding')
   }
   return (
-    <AuthLayout title="登入平台" subtitle="回到你的推薦、聊天室與社群交流。">
+    <AuthLayout title="登入平台" subtitle="使用企業帳號登入後，再建立你的個人檔案與交流偏好。">
       <div className="space-y-4">
         <Input label="Email" value={email} onChange={setEmail} />
         <Input label="密碼" type="password" value={password} onChange={setPassword} />
         {error && <p className="form-error">{error}</p>}
         <button className="btn-primary w-full justify-center" onClick={submit}>登入</button>
-        <button className="w-full text-center text-sm font-semibold text-navy hover:underline" onClick={() => navigate('/register')}>還沒有帳號？前往註冊</button>
+        <p className="text-center text-sm font-semibold text-slate-500">登入後會進入個人檔案建立流程。</p>
       </div>
     </AuthLayout>
   )
