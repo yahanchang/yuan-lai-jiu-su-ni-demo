@@ -599,15 +599,6 @@ function Register({ setProfile, setIsAuthed, navigate, notify }) {
 
   const update = (key, value) => setForm((prev) => ({ ...prev, [key]: value }))
   const toggleArray = (key, value) => setForm((prev) => ({ ...prev, [key]: prev[key].includes(value) ? prev[key].filter((item) => item !== value) : [...prev[key], value] }))
-  const validateStepOne = () => {
-    const next = {}
-    ;['name', 'email', 'password', 'age', 'company', 'division', 'department', 'role', 'seniority', 'location'].forEach((field) => {
-      if (!form[field]) next[field] = '這個欄位需要填寫'
-    })
-    if (form.email && !form.email.includes('@')) next.email = '請輸入有效 Email'
-    setErrors(next)
-    return Object.keys(next).length === 0
-  }
 
   const submit = () => {
     const next = {}
@@ -625,25 +616,28 @@ function Register({ setProfile, setIsAuthed, navigate, notify }) {
   return (
     <AuthLayout title="建立個人檔案" subtitle="先讓平台認識你的專長、興趣、交流需求與可分享經驗，再推薦適合交流或合作的同仁。">
       <div className="mb-7 flex gap-2">
-        <span className={`step-dot ${step === 1 ? 'active' : ''}`}>1 基本資料</span>
+        <span className={`step-dot ${step === 1 ? 'active' : ''}`}>1 公司匯入資料</span>
         <span className={`step-dot ${step === 2 ? 'active' : ''}`}>2 配對偏好</span>
       </div>
       {step === 1 ? (
-        <div className="grid gap-4 md:grid-cols-2">
-          <Input label="姓名" value={form.name} onChange={(v) => update('name', v)} error={errors.name} />
-          <Input label="Email" value={form.email} onChange={(v) => update('email', v)} error={errors.email} />
-          <Input label="密碼" type="password" value={form.password} onChange={(v) => update('password', v)} error={errors.password} />
-          <Input label="年齡" value={form.age} onChange={(v) => update('age', v)} error={errors.age} />
-          <Select label="性別（選填）" value={form.gender} onChange={(v) => update('gender', v)} options={['', '女性', '男性', '非二元／其他', '不透露']} />
-          <Input label="所屬公司／事業部" value={form.division} onChange={(v) => update('division', v)} error={errors.division} />
-          <Input label="部門" value={form.department} onChange={(v) => update('department', v)} error={errors.department} />
-          <Input label="職位" value={form.role} onChange={(v) => update('role', v)} error={errors.role} />
-          <Input label="年資" value={form.seniority} onChange={(v) => update('seniority', v)} error={errors.seniority} />
-          <Input label="工作地點" value={form.location} onChange={(v) => update('location', v)} error={errors.location} />
-          <Toggle label="我塑一個擅長分享的人，願意提供經驗交流" checked={form.canMentor} onChange={(v) => update('canMentor', v)} />
-          <Toggle label="我塑一個正在尋找方向的人，想認識同仁與內部資源" checked={form.seekingMentor} onChange={(v) => update('seekingMentor', v)} />
+        <div className="space-y-5">
+          <div className="rounded-card bg-mist p-5">
+            <h2 className="text-xl font-black text-ink">公司已匯入你的基本資料</h2>
+            <p className="mt-2 leading-7 text-slate-600">以下資料由企業帳號與人資系統帶入，這裡只供確認。若資料有誤，請洽人資或系統管理單位更新。</p>
+          </div>
+          <div className="grid gap-4 md:grid-cols-2">
+            <ReadOnlyField label="姓名" value={form.name} />
+            <ReadOnlyField label="Email" value={form.email} />
+            <ReadOnlyField label="年齡" value={`${form.age} 歲`} />
+            <ReadOnlyField label="性別" value={form.gender || '不透露'} />
+            <ReadOnlyField label="所屬公司／事業部" value={form.division} />
+            <ReadOnlyField label="部門" value={form.department} />
+            <ReadOnlyField label="職位" value={form.role} />
+            <ReadOnlyField label="年資" value={`${form.seniority} 年`} />
+            <ReadOnlyField label="工作地點" value={form.location} />
+          </div>
           <div className="md:col-span-2">
-            <button className="btn-primary w-full justify-center" onClick={() => validateStepOne() && setStep(2)}>下一步</button>
+            <button className="btn-primary w-full justify-center" onClick={() => setStep(2)}>下一步，填寫交流偏好</button>
           </div>
         </div>
       ) : (
@@ -1204,6 +1198,15 @@ function Select({ label, value, onChange, options, dense = false }) {
         {options.map((option) => <option key={option} value={option}>{option || '不限'}</option>)}
       </select>
     </label>
+  )
+}
+
+function ReadOnlyField({ label, value }) {
+  return (
+    <div>
+      <p className="label">{label}</p>
+      <div className="field bg-mist/60 text-slate-600">{value || '未提供'}</div>
+    </div>
   )
 }
 
