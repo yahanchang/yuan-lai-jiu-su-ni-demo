@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import './styles.css'
 
@@ -473,7 +473,7 @@ function Router({ route, appState }) {
   if (route === '/login') return <Login {...appState} />
   if (route === '/onboarding') return <ProfileBuilder {...appState} />
   if (route === '/dashboard') return <Dashboard {...appState} />
-  if (route === '/mentors') return <MentorsPage {...appState} />
+  if (route === '/mentors') return <Dashboard {...appState} />
   if (route.startsWith('/mentor/')) return <MentorDetail id={route.split('/').pop()} {...appState} />
   if (route === '/chat') return <ChatPage {...appState} />
   if (route === '/communities') return <CommunitiesPage {...appState} />
@@ -708,44 +708,6 @@ function Dashboard({ profile, setProfile, navigate, notify, inviteMentor }) {
   )
 }
 
-function MentorsPage({ profile, setProfile, navigate, notify, inviteMentor }) {
-  const [filters, setFilters] = useState({ department: '', role: '', seniority: '', skill: '', topic: '', canMentor: false, method: '' })
-  const filtered = useMemo(() => mentorSeed.filter((m) => {
-    if (filters.department && !m.department.includes(filters.department) && !m.division.includes(filters.department)) return false
-    if (filters.role && !m.role.includes(filters.role)) return false
-    if (filters.seniority && m.seniority < Number(filters.seniority)) return false
-    if (filters.skill && !m.skills.some((s) => s.includes(filters.skill))) return false
-    if (filters.topic && !m.topics.includes(filters.topic)) return false
-    if (filters.canMentor && !m.canMentor) return false
-    if (filters.method && !m.methods.includes(filters.method)) return false
-    return true
-  }), [filters])
-  return (
-    <PageWrap>
-      <PageTitle eyebrow="Recommendation" title="推薦" text="依照共同興趣、交流需求、互補專長、共同社群與跨部門多樣性，推薦適合認識、交流或合作的同仁。" />
-      <div className="mb-6 rounded-card border border-line bg-white p-5 shadow-card">
-        <div className="grid gap-3 md:grid-cols-3 xl:grid-cols-6">
-          <Input label="部門" value={filters.department} onChange={(v) => setFilters({ ...filters, department: v })} dense />
-          <Input label="職位" value={filters.role} onChange={(v) => setFilters({ ...filters, role: v })} dense />
-          <Select label="年資至少" value={filters.seniority} onChange={(v) => setFilters({ ...filters, seniority: v })} options={['', '3', '5', '10', '15']} dense />
-          <Input label="專長" value={filters.skill} onChange={(v) => setFilters({ ...filters, skill: v })} dense />
-          <Select label="指導主題" value={filters.topic} onChange={(v) => setFilters({ ...filters, topic: v })} options={['', ...guidanceOptions]} dense />
-          <Select label="交流方式" value={filters.method} onChange={(v) => setFilters({ ...filters, method: v })} options={['', ...methodOptions]} dense />
-        </div>
-        <label className="mt-4 flex items-center gap-3 text-sm font-semibold text-slate-600">
-          <input type="checkbox" checked={filters.canMentor} onChange={(e) => setFilters({ ...filters, canMentor: e.target.checked })} className="h-5 w-5 rounded border-line text-navy" />
-          只顯示可提供經驗交流的同仁
-        </label>
-      </div>
-      {filtered.length ? (
-        <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-          {filtered.map((mentor) => <MentorCard key={mentor.id} mentor={mentor} profile={profile} setProfile={setProfile} navigate={navigate} notify={notify} inviteMentor={inviteMentor} />)}
-        </div>
-      ) : <EmptyState title="暫時沒有符合的同仁" text="換個條件試試看，也許下一位剛好就是你需要的內部資源。" />}
-    </PageWrap>
-  )
-}
-
 function MentorDetail({ id, profile, setProfile, conversations, inviteMentor, sendChatMessage, navigate, notify }) {
   const mentor = mentorSeed.find((item) => item.id === id) || mentorSeed[0]
   const isFav = profile.favorites.includes(mentor.id)
@@ -756,7 +718,7 @@ function MentorDetail({ id, profile, setProfile, conversations, inviteMentor, se
   }
   return (
     <PageWrap>
-      <button className="mb-5 text-sm font-bold text-navy hover:underline" onClick={() => navigate('/mentors')}>返回推薦</button>
+      <button className="mb-5 text-sm font-bold text-navy hover:underline" onClick={() => navigate('/dashboard')}>返回推薦</button>
       <section className="grid gap-6 lg:grid-cols-[.82fr_1.18fr]">
         <aside className="rounded-[28px] border border-line bg-white p-6 shadow-card">
           <div className="avatar-xl">{mentor.avatar}</div>
@@ -1000,8 +962,7 @@ function ProfilePage({ profile, setProfile, communities, navigate, notify }) {
 
 function AppNav({ route, navigate, logout }) {
   const items = [
-    ['首頁', '/dashboard'],
-    ['推薦', '/mentors'],
+    ['推薦', '/dashboard'],
     ['聊天室', '/chat'],
     ['社群', '/communities'],
     ['我的檔案', '/profile'],
@@ -1019,14 +980,13 @@ function AppNav({ route, navigate, logout }) {
 
 function MobileTabs({ route, navigate }) {
   const items = [
-    ['首頁', '/dashboard'],
-    ['推薦', '/mentors'],
+    ['推薦', '/dashboard'],
     ['聊天', '/chat'],
     ['社群', '/communities'],
     ['我的', '/profile'],
   ]
   return (
-    <nav className="fixed inset-x-3 bottom-3 z-40 grid grid-cols-5 rounded-[22px] border border-line bg-white/95 p-2 shadow-soft backdrop-blur lg:hidden">
+    <nav className="fixed inset-x-3 bottom-3 z-40 grid grid-cols-4 rounded-[22px] border border-line bg-white/95 p-2 shadow-soft backdrop-blur lg:hidden">
       {items.map(([label, path]) => <button key={path} onClick={() => navigate(path)} className={`rounded-2xl px-2 py-3 text-sm font-bold ${route === path || route.startsWith(path + '/') ? 'bg-ink text-white' : 'text-slate-500'}`}>{label}</button>)}
     </nav>
   )
