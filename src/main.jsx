@@ -532,7 +532,7 @@ function Landing({ navigate }) {
         </div>
         <div className="grid gap-5 md:grid-cols-4">
           <FeatureCard title="契合度推薦" text="依專長、興趣、交流需求與互補能力，推薦適合認識、請益或合作的同仁。" />
-          <FeatureCard title="聊天室" text="讓推薦與社群互動能延續討論，支援一對一與小組交流。" />
+          <FeatureCard title="聊天室" text="讓推薦後的交流能延續討論，支援一對一請益與經驗分享。" />
           <FeatureCard title="社群" text="依工作專業、職涯經驗與生活興趣集中交流，累積熱門問題與工作案例。" />
           <FeatureCard title="個人檔案" text="呈現專長、興趣、交流主題、可分享內容與參與紀錄，作為推薦基礎。" />
         </div>
@@ -547,7 +547,7 @@ function Landing({ navigate }) {
             {[
               ['01', '建立個人檔案', '填寫專長、興趣、交流需求與可分享內容。'],
               ['02', '獲得契合度推薦', '看見共同點、互補專長與推薦原因。'],
-              ['03', '透過聊天室交流', '一對一或小組聊天室延續請益與討論。'],
+              ['03', '透過聊天室交流', '用一對一聊天室延續請益與討論。'],
               ['04', '加入主題社群', '沉澱熱門問題、工作案例與跨部門經驗。'],
             ].map(([step, title, text]) => (
               <article key={step} className="rounded-card border border-line bg-white p-5 shadow-card">
@@ -836,18 +836,13 @@ function CommunityDetail({ id, communities, setCommunities, profile, setProfile,
   )
 }
 
-function ChatPage({ conversations, activeChatId, setActiveChatId, sendChatMessage, navigate }) {
+function ChatPage({ conversations, activeChatId, setActiveChatId, sendChatMessage }) {
   const activeConversation = conversations.find((conversation) => conversation.mentorId === activeChatId) || conversations[0]
   const activeMentor = activeConversation ? mentorSeed.find((mentor) => mentor.id === activeConversation.mentorId) : null
-  const suggestedRooms = [
-    { id: 'room-community', title: 'AI 與自動化工具社群聊天室', meta: '社群小組 · 18 則未讀', tags: ['社群', '工具應用'] },
-    { id: 'room-newcomer', title: '新人交流小組聊天室', meta: '職涯小組 · 6 則未讀', tags: ['新人', '職涯'] },
-    { id: 'room-project', title: '跨部門合作討論室', meta: '工作交流 · 3 則未讀', tags: ['跨部門', '合作'] },
-  ]
 
   return (
     <PageWrap>
-      <PageTitle eyebrow="Chat" title="聊天室" text="讓推薦與社群互動能延續討論。聊天室聚焦知識交流、請益討論、工作經驗分享與跨部門協作。" />
+      <PageTitle eyebrow="Chat" title="一對一聊天室" text="這裡只呈現你與同仁的一對一交流，適合請益、交換經驗與討論下一次交流時間。" />
       {activeConversation && activeMentor ? (
         <ChatPanel
           mentor={activeMentor}
@@ -859,23 +854,10 @@ function ChatPage({ conversations, activeChatId, setActiveChatId, sendChatMessag
       ) : (
         <EmptyState title="尚未建立一對一聊天室" text="從推薦頁發送交流邀請後，聊天室會出現在這裡。" />
       )}
-      <section className="mt-8">
-        <SectionHeader title="小組聊天室範例" />
-        <div className="grid gap-4 md:grid-cols-3">
-          {suggestedRooms.map((room) => (
-            <article key={room.id} className="rounded-card border border-line bg-white p-5 shadow-card">
-              <h3 className="text-xl font-black">{room.title}</h3>
-              <p className="mt-2 text-sm font-semibold text-slate-500">{room.meta}</p>
-              <div className="mt-4 flex flex-wrap gap-2">{room.tags.map((tag) => <span key={tag} className="pill">{tag}</span>)}</div>
-              <button className="btn-secondary mt-4 w-full justify-center" onClick={() => navigate('/communities')}>查看來源</button>
-            </article>
-          ))}
-        </div>
-      </section>
       <section className="mt-8 rounded-card bg-white p-5 shadow-card">
         <h2 className="text-xl font-black">聊天室使用原則</h2>
         <div className="mt-4 grid gap-3 md:grid-cols-3">
-          {['聚焦專業知識交流與請益討論', '可分享平台內文章與社群貼文', '不得商業推銷、私人交易或散播企業機密'].map((item) => <div key={item} className="rounded-card bg-mist p-4 font-bold text-navy">{item}</div>)}
+          {['聚焦一對一請益與經驗交流', '可約定後續線上或實體交流', '不得商業推銷、私人交易或散播企業機密'].map((item) => <div key={item} className="rounded-card bg-mist p-4 font-bold text-navy">{item}</div>)}
         </div>
       </section>
     </PageWrap>
@@ -1044,20 +1026,23 @@ function ChatPanel({ mentor, conversation, conversations = [], setActiveChatId, 
           </div>
         </div>
         {conversations.length > 1 && setActiveChatId && (
-          <div className="flex max-w-full gap-2 overflow-x-auto pb-1">
-            {conversations.map((item) => {
-              const chatMentor = mentorSeed.find((candidate) => candidate.id === item.mentorId)
-              if (!chatMentor) return null
-              return (
-                <button
-                  key={item.mentorId}
-                  onClick={() => setActiveChatId(item.mentorId)}
-                  className={`whitespace-nowrap rounded-full px-4 py-2 text-sm font-bold ${item.mentorId === mentor.id ? 'bg-ink text-white' : 'bg-mist text-navy'}`}
-                >
-                  {chatMentor.name}
-                </button>
-              )
-            })}
+          <div className="max-w-full">
+            <p className="mb-2 text-xs font-bold uppercase tracking-[.16em] text-slate-400">對話對象</p>
+            <div className="flex max-w-full gap-2 overflow-x-auto pb-1">
+              {conversations.map((item) => {
+                const chatMentor = mentorSeed.find((candidate) => candidate.id === item.mentorId)
+                if (!chatMentor) return null
+                return (
+                  <button
+                    key={item.mentorId}
+                    onClick={() => setActiveChatId(item.mentorId)}
+                    className={`whitespace-nowrap rounded-full px-4 py-2 text-sm font-bold ${item.mentorId === mentor.id ? 'bg-ink text-white' : 'bg-mist text-navy'}`}
+                  >
+                    {chatMentor.name}
+                  </button>
+                )
+              })}
+            </div>
           </div>
         )}
       </div>
