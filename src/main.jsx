@@ -1239,6 +1239,19 @@ function TagList({ tags }) {
 }
 
 function PostCard({ post }) {
+  const [saved, setSaved] = useState(false)
+  const [showComments, setShowComments] = useState(false)
+  const [commentText, setCommentText] = useState('')
+  const [localComments, setLocalComments] = useState([])
+  const saveCount = (post.saves ?? post.likes ?? 0) + (saved ? 1 : 0)
+  const commentCount = (post.comments ?? 0) + localComments.length
+  const submitComment = () => {
+    if (!commentText.trim()) return
+    setLocalComments((prev) => [...prev, { id: Date.now(), author: '我', text: commentText.trim() }])
+    setCommentText('')
+    setShowComments(true)
+  }
+
   return (
     <article className="rounded-card border border-line bg-white p-5 shadow-card">
       <div className="flex items-center gap-3">
@@ -1250,10 +1263,38 @@ function PostCard({ post }) {
       </div>
       <p className="mt-4 leading-7 text-slate-700">{post.content}</p>
       <div className="mt-4 flex gap-4 text-sm font-bold text-slate-500">
-        <button>讚 {post.likes}</button>
-        <button>留言 {post.comments}</button>
-        <button>回覆</button>
+        <button className={saved ? 'text-navy' : 'hover:text-navy'} onClick={() => setSaved((value) => !value)}>{saved ? '已收藏' : '收藏'} {saveCount}</button>
+        <button className="hover:text-navy" onClick={() => setShowComments((value) => !value)}>留言 {commentCount}</button>
+        <button className="hover:text-navy" onClick={() => setShowComments(true)}>回覆</button>
       </div>
+      {showComments && (
+        <div className="mt-4 rounded-card bg-mist p-4">
+          <div className="space-y-3">
+            <div className="rounded-2xl bg-white p-3 text-sm text-slate-700">
+              <span className="font-black text-ink">{post.author}：</span>
+              歡迎把你的問題寫下來，我們可以一起整理成下次交流的主題。
+            </div>
+            {localComments.map((comment) => (
+              <div key={comment.id} className="rounded-2xl bg-white p-3 text-sm text-slate-700">
+                <span className="font-black text-ink">{comment.author}：</span>
+                {comment.text}
+              </div>
+            ))}
+          </div>
+          <div className="mt-3 flex flex-col gap-2 sm:flex-row">
+            <input
+              className="field mt-0 bg-white"
+              value={commentText}
+              onChange={(event) => setCommentText(event.target.value)}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter') submitComment()
+              }}
+              placeholder="寫下你的留言..."
+            />
+            <button className="btn-primary justify-center sm:min-w-24" onClick={submitComment}>送出</button>
+          </div>
+        </div>
+      )}
     </article>
   )
 }
