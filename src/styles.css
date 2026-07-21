@@ -27,7 +27,7 @@
   }
 
   .btn-primary {
-    @apply inline-flex items-center rounded-full bg-ink px-5 py-3 text-sm font-bold text-white shadow-card transition hover:-translate-y-0.5 hover:bg-navy hover:shadow-soft active:translate-y-0;
+    @apply inline-flex items-center rounded-full bg-blueprint px-5 py-3 text-sm font-bold text-white shadow-card transition hover:-translate-y-0.5 hover:bg-navy hover:shadow-soft active:translate-y-0;
   }
 
   .btn-secondary {
@@ -67,7 +67,7 @@
   }
 
   .pill-dark {
-    @apply rounded-full bg-ink px-3 py-1.5 text-xs font-bold text-white;
+    @apply rounded-full bg-blueprint px-3 py-1.5 text-xs font-bold text-white;
   }
 
   .chip {
@@ -91,7 +91,7 @@
   }
 
   .nav-item.active {
-    @apply bg-ink text-white hover:bg-ink hover:text-white;
+    @apply bg-blueprint text-white hover:bg-blueprint hover:text-white;
   }
 
   .avatar,
@@ -118,7 +118,7 @@
   }
 
   .match {
-    @apply rounded-full bg-ink px-3 py-1.5 text-sm font-black text-white;
+    @apply rounded-full bg-blueprint px-3 py-1.5 text-sm font-black text-white;
   }
 
   .magazine-frame {
@@ -130,9 +130,10 @@
   }
 
   .floating-note {
-    @apply mt-4 rounded-[24px] bg-ink p-5 text-lg font-bold leading-7 text-white shadow-card;
+    @apply mt-4 rounded-[24px] bg-blueprint p-5 text-lg font-bold leading-7 text-white shadow-card;
   }
 }
+
 
 .line-clamp-2 {
   display: -webkit-box;

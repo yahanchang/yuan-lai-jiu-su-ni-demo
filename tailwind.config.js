@@ -9,6 +9,7 @@ export default {
         line: '#e5edf5',
         skysoft: '#dff1ff',
         azure: '#4f9edc',
+        blueprint: '#0b67ff',
         navy: '#173b6c',
       },
       boxShadow: {
