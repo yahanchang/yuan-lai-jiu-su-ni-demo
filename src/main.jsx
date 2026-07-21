@@ -348,7 +348,6 @@ const defaultProfile = {
   guidanceTypes: ['職涯發展', '專業技能', '跨部門交流'],
   mentorPrefs: ['跨部門', '年資較深', '不限'],
   availability: '平日午餐、週三晚間',
-  tagline: '想成為能把想法落地的人',
   privacy: {
     showAge: true,
     showSeniority: true,
@@ -602,7 +601,7 @@ function Register({ setProfile, setIsAuthed, navigate, notify }) {
 
   const submit = () => {
     const next = {}
-    ;['intro', 'interests', 'skills', 'learning', 'availability', 'tagline'].forEach((field) => {
+    ;['intro', 'interests', 'skills', 'learning', 'availability'].forEach((field) => {
       if (!form[field]) next[field] = '這個欄位需要填寫'
     })
     setErrors(next)
@@ -642,7 +641,7 @@ function Register({ setProfile, setIsAuthed, navigate, notify }) {
         </div>
       ) : (
         <div className="space-y-5">
-          <Textarea label="自我介紹：我塑一個正在尋找方向的人" value={form.intro} onChange={(v) => update('intro', v)} error={errors.intro} />
+          <Textarea label="我塑" value={form.intro} onChange={(v) => update('intro', v)} error={errors.intro} />
           <div className="grid gap-4 md:grid-cols-2">
             <Input label="我的興趣：我喜歡討論的主題是" value={form.interests} onChange={(v) => update('interests', v)} error={errors.interests} />
             <Input label="我的專長：我可以分享的經驗是" value={form.skills} onChange={(v) => update('skills', v)} error={errors.skills} />
@@ -651,7 +650,6 @@ function Register({ setProfile, setIsAuthed, navigate, notify }) {
           </div>
           <CheckGroup label="我希望獲得的指導類型" options={guidanceOptions} values={form.guidanceTypes} onToggle={(v) => toggleArray('guidanceTypes', v)} />
           <CheckGroup label="我期待遇見的同仁是" options={mentorPrefOptions} values={form.mentorPrefs} onToggle={(v) => toggleArray('mentorPrefs', v)} />
-          <Input label="一句個人標籤" value={form.tagline} onChange={(v) => update('tagline', v)} error={errors.tagline} />
           <div className="grid gap-3 sm:grid-cols-2">
             <button className="btn-secondary justify-center" onClick={() => setStep(1)}>回上一步</button>
             <button className="btn-primary justify-center" onClick={submit}>完成個人檔案</button>
@@ -917,7 +915,6 @@ function ProfilePage({ profile, setProfile, communities, navigate, notify }) {
             <>
               <h1 className="mt-5 text-4xl font-black">{profile.name}</h1>
               <p className="mt-2 font-semibold text-slate-600">{profile.department} · {profile.role}</p>
-              <p className="mt-4 rounded-card bg-mist p-4 font-semibold text-navy">{profile.tagline}</p>
               <div className="mt-5 grid grid-cols-2 gap-3 text-sm">
                 {canShow(profile, 'showAge') && <Info label="年齡" value={`${profile.age} 歲`} />}
                 {canShow(profile, 'showSeniority') && <Info label="年資" value={`${profile.seniority} 年`} />}
