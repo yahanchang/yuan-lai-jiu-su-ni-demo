@@ -878,7 +878,7 @@ function ChatPage({ conversations, activeChatId, setActiveChatId, sendChatMessag
 function ProfilePage({ profile, setProfile, communities, navigate, notify }) {
   const [editing, setEditing] = useState(false)
   const [draft, setDraft] = useState({ ...profile, privacy: { showAge: canShow(profile, 'showAge'), showSeniority: canShow(profile, 'showSeniority') } })
-  const favoriteMentors = mentorSeed.filter((mentor) => profile.favorites.includes(mentor.id))
+  const savedPosts = communities.flatMap((community) => community.posts.map((post) => ({ ...post, communityName: community.name, communityId: community.id }))).slice(0, 3)
   const joinedCommunities = communities.filter((community) => profile.joinedCommunities.includes(community.id))
   const save = () => {
     setProfile(draft)
@@ -949,8 +949,8 @@ function ProfilePage({ profile, setProfile, communities, navigate, notify }) {
       </div>
       <div className="mt-6 grid gap-6 lg:grid-cols-2">
         <section>
-          <SectionHeader title="已收藏的同仁" />
-          {favoriteMentors.length ? <div className="grid gap-4">{favoriteMentors.map((mentor) => <MiniList key={mentor.id} title={mentor.name} text={`${mentor.department} · ${mentor.role}`} onClick={() => navigate(`/mentor/${mentor.id}`)} />)}</div> : <EmptyState title="尚未收藏同仁" text="看到想交流或請益的人，就先收藏起來。" />}
+          <SectionHeader title="已收藏的貼文" />
+          {savedPosts.length ? <div className="grid gap-4">{savedPosts.map((post) => <MiniList key={`${post.communityId}-${post.id}`} title={post.content.slice(0, 28)} text={`${post.communityName} · ${post.author}`} onClick={() => navigate(`/community/${post.communityId}`)} />)}</div> : <EmptyState title="尚未收藏貼文" text="看到值得之後再看的社群貼文，就先收藏起來。" />}
         </section>
         <section>
           <SectionHeader title="已加入的社群" />
