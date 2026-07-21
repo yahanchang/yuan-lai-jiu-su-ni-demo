@@ -349,6 +349,10 @@ const defaultProfile = {
   mentorPrefs: ['跨部門', '年資較深', '不限'],
   availability: '平日午餐、週三晚間',
   tagline: '想成為能把想法落地的人',
+  privacy: {
+    showAge: true,
+    showSeniority: true,
+  },
   favorites: [],
   joinedCommunities: ['c1', 'c4'],
 }
@@ -363,6 +367,10 @@ function storageGet(key, fallback) {
   } catch {
     return fallback
   }
+}
+
+function canShow(profile, key) {
+  return profile.privacy?.[key] ?? true
 }
 
 function App() {
@@ -436,7 +444,7 @@ function App() {
             id: `msg-${Date.now()}-mentor`,
             from: 'mentor',
             text: `收到，我們可以從「${cleanText.slice(0, 18)}」這個方向開始拆解。你也可以補充目前卡住的情境。`,
-            time: mentor ? `${mentor.name} 回覆` : '同仁回覆',
+            time: mentor ? `${mentor.name} 已讀` : '同仁已讀',
           },
         ],
       }
@@ -866,7 +874,7 @@ function ChatPage({ conversations, activeChatId, setActiveChatId, sendChatMessag
 
 function ProfilePage({ profile, setProfile, communities, navigate, notify }) {
   const [editing, setEditing] = useState(false)
-  const [draft, setDraft] = useState(profile)
+  const [draft, setDraft] = useState({ ...profile, privacy: { showAge: canShow(profile, 'showAge'), showSeniority: canShow(profile, 'showSeniority') } })
   const favoriteMentors = mentorSeed.filter((mentor) => profile.favorites.includes(mentor.id))
   const joinedCommunities = communities.filter((community) => profile.joinedCommunities.includes(community.id))
   const save = () => {
@@ -889,7 +897,16 @@ function ProfilePage({ profile, setProfile, communities, navigate, notify }) {
               <Input label="Email" value={draft.email} onChange={(v) => setDraft({ ...draft, email: v })} />
               <Input label="部門" value={draft.department} onChange={(v) => setDraft({ ...draft, department: v })} />
               <Input label="職位" value={draft.role} onChange={(v) => setDraft({ ...draft, role: v })} />
+              <Input label="年齡" value={draft.age} onChange={(v) => setDraft({ ...draft, age: v })} />
+              <Input label="年資" value={draft.seniority} onChange={(v) => setDraft({ ...draft, seniority: v })} />
               <Toggle label="是否願意提供經驗交流" checked={draft.canMentor} onChange={(v) => setDraft({ ...draft, canMentor: v })} />
+              <div className="rounded-card bg-mist p-4">
+                <p className="mb-3 font-black text-navy">個人資訊顯示設定</p>
+                <div className="space-y-3">
+                  <Toggle label="在我的檔案顯示年齡" checked={canShow(draft, 'showAge')} onChange={(v) => setDraft({ ...draft, privacy: { ...draft.privacy, showAge: v } })} />
+                  <Toggle label="在我的檔案顯示年資" checked={canShow(draft, 'showSeniority')} onChange={(v) => setDraft({ ...draft, privacy: { ...draft.privacy, showSeniority: v } })} />
+                </div>
+              </div>
             </div>
           ) : (
             <>
@@ -897,7 +914,8 @@ function ProfilePage({ profile, setProfile, communities, navigate, notify }) {
               <p className="mt-2 font-semibold text-slate-600">{profile.department} · {profile.role}</p>
               <p className="mt-4 rounded-card bg-mist p-4 font-semibold text-navy">{profile.tagline}</p>
               <div className="mt-5 grid grid-cols-2 gap-3 text-sm">
-                <Info label="年資" value={`${profile.seniority} 年`} />
+                {canShow(profile, 'showAge') && <Info label="年齡" value={`${profile.age} 歲`} />}
+                {canShow(profile, 'showSeniority') && <Info label="年資" value={`${profile.seniority} 年`} />}
                 <Info label="地點" value={profile.location} />
                 <Info label="尋找交流" value={profile.seekingMentor ? '是' : '否'} />
                 <Info label="願意分享" value={profile.canMentor ? '是' : '否'} />
@@ -1265,7 +1283,6 @@ function PostCard({ post }) {
       <div className="mt-4 flex gap-4 text-sm font-bold text-slate-500">
         <button className={saved ? 'text-navy' : 'hover:text-navy'} onClick={() => setSaved((value) => !value)}>{saved ? '已收藏' : '收藏'} {saveCount}</button>
         <button className="hover:text-navy" onClick={() => setShowComments((value) => !value)}>留言 {commentCount}</button>
-        <button className="hover:text-navy" onClick={() => setShowComments(true)}>回覆</button>
       </div>
       {showComments && (
         <div className="mt-4 rounded-card bg-mist p-4">
