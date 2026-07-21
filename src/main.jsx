@@ -251,7 +251,7 @@ const communitySeed = [
   {
     id: 'c2',
     name: '理財交流社群',
-    category: '生活',
+    category: '興趣',
     intro: '用簡單、長期、可持續的方式討論理財，不追求一夜致富，只追求更安心的選擇。',
     members: 186,
     tags: ['理財規劃', '投資', '生活品質'],
@@ -262,7 +262,7 @@ const communitySeed = [
   {
     id: 'c3',
     name: '專案管理社群',
-    category: '技能',
+    category: '工作技能',
     intro: '分享會議、時程、風險與跨部門協作的實戰方法，讓專案不只靠意志力推動。',
     members: 312,
     tags: ['專案管理', '溝通', 'PM'],
@@ -273,7 +273,7 @@ const communitySeed = [
   {
     id: 'c4',
     name: '跨部門交流社群',
-    category: '交流',
+    category: '職涯',
     intro: '讓經驗不只停留在部門裡，而是流動成彼此的力量。',
     members: 421,
     tags: ['跨部門', '交流', '組織理解'],
@@ -284,7 +284,7 @@ const communitySeed = [
   {
     id: 'c5',
     name: '女性成長社群',
-    category: '成長',
+    category: '職涯',
     intro: '討論職涯、領導、生活與自我照顧，在工作裡長出自己的節奏。',
     members: 204,
     tags: ['女性成長', '領導', '工作生活平衡'],
@@ -295,7 +295,7 @@ const communitySeed = [
   {
     id: 'c6',
     name: '研究所與進修社群',
-    category: '進修',
+    category: '職涯',
     intro: '給正在考慮在職進修、轉領域學習或申請研究所的你。',
     members: 149,
     tags: ['研究所', '進修', '自學'],
@@ -306,7 +306,7 @@ const communitySeed = [
   {
     id: 'c7',
     name: 'ESG 與永續社群',
-    category: '永續',
+    category: '工作技能',
     intro: '從政策、企業策略到日常行動，探索永續如何真正進入工作現場。',
     members: 173,
     tags: ['ESG', '永續', '企業責任'],
@@ -317,7 +317,7 @@ const communitySeed = [
   {
     id: 'c8',
     name: '數位轉型社群',
-    category: '科技',
+    category: '工作技能',
     intro: '討論 AI、自動化、資料平台與流程改造，讓工具變成真正改善工作的力量。',
     members: 267,
     tags: ['數位轉型', 'AI', '自動化'],
@@ -369,6 +369,17 @@ function storageGet(key, fallback) {
   }
 }
 
+function normalizeCommunityCategory(category) {
+  if (['技能', '永續', '科技'].includes(category)) return '工作技能'
+  if (['交流', '成長', '進修'].includes(category)) return '職涯'
+  if (category === '生活') return '興趣'
+  return ['工作技能', '職涯', '興趣'].includes(category) ? category : '職涯'
+}
+
+function normalizeCommunities(items) {
+  return items.map((item) => ({ ...item, category: normalizeCommunityCategory(item.category) }))
+}
+
 function canShow(profile, key) {
   return profile.privacy?.[key] ?? true
 }
@@ -377,7 +388,7 @@ function App() {
   const [route, setRoute] = useState(() => location.hash.replace('#', '') || '/')
   const [profile, setProfile] = useState(() => storageGet('yl_profile', defaultProfile))
   const [isAuthed, setIsAuthed] = useState(() => storageGet('yl_authed', false))
-  const [communities, setCommunities] = useState(() => storageGet('yl_communities', communitySeed))
+  const [communities, setCommunities] = useState(() => normalizeCommunities(storageGet('yl_communities', communitySeed)))
   const [conversations, setConversations] = useState(() => storageGet('yl_conversations', []))
   const [activeChatId, setActiveChatId] = useState(() => storageGet('yl_active_chat', ''))
   const [toast, setToast] = useState('')
@@ -1154,7 +1165,7 @@ function CreateCommunityModal({ onClose, setCommunities, notify }) {
         <div className="space-y-4">
           <Input label="社群名稱" value={form.name} onChange={(v) => setForm({ ...form, name: v })} />
           <Textarea label="社群簡介" value={form.intro} onChange={(v) => setForm({ ...form, intro: v })} />
-          <Select label="社群分類" value={form.category} onChange={(v) => setForm({ ...form, category: v })} options={['職涯', '技能', '生活', '交流', '成長', '進修', '永續', '科技']} />
+          <Select label="社群分類" value={form.category} onChange={(v) => setForm({ ...form, category: v })} options={['工作技能', '職涯', '興趣']} />
           <Input label="社群標籤（以逗號分隔）" value={form.tags} onChange={(v) => setForm({ ...form, tags: v })} />
           <Toggle label="公開社群" checked={form.isPublic} onChange={(v) => setForm({ ...form, isPublic: v })} />
           {error && <p className="form-error">{error}</p>}
@@ -1256,13 +1267,40 @@ function TagList({ tags }) {
   return <div className="flex flex-wrap gap-2">{tags.map((tag) => <span key={tag} className="pill">{tag}</span>)}</div>
 }
 
+function getPostReplies(post) {
+  const replies = {
+    p1: [
+      { author: '周明翰', text: '我最近想突破的是跨部門溝通，常常不知道怎麼把需求講得更清楚。' },
+      { author: '林若涵', text: '可以先把問題、影響對象、希望得到的協助拆開寫，午餐交流會比較好討論。' },
+      { author: '吳品萱', text: '我也想聊時間管理，尤其是同時處理例行工作和專案的節奏。' },
+    ],
+    p2: [
+      { author: '張庭安', text: '很認同，願意問問題的人通常適應得更快。' },
+      { author: '陳柏宇', text: '新人期可以先建立三位固定請益對象，會少走很多路。' },
+    ],
+    p3: [
+      { author: 'Yahan', text: '想知道現金流表要先追哪些項目，期待模板。' },
+      { author: '劉怡君', text: '簡單可持續很重要，初版不用太複雜。' },
+    ],
+    p4: [
+      { author: '張庭安', text: 'Project Brief 很適合給新人理解專案全貌。' },
+      { author: '許哲維', text: '如果可以加一欄資料需求會更完整。' },
+    ],
+  }
+  return replies[post.id] || [
+    { author: '陳柏宇', text: '這個主題很值得延伸討論，我也想聽聽其他部門的做法。' },
+    { author: '林若涵', text: '可以把問題情境再寫具體一點，大家比較容易提供經驗。' },
+  ]
+}
+
 function PostCard({ post }) {
   const [saved, setSaved] = useState(false)
   const [showComments, setShowComments] = useState(false)
   const [commentText, setCommentText] = useState('')
   const [localComments, setLocalComments] = useState([])
+  const existingReplies = getPostReplies(post)
   const saveCount = (post.saves ?? post.likes ?? 0) + (saved ? 1 : 0)
-  const commentCount = (post.comments ?? 0) + localComments.length
+  const commentCount = (post.comments ?? existingReplies.length) + localComments.length
   const submitComment = () => {
     if (!commentText.trim()) return
     setLocalComments((prev) => [...prev, { id: Date.now(), author: '我', text: commentText.trim() }])
@@ -1287,10 +1325,12 @@ function PostCard({ post }) {
       {showComments && (
         <div className="mt-4 rounded-card bg-mist p-4">
           <div className="space-y-3">
-            <div className="rounded-2xl bg-white p-3 text-sm text-slate-700">
-              <span className="font-black text-ink">{post.author}：</span>
-              歡迎把你的問題寫下來，我們可以一起整理成下次交流的主題。
-            </div>
+            {existingReplies.map((reply) => (
+              <div key={`${post.id}-${reply.author}-${reply.text}`} className="rounded-2xl bg-white p-3 text-sm text-slate-700">
+                <span className="font-black text-ink">{reply.author}：</span>
+                {reply.text}
+              </div>
+            ))}
             {localComments.map((comment) => (
               <div key={comment.id} className="rounded-2xl bg-white p-3 text-sm text-slate-700">
                 <span className="font-black text-ink">{comment.author}：</span>
