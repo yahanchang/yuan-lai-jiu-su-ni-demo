@@ -902,7 +902,6 @@ function ProfilePage({ profile, setProfile, communities, navigate, notify }) {
               <Input label="職位" value={draft.role} onChange={(v) => setDraft({ ...draft, role: v })} />
               <Input label="年齡" value={draft.age} onChange={(v) => setDraft({ ...draft, age: v })} />
               <Input label="年資" value={draft.seniority} onChange={(v) => setDraft({ ...draft, seniority: v })} />
-              <Toggle label="是否願意提供經驗交流" checked={draft.canMentor} onChange={(v) => setDraft({ ...draft, canMentor: v })} />
               <div className="rounded-card bg-mist p-4">
                 <p className="mb-3 font-black text-navy">個人資訊顯示設定</p>
                 <div className="space-y-3">
@@ -919,8 +918,6 @@ function ProfilePage({ profile, setProfile, communities, navigate, notify }) {
                 {canShow(profile, 'showAge') && <Info label="年齡" value={`${profile.age} 歲`} />}
                 {canShow(profile, 'showSeniority') && <Info label="年資" value={`${profile.seniority} 年`} />}
                 <Info label="地點" value={profile.location} />
-                <Info label="尋找交流" value={profile.seekingMentor ? '是' : '否'} />
-                <Info label="願意分享" value={profile.canMentor ? '是' : '否'} />
               </div>
             </>
           )}
