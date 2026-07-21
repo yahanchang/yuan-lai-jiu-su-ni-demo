@@ -697,78 +697,13 @@ function ProfileBuilder(props) {
   return <Register {...props} />
 }
 
-function Dashboard({ profile, communities, conversations, activeChatId, setActiveChatId, sendChatMessage, navigate, setProfile, notify, inviteMentor }) {
-  const recommendedMentors = mentorSeed.slice(0, 4)
-  const recommendedCommunities = communities.slice(0, 4)
-  const activeConversation = conversations.find((conversation) => conversation.mentorId === activeChatId) || conversations[0]
-  const activeMentor = activeConversation ? mentorSeed.find((mentor) => mentor.id === activeConversation.mentorId) : null
-  const latestPosts = communities.flatMap((community) => community.posts.map((post) => ({ ...post, communityName: community.name, communityId: community.id }))).slice(0, 3)
+function Dashboard({ profile, setProfile, navigate, notify, inviteMentor }) {
   return (
     <PageWrap>
-      <section className="rounded-[28px] bg-gradient-to-br from-white to-skysoft p-6 shadow-card lg:p-8">
-        <p className="eyebrow">Welcome Back</p>
-        <div className="mt-3 flex flex-col justify-between gap-5 lg:flex-row lg:items-end">
-          <div>
-            <h1 className="text-4xl font-black tracking-tight">Hi，{profile.name}！今天想認識哪一位同仁？</h1>
-            <p className="mt-3 max-w-2xl leading-7 text-slate-600">讓專長被看見，讓經驗流動，讓合作發生。今天可以從推薦同仁、加入社群或開啟聊天室開始。</p>
-          </div>
-          <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 lg:min-w-[520px]">
-            <QuickButton text="查看推薦" onClick={() => navigate('/mentors')} />
-            <QuickButton text="開啟聊天室" onClick={() => navigate('/chat')} />
-            <QuickButton text="加入社群" onClick={() => navigate('/communities')} />
-            <QuickButton text="更新我的檔案" onClick={() => navigate('/profile')} />
-          </div>
-        </div>
-      </section>
-      <div className="mt-6 grid gap-4 md:grid-cols-5">
-        <MetricCard label="推薦同仁" value="10" text="依契合度排序" />
-        <MetricCard label="已加入社群" value={String(profile.joinedCommunities.length)} text="持續交流中" />
-        <MetricCard label="收藏同仁" value={String(profile.favorites.length)} text="方便之後邀請" />
-        <MetricCard label="交流邀請" value={String(conversations.length)} text="已建立聊天室" />
-        <MetricCard label="未讀聊天室" value="7" text="含社群小組訊息" />
+      <PageTitle eyebrow="Recommendation" title={`Hi，${profile.name}！推薦給你的同仁`} text="依照共同興趣、交流需求、互補專長與跨部門多樣性，推薦適合認識、交流或合作的同仁。" />
+      <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+        {mentorSeed.map((mentor) => <MentorCard key={mentor.id} mentor={mentor} profile={profile} setProfile={setProfile} navigate={navigate} notify={notify} inviteMentor={inviteMentor} hideFavorite />)}
       </div>
-      {activeConversation && activeMentor && (
-        <section className="mt-6">
-          <SectionHeader title="交流聊天室" />
-          <ChatPanel
-            mentor={activeMentor}
-            conversation={activeConversation}
-            conversations={conversations}
-            setActiveChatId={setActiveChatId}
-            onSend={(text) => sendChatMessage(activeMentor.id, text)}
-          />
-        </section>
-      )}
-      <div className="mt-8 grid gap-8 xl:grid-cols-[1.15fr_.85fr]">
-        <section>
-          <SectionHeader title="本週契合度推薦" action="看更多" onAction={() => navigate('/mentors')} />
-          <div className="grid gap-4 md:grid-cols-2">
-            {recommendedMentors.map((mentor) => <MentorCard key={mentor.id} mentor={mentor} navigate={navigate} profile={profile} setProfile={setProfile} notify={notify} inviteMentor={inviteMentor} compact />)}
-          </div>
-        </section>
-        <section>
-          <SectionHeader title="推薦主題社群" action="探索社群" onAction={() => navigate('/communities')} />
-          <div className="grid gap-4">
-            {recommendedCommunities.map((community) => <CommunityCard key={community.id} community={community} navigate={navigate} profile={profile} setProfile={setProfile} notify={notify} horizontal />)}
-          </div>
-        </section>
-      </div>
-      <section className="mt-8">
-        <SectionHeader title="最新社群貼文" action="進入社群" onAction={() => navigate('/communities')} />
-        <div className="grid gap-4 md:grid-cols-3">
-          {latestPosts.map((post) => (
-            <article key={`${post.communityId}-${post.id}`} className="rounded-card border border-line bg-white p-5 shadow-card">
-              <p className="text-sm font-bold text-azure">{post.communityName}</p>
-              <h3 className="mt-2 font-black">{post.author}</h3>
-              <p className="mt-3 line-clamp-3 leading-7 text-slate-600">{post.content}</p>
-              <div className="mt-4 flex gap-4 text-sm font-bold text-slate-500">
-                <span>{post.likes} 讚</span>
-                <span>{post.comments} 留言</span>
-              </div>
-            </article>
-          ))}
-        </div>
-      </section>
     </PageWrap>
   )
 }
@@ -1097,7 +1032,7 @@ function MobileTabs({ route, navigate }) {
   )
 }
 
-function MentorCard({ mentor, profile, setProfile, navigate, notify, inviteMentor, compact = false }) {
+function MentorCard({ mentor, profile, setProfile, navigate, notify, inviteMentor, compact = false, hideFavorite = false }) {
   const isFav = profile.favorites.includes(mentor.id)
   const toggleFavorite = (event) => {
     event.stopPropagation()
@@ -1122,8 +1057,8 @@ function MentorCard({ mentor, profile, setProfile, navigate, notify, inviteMento
         {mentor.skills.slice(0, compact ? 2 : 3).map((tag) => <span key={tag} className="pill">{tag}</span>)}
       </div>
       {!compact && <div className="mt-3 flex flex-wrap gap-2">{mentor.topics.map((tag) => <span key={tag} className="pill-light">{tag}</span>)}</div>}
-      <div className="mt-5 grid grid-cols-2 gap-2">
-        <button className="btn-secondary justify-center" onClick={toggleFavorite}>{isFav ? '已收藏' : '收藏'}</button>
+      <div className={`mt-5 grid gap-2 ${hideFavorite ? 'grid-cols-1' : 'grid-cols-2'}`}>
+        {!hideFavorite && <button className="btn-secondary justify-center" onClick={toggleFavorite}>{isFav ? '已收藏' : '收藏'}</button>}
         <button className="btn-primary justify-center" onClick={() => navigate(`/mentor/${mentor.id}`)}>查看同仁頁</button>
       </div>
       {compact && <button className="mt-2 w-full rounded-full px-4 py-3 text-sm font-bold text-navy hover:bg-mist" onClick={() => inviteMentor(mentor)}>邀請交流</button>}
@@ -1339,20 +1274,6 @@ function SectionHeader({ title, action, onAction }) {
       <h2 className="text-2xl font-black">{title}</h2>
       {action && <button onClick={onAction} className="text-sm font-bold text-navy hover:underline">{action}</button>}
     </div>
-  )
-}
-
-function QuickButton({ text, onClick }) {
-  return <button onClick={onClick} className="rounded-card bg-white px-4 py-4 text-sm font-black text-navy shadow-card transition hover:-translate-y-0.5 hover:shadow-soft">{text}</button>
-}
-
-function MetricCard({ label, value, text }) {
-  return (
-    <article className="rounded-card border border-line bg-white p-5 shadow-card">
-      <p className="text-sm font-bold text-slate-500">{label}</p>
-      <p className="mt-2 text-3xl font-black text-ink">{value}</p>
-      <p className="mt-1 text-sm font-semibold text-slate-500">{text}</p>
-    </article>
   )
 }
 
