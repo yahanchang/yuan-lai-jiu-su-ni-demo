@@ -10,7 +10,7 @@
   body {
     margin: 0;
     font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans TC", "Microsoft JhengHei", sans-serif;
-    background: #f5f8fb;
+    background: #f8fbfd;
   }
 
   button,
@@ -31,7 +31,7 @@
   }
 
   .btn-secondary {
-    @apply inline-flex items-center rounded-full border border-line bg-white px-5 py-3 text-sm font-bold text-navy transition hover:-translate-y-0.5 hover:bg-skysoft active:translate-y-0;
+    @apply inline-flex items-center rounded-full border border-line bg-white px-5 py-3 text-sm font-bold text-navy transition hover:-translate-y-0.5 hover:bg-skysoft/80 active:translate-y-0;
   }
 
   .btn-ghost {
@@ -67,7 +67,7 @@
   }
 
   .pill-dark {
-    @apply rounded-full bg-blueprint px-3 py-1.5 text-xs font-bold text-white;
+    @apply rounded-full bg-skysoft px-3 py-1.5 text-xs font-bold text-navy;
   }
 
   .chip {
@@ -75,7 +75,7 @@
   }
 
   .chip.active {
-    @apply border-ink bg-ink text-white;
+    @apply border-skysoft bg-skysoft text-navy;
   }
 
   .step-dot {
@@ -83,7 +83,7 @@
   }
 
   .step-dot.active {
-    @apply border-ink bg-ink text-white;
+    @apply border-blueprint bg-blueprint text-white;
   }
 
   .nav-item {
@@ -91,34 +91,11 @@
   }
 
   .nav-item.active {
-    @apply bg-blueprint text-white hover:bg-blueprint hover:text-white;
-  }
-
-  .avatar,
-  .avatar-large,
-  .avatar-xl,
-  .avatar-sm {
-    @apply grid shrink-0 place-items-center rounded-full bg-gradient-to-br from-skysoft to-azure font-black text-navy;
-  }
-
-  .avatar {
-    @apply h-14 w-14;
-  }
-
-  .avatar-sm {
-    @apply h-10 w-10 text-sm;
-  }
-
-  .avatar-large {
-    @apply h-20 w-20 text-2xl;
-  }
-
-  .avatar-xl {
-    @apply h-28 w-28 text-3xl;
+    @apply bg-skysoft text-navy hover:bg-skysoft hover:text-navy;
   }
 
   .match {
-    @apply rounded-full bg-blueprint px-3 py-1.5 text-sm font-black text-white;
+    @apply rounded-full bg-skysoft px-3 py-1.5 text-sm font-black text-navy;
   }
 
   .magazine-frame {
@@ -130,7 +107,7 @@
   }
 
   .floating-note {
-    @apply mt-4 rounded-[24px] bg-blueprint p-5 text-lg font-bold leading-7 text-white shadow-card;
+    @apply mt-4 rounded-[24px] bg-white/80 p-5 text-lg font-bold leading-7 text-navy shadow-card;
   }
 }
 

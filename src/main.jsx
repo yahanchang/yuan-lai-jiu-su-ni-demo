@@ -480,7 +480,7 @@ function App() {
         <Router route={route} appState={appState} />
       </main>
       {showShell && <MobileTabs route={route} navigate={navigate} />}
-      {toast && <div className="fixed bottom-24 left-1/2 z-50 -translate-x-1/2 rounded-full bg-ink px-5 py-3 text-sm text-white shadow-soft lg:bottom-8">{toast}</div>}
+      {toast && <div className="fixed bottom-24 left-1/2 z-50 -translate-x-1/2 rounded-full bg-navy px-5 py-3 text-sm text-white shadow-soft lg:bottom-8">{toast}</div>}
     </div>
   )
 }
@@ -531,7 +531,6 @@ function Landing({ navigate }) {
                     <p className="text-sm font-semibold text-slate-500">交流平台總覽</p>
                     <h2 className="mt-2 text-3xl font-black">4 個入口</h2>
                   </div>
-                  <div className="avatar-large">RH</div>
                 </div>
                 <p className="mt-8 text-2xl font-bold leading-snug">從一次交流開始，遇見新的職涯可能。</p>
                 <div className="mt-8 grid grid-cols-2 gap-3">
@@ -691,7 +690,7 @@ function AuthLayout({ title, subtitle, children }) {
     <div className="min-h-screen bg-gradient-to-br from-white via-mist to-skysoft px-5 py-8">
       <button onClick={() => (location.hash = '/')} className="mx-auto mb-8 block max-w-4xl text-2xl font-black text-navy">緣來就塑你</button>
       <section className="mx-auto grid max-w-5xl overflow-hidden rounded-[28px] border border-white bg-white shadow-soft lg:grid-cols-[.8fr_1.2fr]">
-        <div className="bg-ink p-8 text-white lg:p-10">
+        <div className="bg-navy p-8 text-white lg:p-10">
           <p className="text-sm font-semibold uppercase tracking-[.2em] text-skysoft">Employee Connection</p>
           <h1 className="mt-5 text-4xl font-black leading-tight">{title}</h1>
           <p className="mt-4 leading-7 text-slate-200">{subtitle}</p>
@@ -731,8 +730,7 @@ function MentorDetail({ id, profile, setProfile, conversations, inviteMentor, se
       <button className="mb-5 text-sm font-bold text-navy hover:underline" onClick={() => navigate('/dashboard')}>返回推薦</button>
       <section className="grid gap-6 lg:grid-cols-[.82fr_1.18fr]">
         <aside className="rounded-[28px] border border-line bg-white p-6 shadow-card">
-          <div className="avatar-xl">{mentor.avatar}</div>
-          <h1 className="mt-6 text-4xl font-black">{mentor.name}</h1>
+          <h1 className="text-4xl font-black">{mentor.name}</h1>
           <p className="mt-2 text-lg font-semibold text-slate-600">{mentor.department} · {mentor.role}</p>
           <div className="mt-5 grid grid-cols-2 gap-3 text-sm">
             <Info label="年資" value={`${mentor.seniority} 年`} />
@@ -893,7 +891,6 @@ function ProfilePage({ profile, setProfile, communities, navigate, notify }) {
       </div>
       <div className="grid gap-6 lg:grid-cols-[.8fr_1.2fr]">
         <section className="rounded-[28px] bg-white p-6 shadow-card">
-          <div className="avatar-xl">{profile.name.slice(0, 2).toUpperCase()}</div>
           {editing ? (
             <div className="mt-5 space-y-4">
               <Input label="姓名" value={draft.name} onChange={(v) => setDraft({ ...draft, name: v })} />
@@ -985,7 +982,7 @@ function MobileTabs({ route, navigate }) {
   ]
   return (
     <nav className="fixed inset-x-3 bottom-3 z-40 grid grid-cols-4 rounded-[22px] border border-line bg-white/95 p-2 shadow-soft backdrop-blur lg:hidden">
-      {items.map(([label, path]) => <button key={path} onClick={() => navigate(path)} className={`rounded-2xl px-2 py-3 text-sm font-bold ${route === path || route.startsWith(path + '/') ? 'bg-ink text-white' : 'text-slate-500'}`}>{label}</button>)}
+      {items.map(([label, path]) => <button key={path} onClick={() => navigate(path)} className={`rounded-2xl px-2 py-3 text-sm font-bold ${route === path || route.startsWith(path + '/') ? 'bg-skysoft text-navy' : 'text-slate-500'}`}>{label}</button>)}
     </nav>
   )
 }
@@ -1000,13 +997,10 @@ function MentorCard({ mentor, profile, setProfile, navigate, notify, inviteMento
   return (
     <article className="rounded-card border border-line bg-white p-5 shadow-card transition hover:-translate-y-1 hover:shadow-soft">
       <div className="flex items-start justify-between gap-4">
-        <div className="flex gap-4">
-          <div className="avatar">{mentor.avatar}</div>
-          <div>
-            <h3 className="text-xl font-black">{mentor.name}</h3>
-            <p className="mt-1 text-sm font-semibold text-slate-500">{mentor.department} · {mentor.role}</p>
-            <p className="mt-1 text-sm text-slate-500">年資 {mentor.seniority} 年</p>
-          </div>
+        <div>
+          <h3 className="text-xl font-black">{mentor.name}</h3>
+          <p className="mt-1 text-sm font-semibold text-slate-500">{mentor.department} · {mentor.role}</p>
+          <p className="mt-1 text-sm text-slate-500">年資 {mentor.seniority} 年</p>
         </div>
         <div className="match">{mentor.match}%</div>
       </div>
@@ -1035,12 +1029,9 @@ function ChatPanel({ mentor, conversation, conversations = [], setActiveChatId, 
   return (
     <div className="rounded-[28px] border border-line bg-white p-5 shadow-card lg:p-6">
       <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
-        <div className="flex items-center gap-4">
-          <div className="avatar">{mentor.avatar}</div>
-          <div>
-            <h3 className="text-xl font-black">和 {mentor.name} 討論中</h3>
-            <p className="mt-1 text-sm font-semibold text-slate-500">{mentor.department} · {conversation.status}</p>
-          </div>
+        <div>
+          <h3 className="text-xl font-black">和 {mentor.name} 討論中</h3>
+          <p className="mt-1 text-sm font-semibold text-slate-500">{mentor.department} · {conversation.status}</p>
         </div>
         {conversations.length > 1 && setActiveChatId && (
           <div className="max-w-full">
@@ -1053,7 +1044,7 @@ function ChatPanel({ mentor, conversation, conversations = [], setActiveChatId, 
                   <button
                     key={item.mentorId}
                     onClick={() => setActiveChatId(item.mentorId)}
-                    className={`whitespace-nowrap rounded-full px-4 py-2 text-sm font-bold ${item.mentorId === mentor.id ? 'bg-ink text-white' : 'bg-mist text-navy'}`}
+                    className={`whitespace-nowrap rounded-full px-4 py-2 text-sm font-bold ${item.mentorId === mentor.id ? 'bg-skysoft text-navy' : 'bg-mist text-navy'}`}
                   >
                     {chatMentor.name}
                   </button>
@@ -1066,7 +1057,7 @@ function ChatPanel({ mentor, conversation, conversations = [], setActiveChatId, 
       <div className="mt-5 max-h-80 space-y-3 overflow-y-auto rounded-[22px] bg-mist p-4">
         {conversation.messages.map((item) => (
           <div key={item.id} className={`flex ${item.from === 'user' ? 'justify-end' : 'justify-start'}`}>
-            <div className={`max-w-[82%] rounded-[20px] px-4 py-3 shadow-sm ${item.from === 'user' ? 'bg-ink text-white' : 'bg-white text-ink'}`}>
+            <div className={`max-w-[82%] rounded-[20px] px-4 py-3 shadow-sm ${item.from === 'user' ? 'bg-blueprint text-white' : 'bg-white text-ink'}`}>
               <p className="leading-7">{item.text}</p>
               <p className={`mt-1 text-xs font-semibold ${item.from === 'user' ? 'text-white/70' : 'text-slate-400'}`}>{item.time}</p>
             </div>
@@ -1141,7 +1132,7 @@ function CreateCommunityModal({ onClose, setCommunities, notify }) {
     onClose()
   }
   return (
-    <div className="fixed inset-0 z-50 grid place-items-center bg-ink/40 px-4 backdrop-blur-sm">
+    <div className="fixed inset-0 z-50 grid place-items-center bg-navy/30 px-4 backdrop-blur-sm">
       <div className="w-full max-w-xl rounded-[28px] bg-white p-6 shadow-soft">
         <div className="mb-5 flex items-start justify-between gap-5">
           <div>
@@ -1307,12 +1298,9 @@ function PostCard({ post }) {
 
   return (
     <article className="rounded-card border border-line bg-white p-5 shadow-card">
-      <div className="flex items-center gap-3">
-        <div className="avatar-sm">{post.author.slice(0, 2)}</div>
-        <div>
-          <h3 className="font-black">{post.author}</h3>
-          <p className="text-sm text-slate-500">{post.meta} · {post.time}</p>
-        </div>
+      <div>
+        <h3 className="font-black">{post.author}</h3>
+        <p className="text-sm text-slate-500">{post.meta} · {post.time}</p>
       </div>
       <p className="mt-4 leading-7 text-slate-700">{post.content}</p>
       <div className="mt-4 flex gap-4 text-sm font-bold text-slate-500">
