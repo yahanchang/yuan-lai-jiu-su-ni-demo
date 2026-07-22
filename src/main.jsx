@@ -543,7 +543,7 @@ function App() {
   const dismissIncomingInvite = (invite) => {
     const mentor = mentorSeed.find((item) => item.id === invite.mentorId)
     setIncomingInvites((prev) => prev.filter((item) => item.id !== invite.id))
-    notify(`已將${mentor ? ` ${mentor.name} 的` : ''}邀請移到稍後處理。`)
+    notify(`已拒絕${mentor ? ` ${mentor.name} 的` : ''}交流邀請。`)
   }
 
   const logout = () => {
@@ -983,7 +983,7 @@ function IncomingInvites({ invites, onAccept, onDismiss }) {
               <p className="mt-3 leading-7 text-slate-650">{invite.message}</p>
               <div className="mt-4 grid gap-2 sm:grid-cols-2">
                 <button className="btn-primary justify-center" onClick={() => onAccept(invite)}>接受並開啟聊天室</button>
-                <button className="btn-secondary justify-center" onClick={() => onDismiss(invite)}>稍後回覆</button>
+                <button className="btn-secondary justify-center" onClick={() => onDismiss(invite)}>拒絕邀請</button>
               </div>
             </article>
           )
