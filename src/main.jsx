@@ -329,7 +329,7 @@ const communitySeed = [
 
 const defaultProfile = {
   name: '塑寶',
-  email: 'subao@yuanlai.com',
+  email: 'subao',
   password: 'demo123',
   age: '28',
   gender: '',
@@ -359,7 +359,7 @@ const defaultProfile = {
 const guidanceOptions = ['職涯發展', '專業技能', '跨部門交流', '領導管理', '工作生活平衡', '理財規劃', '研究所／進修', '其他']
 const mentorPrefOptions = ['同部門', '跨部門', '年資較深', '年齡相近', '共同興趣', '互補專長', '不限']
 const methodOptions = ['線上', '實體', '午餐交流', '文字訊息']
-const demoStorageVersion = '2026-07-22-subao-reset'
+const demoStorageVersion = '2026-07-22-account-reset'
 
 function storageGet(key, fallback) {
   try {
@@ -371,11 +371,12 @@ function storageGet(key, fallback) {
 
 function normalizeProfile(profile) {
   const demoNames = ['Yahan', 'YA', '雅涵', 'Yahan Chang']
+  const demoEmails = ['demo@yuanlai.com', 'subao@yuanlai.com']
   return {
     ...defaultProfile,
     ...profile,
     name: demoNames.includes(profile?.name) ? defaultProfile.name : (profile?.name || defaultProfile.name),
-    email: profile?.email === 'demo@yuanlai.com' ? defaultProfile.email : (profile?.email || defaultProfile.email),
+    email: demoEmails.includes(profile?.email) ? defaultProfile.email : (profile?.email || defaultProfile.email),
   }
 }
 
@@ -652,7 +653,7 @@ function Register({ setProfile, setIsAuthed, navigate, notify }) {
           </div>
           <div className="grid gap-4 md:grid-cols-2">
             <ReadOnlyField label="姓名" value={form.name} />
-            <ReadOnlyField label="Email" value={form.email} />
+            <ReadOnlyField label="帳號" value={form.email} />
             <ReadOnlyField label="年齡" value={`${form.age} 歲`} />
             <ReadOnlyField label="性別" value={form.gender || '不透露'} />
             <ReadOnlyField label="所屬公司／事業部" value={form.division} />
@@ -692,7 +693,7 @@ function Login({ profile, setIsAuthed, navigate, notify }) {
   const [error, setError] = useState('')
   const submit = () => {
     if (!email || !password) {
-      setError('請輸入 Email 與密碼')
+      setError('請輸入帳號與密碼')
       return
     }
     setIsAuthed(true)
@@ -702,7 +703,7 @@ function Login({ profile, setIsAuthed, navigate, notify }) {
   return (
     <AuthLayout title="登入平台" subtitle="使用企業帳號登入後，再建立你的個人檔案與交流偏好。">
       <div className="space-y-4">
-        <Input label="Email" value={email} onChange={setEmail} />
+        <Input label="帳號" value={email} onChange={setEmail} />
         <Input label="密碼" type="password" value={password} onChange={setPassword} />
         {error && <p className="form-error">{error}</p>}
         <button className="btn-primary w-full justify-center" onClick={submit}>登入</button>
@@ -921,7 +922,7 @@ function ProfilePage({ profile, setProfile, communities, navigate, notify }) {
           {editing ? (
             <div className="mt-5 space-y-4">
               <Input label="姓名" value={draft.name} onChange={(v) => setDraft({ ...draft, name: v })} />
-              <Input label="Email" value={draft.email} onChange={(v) => setDraft({ ...draft, email: v })} />
+              <Input label="帳號" value={draft.email} onChange={(v) => setDraft({ ...draft, email: v })} />
               <Input label="部門" value={draft.department} onChange={(v) => setDraft({ ...draft, department: v })} />
               <Input label="職位" value={draft.role} onChange={(v) => setDraft({ ...draft, role: v })} />
               <Input label="年齡" value={draft.age} onChange={(v) => setDraft({ ...draft, age: v })} />
