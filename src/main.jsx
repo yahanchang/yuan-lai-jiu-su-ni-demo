@@ -328,8 +328,8 @@ const communitySeed = [
 ]
 
 const defaultProfile = {
-  name: 'Yahan',
-  email: 'demo@yuanlai.com',
+  name: '塑寶',
+  email: 'subao@yuanlai.com',
   password: 'demo123',
   age: '28',
   gender: '',
@@ -359,12 +359,36 @@ const defaultProfile = {
 const guidanceOptions = ['職涯發展', '專業技能', '跨部門交流', '領導管理', '工作生活平衡', '理財規劃', '研究所／進修', '其他']
 const mentorPrefOptions = ['同部門', '跨部門', '年資較深', '年齡相近', '共同興趣', '互補專長', '不限']
 const methodOptions = ['線上', '實體', '午餐交流', '文字訊息']
+const demoStorageVersion = '2026-07-22-subao-reset'
 
 function storageGet(key, fallback) {
   try {
     return JSON.parse(localStorage.getItem(key)) ?? fallback
   } catch {
     return fallback
+  }
+}
+
+function normalizeProfile(profile) {
+  const demoNames = ['Yahan', 'YA', '雅涵', 'Yahan Chang']
+  return {
+    ...defaultProfile,
+    ...profile,
+    name: demoNames.includes(profile?.name) ? defaultProfile.name : (profile?.name || defaultProfile.name),
+    email: profile?.email === 'demo@yuanlai.com' ? defaultProfile.email : (profile?.email || defaultProfile.email),
+  }
+}
+
+function resetDemoStorageIfNeeded() {
+  try {
+    if (localStorage.getItem('yl_storage_version') === demoStorageVersion) return
+    localStorage.setItem('yl_profile', JSON.stringify(defaultProfile))
+    localStorage.setItem('yl_communities', JSON.stringify(communitySeed))
+    localStorage.setItem('yl_conversations', JSON.stringify([]))
+    localStorage.setItem('yl_active_chat', JSON.stringify(''))
+    localStorage.setItem('yl_storage_version', demoStorageVersion)
+  } catch {
+    // localStorage can be unavailable in restricted browser modes.
   }
 }
 
@@ -385,7 +409,10 @@ function canShow(profile, key) {
 
 function App() {
   const [route, setRoute] = useState(() => location.hash.replace('#', '') || '/')
-  const [profile, setProfile] = useState(() => storageGet('yl_profile', defaultProfile))
+  const [profile, setProfile] = useState(() => {
+    resetDemoStorageIfNeeded()
+    return normalizeProfile(storageGet('yl_profile', defaultProfile))
+  })
   const [isAuthed, setIsAuthed] = useState(() => storageGet('yl_authed', false))
   const [communities, setCommunities] = useState(() => normalizeCommunities(storageGet('yl_communities', communitySeed)))
   const [conversations, setConversations] = useState(() => storageGet('yl_conversations', []))
@@ -1267,7 +1294,7 @@ function getPostReplies(post) {
       { author: '陳柏宇', text: '新人期可以先建立三位固定請益對象，會少走很多路。' },
     ],
     p3: [
-      { author: 'Yahan', text: '想知道現金流表要先追哪些項目，期待模板。' },
+      { author: '塑寶', text: '想知道現金流表要先追哪些項目，期待模板。' },
       { author: '劉怡君', text: '簡單可持續很重要，初版不用太複雜。' },
     ],
     p4: [
@@ -1291,7 +1318,7 @@ function PostCard({ post }) {
   const commentCount = (post.comments ?? existingReplies.length) + localComments.length
   const submitComment = () => {
     if (!commentText.trim()) return
-    setLocalComments((prev) => [...prev, { id: Date.now(), author: '我', text: commentText.trim() }])
+    setLocalComments((prev) => [...prev, { id: Date.now(), author: '塑寶', text: commentText.trim() }])
     setCommentText('')
     setShowComments(true)
   }
