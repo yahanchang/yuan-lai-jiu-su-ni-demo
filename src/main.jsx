@@ -800,14 +800,12 @@ function MentorDetail({ id, profile, setProfile, conversations, inviteMentor, se
 function CommunitiesPage({ communities, setCommunities, profile, setProfile, navigate, notify }) {
   const [query, setQuery] = useState('')
   const [category, setCategory] = useState('')
-  const [showModal, setShowModal] = useState(false)
   const categories = ['', ...new Set(communities.map((c) => c.category))]
   const filtered = communities.filter((c) => (!query || `${c.name}${c.intro}${c.tags.join('')}`.includes(query)) && (!category || c.category === category))
   return (
     <PageWrap>
       <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
         <PageTitle eyebrow="Communities" title="主題社群" text="依專業工作、職涯經驗與生活興趣加入社群，讓知識整理、問題討論與同仁交流持續累積。" />
-        <button className="btn-primary justify-center" onClick={() => setShowModal(true)}>提出新增社群建議</button>
       </div>
       <div className="mb-6 mt-2 grid gap-3 rounded-card border border-line bg-white p-5 shadow-card md:grid-cols-[1fr_220px]">
         <Input label="搜尋社群" value={query} onChange={setQuery} dense />
@@ -817,8 +815,7 @@ function CommunitiesPage({ communities, setCommunities, profile, setProfile, nav
         <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
           {filtered.map((community) => <CommunityCard key={community.id} community={community} navigate={navigate} profile={profile} setProfile={setProfile} notify={notify} />)}
         </div>
-      ) : <EmptyState title="還沒有符合的社群" text="提出新增社群建議，經審核後由平台管理單位建立。" />}
-      {showModal && <CreateCommunityModal onClose={() => setShowModal(false)} setCommunities={setCommunities} notify={notify} />}
+      ) : <EmptyState title="還沒有符合的社群" text="試著換一個關鍵字，或調整主題分類再看看。" />}
     </PageWrap>
   )
 }
@@ -1134,52 +1131,6 @@ function CommunityCard({ community, profile, setProfile, navigate, notify, horiz
         <button className="btn-secondary justify-center" onClick={() => navigate(`/community/${community.id}`)}>查看詳情</button>
       </div>
     </article>
-  )
-}
-
-function CreateCommunityModal({ onClose, setCommunities, notify }) {
-  const [form, setForm] = useState({ name: '', intro: '', category: '職涯', tags: '', isPublic: true })
-  const [error, setError] = useState('')
-  const create = () => {
-    if (!form.name || !form.intro) {
-      setError('請填寫社群名稱與簡介')
-      return
-    }
-    const newCommunity = {
-      id: `c${Date.now()}`,
-      name: form.name,
-      category: form.category,
-      intro: form.intro,
-      members: 1,
-      tags: splitText(form.tags).length ? splitText(form.tags) : [form.category],
-      posts: [{ id: `p${Date.now()}`, author: '系統', meta: '社群公告', time: '剛剛', content: `歡迎加入 ${form.name}，從第一個提問開始交流吧。`, likes: 0, comments: 0 }],
-      isPublic: form.isPublic,
-    }
-    setCommunities((prev) => [newCommunity, ...prev])
-    notify('新社群已建立。')
-    onClose()
-  }
-  return (
-    <div className="fixed inset-0 z-50 grid place-items-center bg-navy/30 px-4 backdrop-blur-sm">
-      <div className="w-full max-w-xl rounded-[28px] bg-white p-6 shadow-soft">
-        <div className="mb-5 flex items-start justify-between gap-5">
-          <div>
-            <h2 className="text-2xl font-black">新增社群建議</h2>
-            <p className="mt-2 text-slate-600">由平台管理單位審核後建立，避免大量重複或缺乏管理的社群。</p>
-          </div>
-          <button className="rounded-full bg-mist px-4 py-2 font-bold" onClick={onClose}>關閉</button>
-        </div>
-        <div className="space-y-4">
-          <Input label="社群名稱" value={form.name} onChange={(v) => setForm({ ...form, name: v })} />
-          <Textarea label="社群簡介" value={form.intro} onChange={(v) => setForm({ ...form, intro: v })} />
-          <Select label="社群分類" value={form.category} onChange={(v) => setForm({ ...form, category: v })} options={['工作技能', '職涯', '興趣']} />
-          <Input label="社群標籤（以逗號分隔）" value={form.tags} onChange={(v) => setForm({ ...form, tags: v })} />
-          <Toggle label="公開社群" checked={form.isPublic} onChange={(v) => setForm({ ...form, isPublic: v })} />
-          {error && <p className="form-error">{error}</p>}
-          <button className="btn-primary w-full justify-center" onClick={create}>送出建議並建立 Demo 社群</button>
-        </div>
-      </div>
-    </div>
   )
 }
 
