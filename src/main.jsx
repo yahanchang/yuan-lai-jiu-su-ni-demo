@@ -359,6 +359,22 @@ const defaultProfile = {
 const guidanceOptions = ['職涯發展', '專業技能', '跨部門交流', '領導管理', '工作生活平衡', '理財規劃', '研究所／進修', '其他']
 const mentorPrefOptions = ['同部門', '跨部門', '年資較深', '年齡相近', '共同興趣', '互補專長', '不限']
 const methodOptions = ['線上', '實體', '午餐交流', '文字訊息']
+const incomingInviteSeed = [
+  {
+    id: 'invite-m4',
+    mentorId: 'm4',
+    topic: '資料分析入門與報表整理',
+    message: '看到你也對資料整理和使用者研究有興趣，想邀請你聊聊怎麼把需求訪談結果轉成好讀的報表。',
+    time: '今天 09:40',
+  },
+  {
+    id: 'invite-m7',
+    mentorId: 'm7',
+    topic: '跨部門專案合作方式',
+    message: '我們最近在整理跨部門專案的溝通模板，想聽聽你在產品企劃端的觀察。',
+    time: '昨天 16:15',
+  },
+]
 const demoStorageVersion = '2026-07-22-account-reset'
 
 function storageGet(key, fallback) {
@@ -387,6 +403,7 @@ function resetDemoStorageIfNeeded() {
     localStorage.setItem('yl_communities', JSON.stringify(communitySeed))
     localStorage.setItem('yl_conversations', JSON.stringify([]))
     localStorage.setItem('yl_active_chat', JSON.stringify(''))
+    localStorage.setItem('yl_incoming_invites', JSON.stringify(incomingInviteSeed))
     localStorage.setItem('yl_storage_version', demoStorageVersion)
   } catch {
     // localStorage can be unavailable in restricted browser modes.
@@ -418,6 +435,7 @@ function App() {
   const [communities, setCommunities] = useState(() => normalizeCommunities(storageGet('yl_communities', communitySeed)))
   const [conversations, setConversations] = useState(() => storageGet('yl_conversations', []))
   const [activeChatId, setActiveChatId] = useState(() => storageGet('yl_active_chat', ''))
+  const [incomingInvites, setIncomingInvites] = useState(() => storageGet('yl_incoming_invites', incomingInviteSeed))
   const [toast, setToast] = useState('')
 
   useEffect(() => {
@@ -431,6 +449,7 @@ function App() {
   useEffect(() => localStorage.setItem('yl_communities', JSON.stringify(communities)), [communities])
   useEffect(() => localStorage.setItem('yl_conversations', JSON.stringify(conversations)), [conversations])
   useEffect(() => localStorage.setItem('yl_active_chat', JSON.stringify(activeChatId)), [activeChatId])
+  useEffect(() => localStorage.setItem('yl_incoming_invites', JSON.stringify(incomingInvites)), [incomingInvites])
 
   const navigate = (path) => {
     location.hash = path
@@ -489,13 +508,51 @@ function App() {
     }))
   }
 
+  const acceptIncomingInvite = (invite) => {
+    const mentor = mentorSeed.find((item) => item.id === invite.mentorId)
+    if (!mentor) return
+    setConversations((prev) => {
+      if (prev.some((conversation) => conversation.mentorId === mentor.id)) return prev
+      return [
+        {
+          mentorId: mentor.id,
+          status: '已接受邀請',
+          messages: [
+            {
+              id: `msg-invite-${Date.now()}`,
+              from: 'mentor',
+              text: invite.message,
+              time: invite.time,
+            },
+            {
+              id: `msg-accept-${Date.now()}`,
+              from: 'user',
+              text: '嗨，我已接受邀請，很期待一起交流。',
+              time: '剛剛',
+            },
+          ],
+        },
+        ...prev,
+      ]
+    })
+    setIncomingInvites((prev) => prev.filter((item) => item.id !== invite.id))
+    setActiveChatId(mentor.id)
+    notify(`已接受 ${mentor.name} 的交流邀請。`)
+  }
+
+  const dismissIncomingInvite = (invite) => {
+    const mentor = mentorSeed.find((item) => item.id === invite.mentorId)
+    setIncomingInvites((prev) => prev.filter((item) => item.id !== invite.id))
+    notify(`已將${mentor ? ` ${mentor.name} 的` : ''}邀請移到稍後處理。`)
+  }
+
   const logout = () => {
     setIsAuthed(false)
     notify('已登出，期待下一次交流。')
     navigate('/')
   }
 
-  const appState = { profile, setProfile, isAuthed, setIsAuthed, communities, setCommunities, conversations, activeChatId, setActiveChatId, inviteMentor, sendChatMessage, navigate, notify, logout }
+  const appState = { profile, setProfile, isAuthed, setIsAuthed, communities, setCommunities, conversations, activeChatId, setActiveChatId, incomingInvites, acceptIncomingInvite, dismissIncomingInvite, inviteMentor, sendChatMessage, navigate, notify, logout }
   const authedRoutes = ['/dashboard', '/mentors', '/chat', '/communities', '/profile']
   const isMentorDetail = route.startsWith('/mentor/')
   const isCommunityDetail = route.startsWith('/community/')
@@ -870,13 +927,14 @@ function CommunityDetail({ id, communities, setCommunities, profile, setProfile,
   )
 }
 
-function ChatPage({ conversations, activeChatId, setActiveChatId, sendChatMessage }) {
+function ChatPage({ conversations, activeChatId, setActiveChatId, sendChatMessage, incomingInvites, acceptIncomingInvite, dismissIncomingInvite }) {
   const activeConversation = conversations.find((conversation) => conversation.mentorId === activeChatId) || conversations[0]
   const activeMentor = activeConversation ? mentorSeed.find((mentor) => mentor.id === activeConversation.mentorId) : null
 
   return (
     <PageWrap>
       <PageTitle eyebrow="Chat" title="一對一聊天室" text="這裡只呈現你與同仁的一對一交流，適合請益、交換經驗與討論下一次交流時間。" />
+      <IncomingInvites invites={incomingInvites} onAccept={acceptIncomingInvite} onDismiss={dismissIncomingInvite} />
       {activeConversation && activeMentor ? (
         <ChatPanel
           mentor={activeMentor}
@@ -895,6 +953,43 @@ function ChatPage({ conversations, activeChatId, setActiveChatId, sendChatMessag
         </div>
       </section>
     </PageWrap>
+  )
+}
+
+function IncomingInvites({ invites, onAccept, onDismiss }) {
+  if (!invites.length) return null
+  return (
+    <section className="mb-6 rounded-card border border-line bg-white p-5 shadow-card">
+      <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-end">
+        <div>
+          <p className="eyebrow">Pending Invites</p>
+          <h2 className="mt-1 text-2xl font-black">待確認的交流邀請</h2>
+        </div>
+        <span className="pill-dark w-fit">{invites.length} 則待回覆</span>
+      </div>
+      <div className="mt-4 grid gap-4 lg:grid-cols-2">
+        {invites.map((invite) => {
+          const mentor = mentorSeed.find((item) => item.id === invite.mentorId)
+          if (!mentor) return null
+          return (
+            <article key={invite.id} className="rounded-card bg-mist p-4">
+              <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-start">
+                <div>
+                  <h3 className="text-lg font-black text-ink">{mentor.name} 邀請你交流</h3>
+                  <p className="mt-1 text-sm font-semibold text-slate-500">{mentor.department} · {mentor.role} · {invite.time}</p>
+                </div>
+                <span className="pill whitespace-nowrap">{invite.topic}</span>
+              </div>
+              <p className="mt-3 leading-7 text-slate-650">{invite.message}</p>
+              <div className="mt-4 grid gap-2 sm:grid-cols-2">
+                <button className="btn-primary justify-center" onClick={() => onAccept(invite)}>接受並開啟聊天室</button>
+                <button className="btn-secondary justify-center" onClick={() => onDismiss(invite)}>稍後回覆</button>
+              </div>
+            </article>
+          )
+        })}
+      </div>
+    </section>
   )
 }
 
