@@ -240,12 +240,12 @@ const communitySeed = [
     id: 'c1',
     name: '新人職涯探索社群',
     category: '職涯',
-    intro: '一起把第一份工作裡的疑問攤開來聊，從一次交流開始，遇見新的職涯可能。',
+    intro: '一起把第一份工作裡的疑問攤開來聊，把新人常見問題整理成可以共享的經驗。',
     members: 238,
     tags: ['新人', '職涯探索', '跨部門'],
     posts: [
       { id: 'p1', author: '張庭安', meta: '人才發展部', time: '今天 10:20', content: '你最近在工作裡最想突破的是什麼？歡迎用一句話留言，我們週五午餐交流會一起聊。', likes: 34, comments: 12 },
-      { id: 'p2', author: '周明翰', meta: '採購專員', time: '昨天 18:05', content: '新人期最有幫助的是找到一位可以問笨問題的人，推薦大家主動約一次 30 分鐘咖啡聊聊。', likes: 28, comments: 8 },
+      { id: 'p2', author: '周明翰', meta: '採購專員', time: '昨天 18:05', content: '新人期最有幫助的是把問題整理出來，再找相關部門或社群一起討論。', likes: 28, comments: 8 },
     ],
   },
   {
@@ -336,7 +336,7 @@ const bulletinSeed = [
     owner: '平台管理小組',
     summary: '本次更新將首頁調整為塑訊公布欄，並新增聊天室搜尋邀請、創建社群與交流守則頁，讓資訊發布與同仁交流更集中。',
     body: [
-      '首頁已由推薦頁調整為塑訊公布欄，集中呈現平台更新、重要公告與社群精選內容。',
+      '首頁已調整為塑訊公布欄，集中呈現平台更新、重要公告與社群精選內容。',
       '聊天室頁調整為一對一交流入口，可搜尋員工姓名或員工編號並發送交流邀請。',
       '社群頁新增創建社群功能，社群分類維持工作技能、職涯、興趣三大類，方便後續整理與管理。',
       '新增交流守則頁，說明聊天室、社群與資料使用原則，讓交流更清楚也更安心。',
@@ -657,8 +657,8 @@ function Landing({ navigate }) {
           <div className="relative z-10">
             <p className="mb-5 inline-flex rounded-full border border-white/80 bg-white/70 px-4 py-2 text-sm font-semibold text-navy shadow-card">台塑企業員工交流與共學平台</p>
             <h1 className="max-w-3xl text-5xl font-black leading-tight tracking-tight text-ink sm:text-6xl lg:text-7xl">塑學圈</h1>
-            <p className="mt-4 max-w-3xl text-2xl font-black leading-tight text-ink sm:text-3xl">找到適合的人、加入有興趣的社群，讓知識交流與合作自然發生。</p>
-            <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-600">塑學圈透過塑訊公布欄、聊天室、塑學社群與員工資料，協助同仁跨越公司、部門、職位、世代與工作地點的限制，讓知識交流與合作自然發生。</p>
+            <p className="mt-4 max-w-3xl text-2xl font-black leading-tight text-ink sm:text-3xl">把公告、交流與社群共學集中在一起，讓工作經驗在組織裡持續流動。</p>
+            <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-600">塑學圈透過塑訊公布欄、聊天室、塑學社群與員工資料，協助同仁掌握重要資訊、延續一對一交流，並在社群中累積可被共享的工作知識。</p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <button onClick={() => navigate('/login')} className="btn-primary h-13 justify-center px-8 text-base">登入平台</button>
               <span className="flex items-center px-2 text-sm font-semibold text-slate-500">登入後再建立個人檔案</span>
@@ -669,16 +669,16 @@ function Landing({ navigate }) {
               <div className="hero-card">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-semibold text-slate-500">交流平台總覽</p>
+                    <p className="text-sm font-semibold text-slate-500">共學平台總覽</p>
                     <h2 className="mt-2 text-3xl font-black">4 個入口</h2>
                   </div>
                 </div>
-                <p className="mt-8 text-2xl font-bold leading-snug">從一次交流開始，遇見新的職涯可能。</p>
+                <p className="mt-8 text-2xl font-bold leading-snug">讓公告有脈絡，讓討論有地方沉澱。</p>
                 <div className="mt-8 grid grid-cols-2 gap-3">
                   {['塑訊公布欄', '塑聊', '塑學社群', '交流守則'].map((tag) => <span key={tag} className="pill">{tag}</span>)}
                 </div>
               </div>
-              <div className="floating-note">登入平台 → 查看塑訊公布欄 → 搜尋同仁並開啟聊天室 → 加入或創建社群 → 延續請益與合作討論。</div>
+              <div className="floating-note">登入平台 → 查看塑訊公布欄 → 搜尋同仁並開啟聊天室 → 加入或創建社群 → 沉澱工作討論與經驗整理。</div>
             </div>
           </div>
         </div>
@@ -686,12 +686,12 @@ function Landing({ navigate }) {
       <section className="mx-auto max-w-7xl px-5 py-16">
         <div className="mb-8 max-w-2xl">
           <p className="eyebrow">Core Features</p>
-          <h2 className="section-title">四個核心功能，讓交流從認識延伸到合作</h2>
+          <h2 className="section-title">四個核心功能，讓資訊發布、交流與共學更集中</h2>
         </div>
         <div className="grid gap-5 md:grid-cols-4">
           <FeatureCard title="塑訊公布欄" text="集中呈現全公司公告、平台更新、社群精選與重要提醒。" />
-          <FeatureCard title="塑聊" text="搜尋同仁姓名或員工編號，發送交流邀請並延續一對一討論。" />
-          <FeatureCard title="塑學社群" text="依工作專業、職涯經驗與生活興趣集中交流，累積熱門問題與工作案例。" />
+          <FeatureCard title="塑聊" text="搜尋同仁姓名或員工編號，發送交流邀請並延續一對一工作討論。" />
+          <FeatureCard title="塑學社群" text="依工作技能、職涯與興趣分類集中討論，累積熱門問題與工作案例。" />
           <FeatureCard title="交流守則" text="清楚說明聊天室、社群與個人資料的使用原則，讓交流更安心。" />
         </div>
       </section>
@@ -699,13 +699,13 @@ function Landing({ navigate }) {
         <div className="mx-auto max-w-7xl px-5 py-16">
           <div className="mb-8 max-w-3xl">
             <p className="eyebrow">User Journey</p>
-            <h2 className="section-title">從建立檔案到聊天室，讓交流自然延伸</h2>
+            <h2 className="section-title">從查看公告到參與社群，讓知識有地方流動</h2>
           </div>
           <div className="grid gap-4 lg:grid-cols-4">
             {[
-              ['01', '建立個人檔案', '填寫專長、興趣、交流需求與可分享內容。'],
+              ['01', '確認員工資料', '登入後確認公司匯入的基本資料。'],
               ['02', '查看塑訊公布欄', '掌握全公司公告、平台更新與熱門社群動態。'],
-              ['03', '開啟聊天室', '搜尋同仁並發送交流邀請，延續一對一討論。'],
+              ['03', '開啟塑聊', '搜尋同仁並發送交流邀請，延續一對一討論。'],
               ['04', '加入或創建社群', '沉澱熱門問題、工作案例與跨部門經驗。'],
             ].map(([step, title, text]) => (
               <article key={step} className="rounded-card border border-line bg-white p-5 shadow-card">
@@ -741,7 +741,7 @@ function Register({ setProfile, setIsAuthed, navigate, notify }) {
 
   const submit = () => {
     const next = {}
-    ;['intro', 'interests', 'skills', 'learning', 'availability'].forEach((field) => {
+    ;['intro', 'skills', 'learning', 'availability'].forEach((field) => {
       if (!form[field]) next[field] = '這個欄位需要填寫'
     })
     setErrors(next)
@@ -753,10 +753,10 @@ function Register({ setProfile, setIsAuthed, navigate, notify }) {
   }
 
   return (
-    <AuthLayout title="建立個人檔案" subtitle="先讓平台認識你的專長、興趣、交流需求與可分享經驗，再開始參與聊天室與塑學社群。">
+    <AuthLayout title="建立個人檔案" subtitle="確認公司匯入資料後，補充想交流的主題與可分享經驗，再開始參與聊天室與塑學社群。">
       <div className="mb-7 flex gap-2">
         <span className={`step-dot ${step === 1 ? 'active' : ''}`}>1 公司匯入資料</span>
-        <span className={`step-dot ${step === 2 ? 'active' : ''}`}>2 配對偏好</span>
+        <span className={`step-dot ${step === 2 ? 'active' : ''}`}>2 交流設定</span>
       </div>
       {step === 1 ? (
         <div className="space-y-5">
@@ -776,20 +776,19 @@ function Register({ setProfile, setIsAuthed, navigate, notify }) {
             <ReadOnlyField label="工作地點" value={form.location} />
           </div>
           <div className="md:col-span-2">
-            <button className="btn-primary w-full justify-center" onClick={() => setStep(2)}>下一步，填寫交流偏好</button>
+            <button className="btn-primary w-full justify-center" onClick={() => setStep(2)}>下一步，填寫交流設定</button>
           </div>
         </div>
       ) : (
         <div className="space-y-5">
           <Textarea label="我塑" value={form.intro} onChange={(v) => update('intro', v)} error={errors.intro} />
           <div className="grid gap-4 md:grid-cols-2">
-            <Input label="我的興趣：我喜歡討論的主題是" value={form.interests} onChange={(v) => update('interests', v)} error={errors.interests} />
             <Input label="我的專長：我可以分享的經驗是" value={form.skills} onChange={(v) => update('skills', v)} error={errors.skills} />
             <Input label="我想請益的主題：我最近想突破的是" value={form.learning} onChange={(v) => update('learning', v)} error={errors.learning} />
             <Input label="可聯繫時段" value={form.availability} onChange={(v) => update('availability', v)} error={errors.availability} />
           </div>
-          <CheckGroup label="我希望獲得的指導類型" options={guidanceOptions} values={form.guidanceTypes} onToggle={(v) => toggleArray('guidanceTypes', v)} />
-          <CheckGroup label="我期待遇見的同仁是" options={mentorPrefOptions} values={form.mentorPrefs} onToggle={(v) => toggleArray('mentorPrefs', v)} />
+          <CheckGroup label="我想交流的主題類型" options={guidanceOptions} values={form.guidanceTypes} onToggle={(v) => toggleArray('guidanceTypes', v)} />
+          <CheckGroup label="我希望交流的方向" options={mentorPrefOptions} values={form.mentorPrefs} onToggle={(v) => toggleArray('mentorPrefs', v)} />
           <div className="grid gap-3 sm:grid-cols-2">
             <button className="btn-secondary justify-center" onClick={() => setStep(1)}>回上一步</button>
             <button className="btn-primary justify-center" onClick={submit}>完成個人檔案</button>
@@ -814,7 +813,7 @@ function Login({ profile, setIsAuthed, navigate, notify }) {
     navigate('/onboarding')
   }
   return (
-    <AuthLayout title="登入平台" subtitle="使用企業帳號登入後，再建立你的個人檔案與交流偏好。">
+    <AuthLayout title="登入平台" subtitle="使用企業帳號登入後，確認公司匯入資料並補充交流設定。">
       <div className="space-y-4">
         <Input label="帳號" value={email} onChange={setEmail} />
         <Input label="密碼" type="password" value={password} onChange={setPassword} />
@@ -945,7 +944,7 @@ function MentorDetail({ id, profile, setProfile, conversations, inviteMentor, se
             <Info label="年資" value={`${mentor.seniority} 年`} />
             <Info label="工作地點" value={mentor.location} />
             <Info label="年齡" value={`${mentor.age} 歲`} />
-            <Info label="契合度" value={`${mentor.match}%`} />
+            <Info label="員工編號" value={employeeCode(mentor)} />
           </div>
           <div className="mt-6 flex flex-col gap-3">
             <button className="btn-primary justify-center" onClick={() => inviteMentor(mentor)}>{conversation ? '已建立交流，繼續聊' : '邀請交流'}</button>
