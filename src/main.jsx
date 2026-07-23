@@ -330,23 +330,34 @@ const communitySeed = [
 const bulletinSeed = [
   {
     id: 'b1',
-    type: '全公司公告',
-    title: '七月員工交流週開跑',
+    type: '系統更新',
+    title: '聊天室與社群首頁改版更新',
     date: '2026/07/23',
-    owner: '人資暨文化處',
-    summary: '本週開放跨部門午餐交流、線上請益與主題社群導覽，歡迎從一個感興趣的主題開始認識同仁。',
-    tags: ['交流週', '跨部門', '員工體驗'],
-    cta: '查看交流主題',
+    owner: '平台管理小組',
+    summary: '本次更新將首頁調整為公布欄，並新增全公司聊天室、創建社群與平台規範頁，讓資訊發布與同仁交流更集中。',
+    body: [
+      '首頁已由推薦頁調整為全公司公布欄，集中呈現平台更新、重要公告與社群精選內容。',
+      '聊天室頁新增全公司公開交流大廳，適合提出問題、分享資源與尋找跨部門經驗；一對一邀請仍保留在聊天室頁下方。',
+      '社群頁新增創建社群功能，社群分類維持工作技能、職涯、興趣三大類，方便後續整理與管理。',
+      '新增平台規範頁，說明聊天室、社群與資料使用原則，讓交流更清楚也更安心。',
+    ],
+    tags: ['改版更新', '聊天室', '社群'],
+    cta: '查看完整內文',
   },
   {
     id: 'b2',
-    type: '活動提醒',
-    title: '數位工具實戰分享：把例行報表變簡單',
+    type: '功能說明',
+    title: '全公司聊天室使用方式更新',
     date: '2026/07/25',
-    owner: '資料平台部',
-    summary: '分享常見報表整理流程、資料清理技巧與可重複使用的工作模板，適合想提升效率的同仁。',
-    tags: ['工作技能', '資料分析', '效率工具'],
-    cta: '我想參加',
+    owner: '平台管理小組',
+    summary: '全公司聊天室適合公開請益、資源分享與社群入口推薦；涉及個資、機密或私人邀約的內容請改用一對一聊天室。',
+    body: [
+      '全公司聊天室是公開交流空間，所有平台使用者都可能看見內容。',
+      '適合張貼的內容包含：工作工具請益、社群推薦、跨部門經驗詢問、公開資源分享。',
+      '不適合張貼的內容包含：企業機密、個人敏感資料、私人交易、商業推銷或未經核准的內部文件。',
+    ],
+    tags: ['聊天室', '使用說明', '資訊安全'],
+    cta: '查看完整內文',
   },
   {
     id: 'b3',
@@ -355,13 +366,18 @@ const bulletinSeed = [
     date: '2026/07/26',
     owner: '人才發展部',
     summary: '你最近在工作裡最想突破的是什麼？社群將整理大家的回覆，轉成下週午餐交流題綱。',
+    body: [
+      '新人職涯探索社群本週最熱門的討論是：你最近在工作裡最想突破的是什麼？',
+      '常見回覆包含跨部門溝通、會議表達、時間安排與不熟悉公司資源。',
+      '社群管理者會將回覆整理為討論題綱，提供後續社群交流使用。',
+    ],
     tags: ['職涯', '新人', '社群討論'],
-    cta: '前往社群',
+    cta: '查看完整內文',
   },
 ]
 
 const companyChatSeed = [
-  { id: 'company-1', author: '張庭安', meta: '人才發展部', text: '早安，今天公布欄有七月員工交流週資訊，想參加午餐交流的同仁可以先到社群看看主題。', time: '09:05' },
+  { id: 'company-1', author: '張庭安', meta: '人才發展部', text: '早安，今天公布欄更新了聊天室與社群功能說明，第一次使用的同仁可以先看完整公告。', time: '09:05' },
   { id: 'company-2', author: '許哲維', meta: '資料平台部', text: '下午會在數位轉型社群分享 5 個自動化小案例，歡迎帶著自己部門的問題一起討論。', time: '09:28' },
   { id: 'company-3', author: '塑寶', meta: '產品體驗部', text: '我想找有做過跨部門專案的人請益，尤其是需求整理和會議節奏，歡迎推薦社群或同仁。', time: '10:10' },
 ]
@@ -612,9 +628,10 @@ function App() {
 
   const appState = { profile, setProfile, isAuthed, setIsAuthed, communities, setCommunities, conversations, activeChatId, setActiveChatId, incomingInvites, acceptIncomingInvite, dismissIncomingInvite, inviteMentor, sendChatMessage, companyChat, sendCompanyMessage, navigate, notify, logout }
   const authedRoutes = ['/dashboard', '/mentors', '/chat', '/communities', '/rules', '/profile']
+  const isBulletinDetail = route.startsWith('/bulletin/')
   const isMentorDetail = route.startsWith('/mentor/')
   const isCommunityDetail = route.startsWith('/community/')
-  const showShell = isAuthed && (authedRoutes.includes(route) || isMentorDetail || isCommunityDetail)
+  const showShell = isAuthed && (authedRoutes.includes(route) || isBulletinDetail || isMentorDetail || isCommunityDetail)
 
   return (
     <div className="min-h-screen bg-mist text-ink">
@@ -634,6 +651,7 @@ function Router({ route, appState }) {
   if (route === '/login') return <Login {...appState} />
   if (route === '/onboarding') return <ProfileBuilder {...appState} />
   if (route === '/dashboard') return <Dashboard {...appState} />
+  if (route.startsWith('/bulletin/')) return <BulletinDetail id={route.split('/').pop()} {...appState} />
   if (route === '/mentors') return <Dashboard {...appState} />
   if (route.startsWith('/mentor/')) return <MentorDetail id={route.split('/').pop()} {...appState} />
   if (route === '/chat') return <ChatPage {...appState} />
@@ -864,12 +882,11 @@ function Dashboard({ profile, navigate }) {
           <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-1">
             <Info label="本週公告" value={`${bulletinSeed.length} 則`} />
             <Info label="熱門社群" value="新人、數位、跨部門" />
-            <Info label="今日提醒" value="交流週報名中" />
           </div>
         </div>
       </section>
       <section className="mt-6">
-        <SectionHeader title="最新公告與活動" />
+        <SectionHeader title="最新公告" />
         <div className="grid gap-5 lg:grid-cols-3">
           {bulletinSeed.map((item) => (
             <article key={item.id} className="rounded-card border border-line bg-white p-5 shadow-card transition hover:-translate-y-1 hover:shadow-soft">
@@ -883,12 +900,12 @@ function Dashboard({ profile, navigate }) {
               <div className="mt-4 flex flex-wrap gap-2">
                 {item.tags.map((tag) => <span key={tag} className="pill">{tag}</span>)}
               </div>
-              <button className="btn-secondary mt-5 w-full justify-center" onClick={() => item.id === 'b3' ? navigate('/community/c1') : navigate('/communities')}>{item.cta}</button>
+              <button className="btn-secondary mt-5 w-full justify-center" onClick={() => navigate(`/bulletin/${item.id}`)}>{item.cta}</button>
             </article>
           ))}
         </div>
       </section>
-      <section className="mt-8 grid gap-5 lg:grid-cols-2">
+      <section className="mt-8">
         <DetailBlock title="熱門社群動態">
           <div className="space-y-3">
             {communitySeed.slice(0, 3).map((community) => (
@@ -899,12 +916,33 @@ function Dashboard({ profile, navigate }) {
             ))}
           </div>
         </DetailBlock>
-        <DetailBlock title="本週可以做的事">
-          <div className="grid gap-3 sm:grid-cols-2">
-            {['到聊天室問一個全公司都能回答的問題', '加入一個職涯或工作技能社群', '收藏一篇想回頭看的貼文', '閱讀平台交流規範'].map((item) => <div key={item} className="rounded-card bg-mist p-4 font-semibold">{item}</div>)}
-          </div>
-        </DetailBlock>
       </section>
+    </PageWrap>
+  )
+}
+
+function BulletinDetail({ id, navigate }) {
+  const item = bulletinSeed.find((entry) => entry.id === id) || bulletinSeed[0]
+  return (
+    <PageWrap>
+      <button className="mb-5 text-sm font-bold text-navy hover:underline" onClick={() => navigate('/dashboard')}>返回公布欄</button>
+      <article className="rounded-[28px] bg-white p-6 shadow-card lg:p-8">
+        <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-start">
+          <div>
+            <p className="eyebrow">{item.type}</p>
+            <h1 className="mt-2 max-w-3xl text-4xl font-black leading-tight">{item.title}</h1>
+            <p className="mt-3 font-semibold text-slate-500">{item.owner} · {item.date}</p>
+          </div>
+          <span className="pill-dark w-fit">公布欄</span>
+        </div>
+        <p className="mt-6 rounded-card bg-mist p-5 text-lg font-semibold leading-8 text-slate-700">{item.summary}</p>
+        <div className="mt-6 space-y-4 leading-8 text-slate-650">
+          {item.body.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+        </div>
+        <div className="mt-6 flex flex-wrap gap-2">
+          {item.tags.map((tag) => <span key={tag} className="pill">{tag}</span>)}
+        </div>
+      </article>
     </PageWrap>
   )
 }
