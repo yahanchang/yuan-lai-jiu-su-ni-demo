@@ -1120,9 +1120,7 @@ function EmployeeInviteSearch({ conversations, onInvite, setActiveChatId }) {
                   <h3 className="mt-1 text-xl font-black">{mentor.name}</h3>
                   <p className="mt-1 text-sm font-semibold text-slate-500">{mentor.department} · {mentor.role}</p>
                 </div>
-                <span className="pill whitespace-nowrap">{mentor.skills[0]}</span>
               </div>
-              <p className="mt-3 line-clamp-2 leading-7 text-slate-650">{mentor.intro}</p>
               <button
                 className="btn-primary mt-4 w-full justify-center"
                 onClick={() => {
