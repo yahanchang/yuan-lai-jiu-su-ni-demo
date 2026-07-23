@@ -327,6 +327,45 @@ const communitySeed = [
   },
 ]
 
+const bulletinSeed = [
+  {
+    id: 'b1',
+    type: '全公司公告',
+    title: '七月員工交流週開跑',
+    date: '2026/07/23',
+    owner: '人資暨文化處',
+    summary: '本週開放跨部門午餐交流、線上請益與主題社群導覽，歡迎從一個感興趣的主題開始認識同仁。',
+    tags: ['交流週', '跨部門', '員工體驗'],
+    cta: '查看交流主題',
+  },
+  {
+    id: 'b2',
+    type: '活動提醒',
+    title: '數位工具實戰分享：把例行報表變簡單',
+    date: '2026/07/25',
+    owner: '資料平台部',
+    summary: '分享常見報表整理流程、資料清理技巧與可重複使用的工作模板，適合想提升效率的同仁。',
+    tags: ['工作技能', '資料分析', '效率工具'],
+    cta: '我想參加',
+  },
+  {
+    id: 'b3',
+    type: '社群精選',
+    title: '新人職涯探索社群：本週熱門提問',
+    date: '2026/07/26',
+    owner: '人才發展部',
+    summary: '你最近在工作裡最想突破的是什麼？社群將整理大家的回覆，轉成下週午餐交流題綱。',
+    tags: ['職涯', '新人', '社群討論'],
+    cta: '前往社群',
+  },
+]
+
+const companyChatSeed = [
+  { id: 'company-1', author: '張庭安', meta: '人才發展部', text: '早安，今天公布欄有七月員工交流週資訊，想參加午餐交流的同仁可以先到社群看看主題。', time: '09:05' },
+  { id: 'company-2', author: '許哲維', meta: '資料平台部', text: '下午會在數位轉型社群分享 5 個自動化小案例，歡迎帶著自己部門的問題一起討論。', time: '09:28' },
+  { id: 'company-3', author: '塑寶', meta: '產品體驗部', text: '我想找有做過跨部門專案的人請益，尤其是需求整理和會議節奏，歡迎推薦社群或同仁。', time: '10:10' },
+]
+
 const defaultProfile = {
   name: '塑寶',
   email: 'subao',
@@ -404,6 +443,7 @@ function resetDemoStorageIfNeeded() {
     localStorage.setItem('yl_conversations', JSON.stringify([]))
     localStorage.setItem('yl_active_chat', JSON.stringify(''))
     localStorage.setItem('yl_incoming_invites', JSON.stringify(incomingInviteSeed))
+    localStorage.setItem('yl_company_chat', JSON.stringify(companyChatSeed))
     localStorage.setItem('yl_storage_version', demoStorageVersion)
   } catch {
     // localStorage can be unavailable in restricted browser modes.
@@ -436,6 +476,7 @@ function App() {
   const [conversations, setConversations] = useState(() => storageGet('yl_conversations', []))
   const [activeChatId, setActiveChatId] = useState(() => storageGet('yl_active_chat', ''))
   const [incomingInvites, setIncomingInvites] = useState(() => storageGet('yl_incoming_invites', incomingInviteSeed))
+  const [companyChat, setCompanyChat] = useState(() => storageGet('yl_company_chat', companyChatSeed))
   const [toast, setToast] = useState('')
 
   useEffect(() => {
@@ -450,6 +491,7 @@ function App() {
   useEffect(() => localStorage.setItem('yl_conversations', JSON.stringify(conversations)), [conversations])
   useEffect(() => localStorage.setItem('yl_active_chat', JSON.stringify(activeChatId)), [activeChatId])
   useEffect(() => localStorage.setItem('yl_incoming_invites', JSON.stringify(incomingInvites)), [incomingInvites])
+  useEffect(() => localStorage.setItem('yl_company_chat', JSON.stringify(companyChat)), [companyChat])
 
   const navigate = (path) => {
     location.hash = path
@@ -508,6 +550,22 @@ function App() {
     }))
   }
 
+  const sendCompanyMessage = (text) => {
+    const cleanText = text.trim()
+    if (!cleanText) return
+    setCompanyChat((prev) => [
+      ...prev,
+      {
+        id: `company-${Date.now()}`,
+        author: profile.name,
+        meta: profile.department || profile.role,
+        text: cleanText,
+        time: '剛剛',
+      },
+    ])
+    notify('已送出到全公司聊天室。')
+  }
+
   const acceptIncomingInvite = (invite) => {
     const mentor = mentorSeed.find((item) => item.id === invite.mentorId)
     if (!mentor) return
@@ -552,8 +610,8 @@ function App() {
     navigate('/')
   }
 
-  const appState = { profile, setProfile, isAuthed, setIsAuthed, communities, setCommunities, conversations, activeChatId, setActiveChatId, incomingInvites, acceptIncomingInvite, dismissIncomingInvite, inviteMentor, sendChatMessage, navigate, notify, logout }
-  const authedRoutes = ['/dashboard', '/mentors', '/chat', '/communities', '/profile']
+  const appState = { profile, setProfile, isAuthed, setIsAuthed, communities, setCommunities, conversations, activeChatId, setActiveChatId, incomingInvites, acceptIncomingInvite, dismissIncomingInvite, inviteMentor, sendChatMessage, companyChat, sendCompanyMessage, navigate, notify, logout }
+  const authedRoutes = ['/dashboard', '/mentors', '/chat', '/communities', '/rules', '/profile']
   const isMentorDetail = route.startsWith('/mentor/')
   const isCommunityDetail = route.startsWith('/community/')
   const showShell = isAuthed && (authedRoutes.includes(route) || isMentorDetail || isCommunityDetail)
@@ -581,6 +639,7 @@ function Router({ route, appState }) {
   if (route === '/chat') return <ChatPage {...appState} />
   if (route === '/communities') return <CommunitiesPage {...appState} />
   if (route.startsWith('/community/')) return <CommunityDetail id={route.split('/').pop()} {...appState} />
+  if (route === '/rules') return <RulesPage />
   if (route === '/profile') return <ProfilePage {...appState} />
   return <Landing {...appState} />
 }
@@ -602,7 +661,7 @@ function Landing({ navigate }) {
             <p className="mb-5 inline-flex rounded-full border border-white/80 bg-white/70 px-4 py-2 text-sm font-semibold text-navy shadow-card">台塑企業員工交流社群平台</p>
             <h1 className="max-w-3xl text-5xl font-black leading-tight tracking-tight text-ink sm:text-6xl lg:text-7xl">緣來就塑你</h1>
             <p className="mt-4 max-w-3xl text-2xl font-black leading-tight text-ink sm:text-3xl">找到適合的人、加入有興趣的社群，讓知識交流與合作自然發生。</p>
-            <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-600">緣來就「塑」你透過契合度推薦、聊天室、主題社群與個人檔案，協助員工跨越公司、部門、職位、世代與工作地點的限制，讓知識交流與合作自然發生。</p>
+            <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-600">緣來就「塑」你透過公布欄、全公司聊天室、主題社群與個人檔案，協助員工跨越公司、部門、職位、世代與工作地點的限制，讓知識交流與合作自然發生。</p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <button onClick={() => navigate('/login')} className="btn-primary h-13 justify-center px-8 text-base">登入平台</button>
               <span className="flex items-center px-2 text-sm font-semibold text-slate-500">登入後再建立個人檔案</span>
@@ -619,10 +678,10 @@ function Landing({ navigate }) {
                 </div>
                 <p className="mt-8 text-2xl font-bold leading-snug">從一次交流開始，遇見新的職涯可能。</p>
                 <div className="mt-8 grid grid-cols-2 gap-3">
-                  {['推薦', '聊天室', '社群', '個人檔案'].map((tag) => <span key={tag} className="pill">{tag}</span>)}
+                  {['公布欄', '全公司聊天室', '社群', '規範'].map((tag) => <span key={tag} className="pill">{tag}</span>)}
                 </div>
               </div>
-              <div className="floating-note">建立個人檔案 → 獲得契合度推薦 → 透過聊天室交流 → 加入社群 → 延續請益與合作討論。</div>
+              <div className="floating-note">登入平台 → 查看公布欄 → 進入全公司聊天室 → 加入或創建社群 → 延續請益與合作討論。</div>
             </div>
           </div>
         </div>
@@ -633,10 +692,10 @@ function Landing({ navigate }) {
           <h2 className="section-title">四個核心功能，讓交流從認識延伸到合作</h2>
         </div>
         <div className="grid gap-5 md:grid-cols-4">
-          <FeatureCard title="契合度推薦" text="依專長、興趣、交流需求與互補能力，推薦適合認識、請益或合作的同仁。" />
-          <FeatureCard title="聊天室" text="讓推薦後的交流能延續討論，支援一對一請益與經驗分享。" />
+          <FeatureCard title="公布欄" text="集中呈現全公司公告、交流活動、社群精選與重要提醒。" />
+          <FeatureCard title="全公司聊天室" text="讓員工公開提問、分享資源、尋找跨部門經驗與社群入口。" />
           <FeatureCard title="社群" text="依工作專業、職涯經驗與生活興趣集中交流，累積熱門問題與工作案例。" />
-          <FeatureCard title="個人檔案" text="呈現專長、興趣、交流主題、可分享內容與參與紀錄，作為推薦基礎。" />
+          <FeatureCard title="規範" text="清楚說明聊天室、社群與個人資料的使用原則，讓交流更安心。" />
         </div>
       </section>
       <section className="border-y border-line bg-mist">
@@ -648,9 +707,9 @@ function Landing({ navigate }) {
           <div className="grid gap-4 lg:grid-cols-4">
             {[
               ['01', '建立個人檔案', '填寫專長、興趣、交流需求與可分享內容。'],
-              ['02', '獲得契合度推薦', '看見共同點、互補專長與推薦原因。'],
-              ['03', '透過聊天室交流', '用一對一聊天室延續請益與討論。'],
-              ['04', '加入主題社群', '沉澱熱門問題、工作案例與跨部門經驗。'],
+              ['02', '查看公布欄', '掌握全公司公告、活動與熱門社群動態。'],
+              ['03', '進入全公司聊天室', '公開提問、分享資源或尋找跨部門經驗。'],
+              ['04', '加入或創建社群', '沉澱熱門問題、工作案例與跨部門經驗。'],
             ].map(([step, title, text]) => (
               <article key={step} className="rounded-card border border-line bg-white p-5 shadow-card">
                 <p className="text-4xl font-black text-blueprint">{step}</p>
@@ -697,7 +756,7 @@ function Register({ setProfile, setIsAuthed, navigate, notify }) {
   }
 
   return (
-    <AuthLayout title="建立個人檔案" subtitle="先讓平台認識你的專長、興趣、交流需求與可分享經驗，再推薦適合交流或合作的同仁。">
+    <AuthLayout title="建立個人檔案" subtitle="先讓平台認識你的專長、興趣、交流需求與可分享經驗，再開始參與全公司聊天室與主題社群。">
       <div className="mb-7 flex gap-2">
         <span className={`step-dot ${step === 1 ? 'active' : ''}`}>1 公司匯入資料</span>
         <span className={`step-dot ${step === 2 ? 'active' : ''}`}>2 配對偏好</span>
@@ -779,7 +838,7 @@ function AuthLayout({ title, subtitle, children }) {
           <p className="text-sm font-semibold uppercase tracking-[.2em] text-skysoft">Employee Connection</p>
           <h1 className="mt-5 text-4xl font-black leading-tight">{title}</h1>
           <p className="mt-4 leading-7 text-slate-200">{subtitle}</p>
-          <p className="mt-10 rounded-card bg-white/10 p-5 leading-7 text-slate-100">從推薦、聊天室到主題社群，讓經驗在組織裡真正流動。</p>
+          <p className="mt-10 rounded-card bg-white/10 p-5 leading-7 text-slate-100">從公布欄、聊天室到主題社群，讓經驗在組織裡真正流動。</p>
         </div>
         <div className="p-6 sm:p-8 lg:p-10">{children}</div>
       </section>
@@ -791,13 +850,61 @@ function ProfileBuilder(props) {
   return <Register {...props} />
 }
 
-function Dashboard({ profile, setProfile, navigate, notify, inviteMentor }) {
+function Dashboard({ profile, navigate }) {
   return (
     <PageWrap>
-      <PageTitle eyebrow="Recommendation" title={`Hi，${profile.name}！推薦給你的同仁`} text="依照共同興趣、交流需求、互補專長與跨部門多樣性，推薦適合認識、交流或合作的同仁。" />
-      <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-        {mentorSeed.map((mentor) => <MentorCard key={mentor.id} mentor={mentor} profile={profile} setProfile={setProfile} navigate={navigate} notify={notify} inviteMentor={inviteMentor} hideFavorite />)}
-      </div>
+      <PageTitle eyebrow="Bulletin" title={`Hi，${profile.name}！全公司公布欄`} text="集中查看平台公告、近期交流活動、社群精選與需要大家一起知道的重要資訊。" />
+      <section className="rounded-[28px] bg-gradient-to-br from-white to-skysoft p-6 shadow-card lg:p-8">
+        <div className="grid gap-5 lg:grid-cols-[1.1fr_.9fr] lg:items-center">
+          <div>
+            <p className="eyebrow">Today</p>
+            <h2 className="mt-2 text-3xl font-black">讓重要消息不被聊天訊息淹沒</h2>
+            <p className="mt-4 max-w-2xl leading-7 text-slate-600">公布欄作為全公司資訊入口，整理公告、活動、社群熱門議題與跨部門交流機會，讓同仁可以快速判斷哪些內容值得參與。</p>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-1">
+            <Info label="本週公告" value={`${bulletinSeed.length} 則`} />
+            <Info label="熱門社群" value="新人、數位、跨部門" />
+            <Info label="今日提醒" value="交流週報名中" />
+          </div>
+        </div>
+      </section>
+      <section className="mt-6">
+        <SectionHeader title="最新公告與活動" />
+        <div className="grid gap-5 lg:grid-cols-3">
+          {bulletinSeed.map((item) => (
+            <article key={item.id} className="rounded-card border border-line bg-white p-5 shadow-card transition hover:-translate-y-1 hover:shadow-soft">
+              <div className="flex items-start justify-between gap-3">
+                <span className="pill-dark">{item.type}</span>
+                <span className="text-sm font-bold text-slate-400">{item.date}</span>
+              </div>
+              <h3 className="mt-4 text-2xl font-black leading-tight">{item.title}</h3>
+              <p className="mt-2 text-sm font-semibold text-slate-500">{item.owner}</p>
+              <p className="mt-4 line-clamp-4 leading-7 text-slate-600">{item.summary}</p>
+              <div className="mt-4 flex flex-wrap gap-2">
+                {item.tags.map((tag) => <span key={tag} className="pill">{tag}</span>)}
+              </div>
+              <button className="btn-secondary mt-5 w-full justify-center" onClick={() => item.id === 'b3' ? navigate('/community/c1') : navigate('/communities')}>{item.cta}</button>
+            </article>
+          ))}
+        </div>
+      </section>
+      <section className="mt-8 grid gap-5 lg:grid-cols-2">
+        <DetailBlock title="熱門社群動態">
+          <div className="space-y-3">
+            {communitySeed.slice(0, 3).map((community) => (
+              <button key={community.id} className="w-full rounded-card bg-mist p-4 text-left transition hover:bg-skysoft" onClick={() => navigate(`/community/${community.id}`)}>
+                <p className="font-black text-ink">{community.name}</p>
+                <p className="mt-1 text-sm text-slate-600">{community.posts[0]?.content}</p>
+              </button>
+            ))}
+          </div>
+        </DetailBlock>
+        <DetailBlock title="本週可以做的事">
+          <div className="grid gap-3 sm:grid-cols-2">
+            {['到聊天室問一個全公司都能回答的問題', '加入一個職涯或工作技能社群', '收藏一篇想回頭看的貼文', '閱讀平台交流規範'].map((item) => <div key={item} className="rounded-card bg-mist p-4 font-semibold">{item}</div>)}
+          </div>
+        </DetailBlock>
+      </section>
     </PageWrap>
   )
 }
@@ -812,7 +919,7 @@ function MentorDetail({ id, profile, setProfile, conversations, inviteMentor, se
   }
   return (
     <PageWrap>
-      <button className="mb-5 text-sm font-bold text-navy hover:underline" onClick={() => navigate('/dashboard')}>返回推薦</button>
+      <button className="mb-5 text-sm font-bold text-navy hover:underline" onClick={() => navigate('/dashboard')}>返回公布欄</button>
       <section className="grid gap-6 lg:grid-cols-[.82fr_1.18fr]">
         <aside className="rounded-[28px] border border-line bg-white p-6 shadow-card">
           <h1 className="text-4xl font-black">{mentor.name}</h1>
@@ -857,12 +964,14 @@ function MentorDetail({ id, profile, setProfile, conversations, inviteMentor, se
 function CommunitiesPage({ communities, setCommunities, profile, setProfile, navigate, notify }) {
   const [query, setQuery] = useState('')
   const [category, setCategory] = useState('')
+  const [showCreate, setShowCreate] = useState(false)
   const categories = ['', ...new Set(communities.map((c) => c.category))]
   const filtered = communities.filter((c) => (!query || `${c.name}${c.intro}${c.tags.join('')}`.includes(query)) && (!category || c.category === category))
   return (
     <PageWrap>
       <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
         <PageTitle eyebrow="Communities" title="主題社群" text="依專業工作、職涯經驗與生活興趣加入社群，讓知識整理、問題討論與同仁交流持續累積。" />
+        <button className="btn-primary justify-center" onClick={() => setShowCreate(true)}>創建社群</button>
       </div>
       <div className="mb-6 mt-2 grid gap-3 rounded-card border border-line bg-white p-5 shadow-card md:grid-cols-[1fr_220px]">
         <Input label="搜尋社群" value={query} onChange={setQuery} dense />
@@ -873,6 +982,7 @@ function CommunitiesPage({ communities, setCommunities, profile, setProfile, nav
           {filtered.map((community) => <CommunityCard key={community.id} community={community} navigate={navigate} profile={profile} setProfile={setProfile} notify={notify} />)}
         </div>
       ) : <EmptyState title="還沒有符合的社群" text="試著換一個關鍵字，或調整主題分類再看看。" />}
+      {showCreate && <CreateCommunityModal onClose={() => setShowCreate(false)} setCommunities={setCommunities} notify={notify} />}
     </PageWrap>
   )
 }
@@ -927,32 +1037,80 @@ function CommunityDetail({ id, communities, setCommunities, profile, setProfile,
   )
 }
 
-function ChatPage({ conversations, activeChatId, setActiveChatId, sendChatMessage, incomingInvites, acceptIncomingInvite, dismissIncomingInvite }) {
+function ChatPage({ conversations, activeChatId, setActiveChatId, sendChatMessage, incomingInvites, acceptIncomingInvite, dismissIncomingInvite, companyChat, sendCompanyMessage }) {
   const activeConversation = conversations.find((conversation) => conversation.mentorId === activeChatId) || conversations[0]
   const activeMentor = activeConversation ? mentorSeed.find((mentor) => mentor.id === activeConversation.mentorId) : null
 
   return (
     <PageWrap>
-      <PageTitle eyebrow="Chat" title="一對一聊天室" text="這裡只呈現你與同仁的一對一交流，適合請益、交換經驗與討論下一次交流時間。" />
+      <PageTitle eyebrow="Company Chat" title="全公司聊天室" text="開放給全公司同仁的即時交流空間，適合提出問題、分享資源、尋找跨部門經驗與社群入口。" />
+      <CompanyChatPanel messages={companyChat} onSend={sendCompanyMessage} />
       <IncomingInvites invites={incomingInvites} onAccept={acceptIncomingInvite} onDismiss={dismissIncomingInvite} />
       {activeConversation && activeMentor ? (
-        <ChatPanel
-          mentor={activeMentor}
-          conversation={activeConversation}
-          conversations={conversations}
-          setActiveChatId={setActiveChatId}
-          onSend={(text) => sendChatMessage(activeMentor.id, text)}
-        />
+        <section className="mt-6">
+          <SectionHeader title="一對一交流" />
+          <ChatPanel
+            mentor={activeMentor}
+            conversation={activeConversation}
+            conversations={conversations}
+            setActiveChatId={setActiveChatId}
+            onSend={(text) => sendChatMessage(activeMentor.id, text)}
+          />
+        </section>
       ) : (
-        <EmptyState title="尚未建立一對一聊天室" text="從推薦頁發送交流邀請後，聊天室會出現在這裡。" />
+        <EmptyState title="尚未建立一對一聊天室" text="接受交流邀請後，一對一聊天室會出現在這裡。" />
       )}
       <section className="mt-8 rounded-card bg-white p-5 shadow-card">
         <h2 className="text-xl font-black">聊天室使用原則</h2>
         <div className="mt-4 grid gap-3 md:grid-cols-3">
-          {['聚焦一對一請益與經驗交流', '可約定後續線上或實體交流', '不得商業推銷、私人交易或散播企業機密'].map((item) => <div key={item} className="rounded-card bg-mist p-4 font-bold text-navy">{item}</div>)}
+          {['全公司聊天室適合公開請益與資源分享', '一對一聊天室適合延續具體交流', '不得商業推銷、私人交易或散播企業機密'].map((item) => <div key={item} className="rounded-card bg-mist p-4 font-bold text-navy">{item}</div>)}
         </div>
       </section>
     </PageWrap>
+  )
+}
+
+function CompanyChatPanel({ messages, onSend }) {
+  const [message, setMessage] = useState('')
+  const submit = () => {
+    if (!message.trim()) return
+    onSend(message)
+    setMessage('')
+  }
+  return (
+    <section className="rounded-[28px] border border-line bg-white p-5 shadow-card lg:p-6">
+      <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
+        <div>
+          <h2 className="text-2xl font-black">公開交流大廳</h2>
+          <p className="mt-2 text-slate-600">所有同仁都能看見，適合問問題、找資源、邀請大家加入社群討論。</p>
+        </div>
+        <span className="pill-dark w-fit">{messages.length} 則訊息</span>
+      </div>
+      <div className="mt-5 max-h-96 space-y-3 overflow-y-auto rounded-[22px] bg-mist p-4">
+        {messages.map((item) => (
+          <article key={item.id} className="rounded-[20px] bg-white p-4 shadow-sm">
+            <div className="flex flex-col justify-between gap-1 sm:flex-row sm:items-center">
+              <h3 className="font-black text-ink">{item.author}</h3>
+              <span className="text-xs font-bold text-slate-400">{item.time}</span>
+            </div>
+            <p className="mt-1 text-sm font-semibold text-slate-500">{item.meta}</p>
+            <p className="mt-3 leading-7 text-slate-700">{item.text}</p>
+          </article>
+        ))}
+      </div>
+      <div className="mt-4 flex flex-col gap-3 sm:flex-row">
+        <input
+          className="field mt-0"
+          value={message}
+          onChange={(event) => setMessage(event.target.value)}
+          onKeyDown={(event) => {
+            if (event.key === 'Enter') submit()
+          }}
+          placeholder="輸入想讓全公司同仁看見的問題、資源或交流邀請..."
+        />
+        <button className="btn-primary justify-center sm:min-w-28" onClick={submit}>送出</button>
+      </div>
+    </section>
   )
 }
 
@@ -1006,7 +1164,7 @@ function ProfilePage({ profile, setProfile, communities, navigate, notify }) {
   return (
     <PageWrap>
       <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
-        <PageTitle eyebrow="My Profile" title="我的檔案" text="整理你的專長、興趣、請益主題與可分享內容，讓平台更容易推薦同仁與社群。" />
+        <PageTitle eyebrow="My Profile" title="我的檔案" text="整理你的專長、興趣、請益主題與可分享內容，讓同仁更容易在聊天室與社群中認識你。" />
         <button className="btn-primary justify-center" onClick={() => editing ? save() : setEditing(true)}>{editing ? '儲存個人資料' : '編輯個人資料'}</button>
       </div>
       <div className="grid gap-6 lg:grid-cols-[.8fr_1.2fr]">
@@ -1075,11 +1233,56 @@ function ProfilePage({ profile, setProfile, communities, navigate, notify }) {
   )
 }
 
+function RulesPage() {
+  const rules = [
+    {
+      title: '交流目的',
+      items: ['以知識交流、工作經驗分享、跨部門請益與社群討論為主。', '鼓勵具體提問、善意回覆與可被其他同仁參考的經驗整理。'],
+    },
+    {
+      title: '聊天室使用',
+      items: ['全公司聊天室適合公開問題、資源分享與社群活動提醒。', '一對一聊天室適合延續邀請後的具體請益與合作討論。', '請避免張貼薪資、考績、健康、家庭或其他敏感個人資料。'],
+    },
+    {
+      title: '社群管理',
+      items: ['社群以工作技能、職涯、興趣三類為主，避免主題過度重複。', '創建社群後，請維持清楚簡介、適當標籤與友善討論氣氛。', '熱門問題可以整理成公告、活動或後續交流主題。'],
+    },
+    {
+      title: '禁止事項',
+      items: ['不得進行未經許可的商業推銷、投資招攬、借貸、兼職招募或私人交易。', '不得散播企業機密、未公開財務資訊、客戶資料或任何未經核准的內部文件。', '不得使用攻擊、歧視、騷擾或讓他人感到不舒服的文字。'],
+    },
+  ]
+  return (
+    <PageWrap>
+      <PageTitle eyebrow="Guidelines" title="平台規範" text="讓交流保持開放、可信任，也讓每一位同仁都能安心提問、分享與參與社群。" />
+      <section className="rounded-[28px] bg-white p-6 shadow-card lg:p-8">
+        <h2 className="text-3xl font-black">共同使用原則</h2>
+        <p className="mt-4 max-w-3xl leading-7 text-slate-600">緣來就塑你是企業內部交流平台，內容應聚焦於職涯、工作技能、社群共學與跨部門合作。平台資料僅作為交流參考，不應直接作為績效評價或私人用途。</p>
+        <div className="mt-6 grid gap-4 md:grid-cols-2">
+          {rules.map((group) => (
+            <article key={group.title} className="rounded-card bg-mist p-5">
+              <h3 className="text-xl font-black text-ink">{group.title}</h3>
+              <ul className="mt-4 space-y-3 leading-7 text-slate-650">
+                {group.items.map((item) => <li key={item}>・{item}</li>)}
+              </ul>
+            </article>
+          ))}
+        </div>
+      </section>
+      <section className="mt-6 rounded-card border border-line bg-white p-5 shadow-card">
+        <h2 className="text-xl font-black">遇到不適當內容怎麼辦？</h2>
+        <p className="mt-3 leading-7 text-slate-600">請先避免公開爭執，保留訊息內容並回報平台管理單位。正式版本可加入檢舉、封鎖與內容審核流程，Demo 先以規範頁呈現治理設計。</p>
+      </section>
+    </PageWrap>
+  )
+}
+
 function AppNav({ route, navigate, logout }) {
   const items = [
-    ['推薦', '/dashboard'],
-    ['聊天室', '/chat'],
+    ['公布欄', '/dashboard'],
+    ['全公司聊天室', '/chat'],
     ['社群', '/communities'],
+    ['規範', '/rules'],
     ['我的檔案', '/profile'],
   ]
   return (
@@ -1095,13 +1298,14 @@ function AppNav({ route, navigate, logout }) {
 
 function MobileTabs({ route, navigate }) {
   const items = [
-    ['推薦', '/dashboard'],
+    ['公布欄', '/dashboard'],
     ['聊天', '/chat'],
     ['社群', '/communities'],
+    ['規範', '/rules'],
     ['我的', '/profile'],
   ]
   return (
-    <nav className="fixed inset-x-3 bottom-3 z-40 grid grid-cols-4 rounded-[22px] border border-line bg-white/95 p-2 shadow-soft backdrop-blur lg:hidden">
+    <nav className="fixed inset-x-3 bottom-3 z-40 grid grid-cols-5 rounded-[22px] border border-line bg-white/95 p-2 shadow-soft backdrop-blur lg:hidden">
       {items.map(([label, path]) => <button key={path} onClick={() => navigate(path)} className={`rounded-2xl px-2 py-3 text-sm font-bold ${route === path || route.startsWith(path + '/') ? 'bg-skysoft text-navy' : 'text-slate-500'}`}>{label}</button>)}
     </nav>
   )
@@ -1135,6 +1339,60 @@ function MentorCard({ mentor, profile, setProfile, navigate, notify, inviteMento
       </div>
       {compact && <button className="mt-2 w-full rounded-full px-4 py-3 text-sm font-bold text-navy hover:bg-mist" onClick={() => inviteMentor(mentor)}>邀請交流</button>}
     </article>
+  )
+}
+
+function CreateCommunityModal({ onClose, setCommunities, notify }) {
+  const [form, setForm] = useState({ name: '', intro: '', category: '工作技能', tags: '' })
+  const [error, setError] = useState('')
+  const create = () => {
+    if (!form.name.trim() || !form.intro.trim()) {
+      setError('請填寫社群名稱與簡介')
+      return
+    }
+    const newCommunity = {
+      id: `c${Date.now()}`,
+      name: form.name.trim(),
+      category: form.category,
+      intro: form.intro.trim(),
+      members: 1,
+      tags: splitText(form.tags).length ? splitText(form.tags) : [form.category],
+      posts: [
+        {
+          id: `p${Date.now()}`,
+          author: '塑寶',
+          meta: '社群建立者',
+          time: '剛剛',
+          content: `歡迎加入 ${form.name.trim()}，可以先分享一個你想討論的問題或經驗。`,
+          likes: 0,
+          comments: 0,
+        },
+      ],
+    }
+    setCommunities((prev) => [newCommunity, ...prev])
+    notify('社群已建立。')
+    onClose()
+  }
+  return (
+    <div className="fixed inset-0 z-50 grid place-items-center bg-navy/30 px-4 backdrop-blur-sm">
+      <div className="w-full max-w-xl rounded-[28px] bg-white p-6 shadow-soft">
+        <div className="mb-5 flex items-start justify-between gap-5">
+          <div>
+            <h2 className="text-2xl font-black">創建社群</h2>
+            <p className="mt-2 text-slate-600">建立一個可以持續討論工作技能、職涯或興趣主題的交流空間。</p>
+          </div>
+          <button className="rounded-full bg-mist px-4 py-2 font-bold" onClick={onClose}>關閉</button>
+        </div>
+        <div className="space-y-4">
+          <Input label="社群名稱" value={form.name} onChange={(value) => setForm({ ...form, name: value })} />
+          <Textarea label="社群簡介" value={form.intro} onChange={(value) => setForm({ ...form, intro: value })} />
+          <Select label="社群分類" value={form.category} onChange={(value) => setForm({ ...form, category: value })} options={['工作技能', '職涯', '興趣']} />
+          <Input label="社群標籤（以逗號分隔）" value={form.tags} onChange={(value) => setForm({ ...form, tags: value })} />
+          {error && <p className="form-error">{error}</p>}
+          <button className="btn-primary w-full justify-center" onClick={create}>建立社群</button>
+        </div>
+      </div>
+    </div>
   )
 }
 
