@@ -390,13 +390,13 @@ const defaultProfile = {
   location: '台北總部',
   canMentor: false,
   seekingMentor: true,
-  intro: '我塑一個正在尋找交流夥伴的人，想透過不同同仁的經驗看見更多工作改善與成長可能。',
-  interests: '設計、閱讀、咖啡、城市散步',
-  skills: '需求訪談、使用者研究、簡報整理',
-  learning: '產品策略、專案管理、跨部門溝通',
-  guidanceTypes: ['職涯發展', '專業技能', '跨部門交流'],
-  mentorPrefs: ['跨部門', '年資較深', '不限'],
-  availability: '平日午餐、週三晚間',
+  intro: '',
+  interests: '',
+  skills: '',
+  learning: '',
+  guidanceTypes: [],
+  mentorPrefs: [],
+  availability: '',
   privacy: {
     showAge: true,
     showSeniority: true,
@@ -732,69 +732,35 @@ function FeatureCard({ title, text }) {
 }
 
 function Register({ setProfile, setIsAuthed, navigate, notify }) {
-  const [step, setStep] = useState(1)
-  const [form, setForm] = useState(defaultProfile)
-  const [errors, setErrors] = useState({})
-
-  const update = (key, value) => setForm((prev) => ({ ...prev, [key]: value }))
-  const toggleArray = (key, value) => setForm((prev) => ({ ...prev, [key]: prev[key].includes(value) ? prev[key].filter((item) => item !== value) : [...prev[key], value] }))
+  const [form] = useState(defaultProfile)
 
   const submit = () => {
-    const next = {}
-    ;['intro', 'skills', 'learning', 'availability'].forEach((field) => {
-      if (!form[field]) next[field] = '這個欄位需要填寫'
-    })
-    setErrors(next)
-    if (Object.keys(next).length) return
     setProfile({ ...form, favorites: [], joinedCommunities: ['c1'] })
     setIsAuthed(true)
-    notify('個人檔案建立完成，歡迎來到塑學圈。')
+    notify('員工資料確認完成，歡迎來到塑學圈。')
     navigate('/dashboard')
   }
 
   return (
-    <AuthLayout title="建立個人檔案" subtitle="確認公司匯入資料後，補充想交流的主題與可分享經驗，再開始參與聊天室與塑學社群。">
-      <div className="mb-7 flex gap-2">
-        <span className={`step-dot ${step === 1 ? 'active' : ''}`}>1 公司匯入資料</span>
-        <span className={`step-dot ${step === 2 ? 'active' : ''}`}>2 交流設定</span>
+    <AuthLayout title="確認員工資料" subtitle="以下資料由企業帳號與人資系統匯入，平台不提供自行填寫或編輯。確認無誤後即可進入塑學圈。">
+      <div className="space-y-5">
+        <div className="rounded-card bg-mist p-5">
+          <h2 className="text-xl font-black text-ink">公司已匯入你的基本資料</h2>
+          <p className="mt-2 leading-7 text-slate-600">這裡只供確認。若資料有誤，請洽人資或系統管理單位更新。</p>
+        </div>
+        <div className="grid gap-4 md:grid-cols-2">
+          <ReadOnlyField label="姓名" value={form.name} />
+          <ReadOnlyField label="帳號" value={form.email} />
+          <ReadOnlyField label="年齡" value={`${form.age} 歲`} />
+          <ReadOnlyField label="性別" value={form.gender || '不透露'} />
+          <ReadOnlyField label="所屬公司／事業部" value={form.division} />
+          <ReadOnlyField label="部門" value={form.department} />
+          <ReadOnlyField label="職位" value={form.role} />
+          <ReadOnlyField label="年資" value={`${form.seniority} 年`} />
+          <ReadOnlyField label="工作地點" value={form.location} />
+        </div>
+        <button className="btn-primary w-full justify-center" onClick={submit}>確認並進入平台</button>
       </div>
-      {step === 1 ? (
-        <div className="space-y-5">
-          <div className="rounded-card bg-mist p-5">
-            <h2 className="text-xl font-black text-ink">公司已匯入你的基本資料</h2>
-            <p className="mt-2 leading-7 text-slate-600">以下資料由企業帳號與人資系統帶入，這裡只供確認。若資料有誤，請洽人資或系統管理單位更新。</p>
-          </div>
-          <div className="grid gap-4 md:grid-cols-2">
-            <ReadOnlyField label="姓名" value={form.name} />
-            <ReadOnlyField label="帳號" value={form.email} />
-            <ReadOnlyField label="年齡" value={`${form.age} 歲`} />
-            <ReadOnlyField label="性別" value={form.gender || '不透露'} />
-            <ReadOnlyField label="所屬公司／事業部" value={form.division} />
-            <ReadOnlyField label="部門" value={form.department} />
-            <ReadOnlyField label="職位" value={form.role} />
-            <ReadOnlyField label="年資" value={`${form.seniority} 年`} />
-            <ReadOnlyField label="工作地點" value={form.location} />
-          </div>
-          <div className="md:col-span-2">
-            <button className="btn-primary w-full justify-center" onClick={() => setStep(2)}>下一步，填寫交流設定</button>
-          </div>
-        </div>
-      ) : (
-        <div className="space-y-5">
-          <Textarea label="我塑" value={form.intro} onChange={(v) => update('intro', v)} error={errors.intro} />
-          <div className="grid gap-4 md:grid-cols-2">
-            <Input label="我的專長：我可以分享的經驗是" value={form.skills} onChange={(v) => update('skills', v)} error={errors.skills} />
-            <Input label="我想請益的主題：我最近想突破的是" value={form.learning} onChange={(v) => update('learning', v)} error={errors.learning} />
-            <Input label="可聯繫時段" value={form.availability} onChange={(v) => update('availability', v)} error={errors.availability} />
-          </div>
-          <CheckGroup label="我想交流的主題類型" options={guidanceOptions} values={form.guidanceTypes} onToggle={(v) => toggleArray('guidanceTypes', v)} />
-          <CheckGroup label="我希望交流的方向" options={mentorPrefOptions} values={form.mentorPrefs} onToggle={(v) => toggleArray('mentorPrefs', v)} />
-          <div className="grid gap-3 sm:grid-cols-2">
-            <button className="btn-secondary justify-center" onClick={() => setStep(1)}>回上一步</button>
-            <button className="btn-primary justify-center" onClick={submit}>完成個人檔案</button>
-          </div>
-        </div>
-      )}
     </AuthLayout>
   )
 }
@@ -813,7 +779,7 @@ function Login({ profile, setIsAuthed, navigate, notify }) {
     navigate('/onboarding')
   }
   return (
-    <AuthLayout title="登入平台" subtitle="使用企業帳號登入後，確認公司匯入資料並補充交流設定。">
+    <AuthLayout title="登入平台" subtitle="使用企業帳號登入後，確認公司匯入的員工資料。">
       <div className="space-y-4">
         <Input label="帳號" value={email} onChange={setEmail} />
         <Input label="密碼" type="password" value={password} onChange={setPassword} />
