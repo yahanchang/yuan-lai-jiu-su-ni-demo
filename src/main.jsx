@@ -1178,82 +1178,45 @@ function IncomingInvites({ invites, onAccept, onDismiss }) {
   )
 }
 
-function ProfilePage({ profile, setProfile, communities, navigate, notify }) {
-  const [editing, setEditing] = useState(false)
-  const [draft, setDraft] = useState({ ...profile, privacy: { showAge: canShow(profile, 'showAge'), showSeniority: canShow(profile, 'showSeniority') } })
-  const savedPosts = communities.flatMap((community) => community.posts.map((post) => ({ ...post, communityName: community.name, communityId: community.id }))).slice(0, 3)
-  const joinedCommunities = communities.filter((community) => profile.joinedCommunities.includes(community.id))
-  const save = () => {
-    setProfile(draft)
-    setEditing(false)
-    notify('個人資料已更新。')
-  }
+function ProfilePage({ profile }) {
+  const importedFields = [
+    ['姓名', profile.name],
+    ['帳號', profile.email],
+    ['所屬公司', profile.company],
+    ['事業部', profile.division],
+    ['部門', profile.department],
+    ['職位', profile.role],
+    ['年齡', `${profile.age} 歲`],
+    ['年資', `${profile.seniority} 年`],
+    ['工作地點', profile.location],
+  ]
+
   return (
     <PageWrap>
-      <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
-        <PageTitle eyebrow="My Profile" title="我的檔案" text="整理你的專長、興趣、請益主題與可分享內容，讓同仁更容易在聊天室與社群中認識你。" />
-        <button className="btn-primary justify-center" onClick={() => editing ? save() : setEditing(true)}>{editing ? '儲存個人資料' : '編輯個人資料'}</button>
-      </div>
-      <div className="grid gap-6 lg:grid-cols-[.8fr_1.2fr]">
+      <PageTitle eyebrow="Employee Profile" title="我的檔案" text="此頁以公司匯入的員工資料為主，僅供平台識別與同仁確認使用；若資料有誤，請洽人資或系統管理單位更新。" />
+      <div className="grid gap-6 lg:grid-cols-[.75fr_1.25fr]">
         <section className="rounded-[28px] bg-white p-6 shadow-card">
-          {editing ? (
-            <div className="mt-5 space-y-4">
-              <Input label="姓名" value={draft.name} onChange={(v) => setDraft({ ...draft, name: v })} />
-              <Input label="帳號" value={draft.email} onChange={(v) => setDraft({ ...draft, email: v })} />
-              <Input label="部門" value={draft.department} onChange={(v) => setDraft({ ...draft, department: v })} />
-              <Input label="職位" value={draft.role} onChange={(v) => setDraft({ ...draft, role: v })} />
-              <Input label="年齡" value={draft.age} onChange={(v) => setDraft({ ...draft, age: v })} />
-              <Input label="年資" value={draft.seniority} onChange={(v) => setDraft({ ...draft, seniority: v })} />
-              <div className="rounded-card bg-mist p-4">
-                <p className="mb-3 font-black text-navy">個人資訊顯示設定</p>
-                <div className="space-y-3">
-                  <Toggle label="在我的檔案顯示年齡" checked={canShow(draft, 'showAge')} onChange={(v) => setDraft({ ...draft, privacy: { ...draft.privacy, showAge: v } })} />
-                  <Toggle label="在我的檔案顯示年資" checked={canShow(draft, 'showSeniority')} onChange={(v) => setDraft({ ...draft, privacy: { ...draft.privacy, showSeniority: v } })} />
-                </div>
-              </div>
+          <div className="rounded-card bg-mist p-5">
+            <p className="eyebrow">Company Imported</p>
+            <h1 className="mt-3 text-4xl font-black">{profile.name}</h1>
+            <p className="mt-2 font-semibold text-slate-600">{profile.department} · {profile.role}</p>
+          </div>
+          <div className="mt-5 rounded-card border border-line bg-white p-5">
+            <h2 className="text-xl font-black text-ink">資料狀態</h2>
+            <p className="mt-3 leading-7 text-slate-600">個人檔案資料由公司系統匯入，平台 Demo 暫不提供自行編輯，避免員工資料與公司紀錄不一致。</p>
+          </div>
+        </section>
+        <section className="rounded-[28px] bg-white p-6 shadow-card">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <p className="eyebrow">Employee Data</p>
+              <h2 className="mt-2 text-2xl font-black text-ink">公司匯入資料</h2>
             </div>
-          ) : (
-            <>
-              <h1 className="mt-5 text-4xl font-black">{profile.name}</h1>
-              <p className="mt-2 font-semibold text-slate-600">{profile.department} · {profile.role}</p>
-              <div className="mt-5 grid grid-cols-2 gap-3 text-sm">
-                {canShow(profile, 'showAge') && <Info label="年齡" value={`${profile.age} 歲`} />}
-                {canShow(profile, 'showSeniority') && <Info label="年資" value={`${profile.seniority} 年`} />}
-                <Info label="地點" value={profile.location} />
-              </div>
-            </>
-          )}
-        </section>
-        <section className="space-y-5">
-          {editing ? (
-            <div className="rounded-card bg-white p-5 shadow-card">
-              <Textarea label="自我介紹" value={draft.intro} onChange={(v) => setDraft({ ...draft, intro: v })} />
-              <div className="mt-4 grid gap-4 md:grid-cols-2">
-                <Input label="興趣" value={draft.interests} onChange={(v) => setDraft({ ...draft, interests: v })} />
-                <Input label="專長" value={draft.skills} onChange={(v) => setDraft({ ...draft, skills: v })} />
-                <Input label="想請益的主題" value={draft.learning} onChange={(v) => setDraft({ ...draft, learning: v })} />
-                <Input label="可聯繫時段" value={draft.availability} onChange={(v) => setDraft({ ...draft, availability: v })} />
-              </div>
-            </div>
-          ) : (
-            <>
-              <DetailBlock title="自我介紹"><p>{profile.intro}</p></DetailBlock>
-              <DetailBlock title="興趣"><TagList tags={splitText(profile.interests)} /></DetailBlock>
-              <DetailBlock title="專長"><TagList tags={splitText(profile.skills)} /></DetailBlock>
-              <DetailBlock title="想請益的主題"><TagList tags={splitText(profile.learning)} /></DetailBlock>
-              <DetailBlock title="交流偏好"><TagList tags={[...profile.guidanceTypes, ...profile.mentorPrefs]} /></DetailBlock>
-            </>
-          )}
-        </section>
-      </div>
-      <div className="mt-6 grid gap-6 lg:grid-cols-2">
-        <section>
-          <SectionHeader title="已收藏的貼文" />
-          {savedPosts.length ? <div className="grid gap-4">{savedPosts.map((post) => <MiniList key={`${post.communityId}-${post.id}`} title={post.content.slice(0, 28)} text={`${post.communityName} · ${post.author}`} onClick={() => navigate(`/community/${post.communityId}`)} />)}</div> : <EmptyState title="尚未收藏貼文" text="看到值得之後再看的社群貼文，就先收藏起來。" />}
-        </section>
-        <section>
-          <SectionHeader title="已加入的社群" />
-          {joinedCommunities.length ? <div className="grid gap-4">{joinedCommunities.map((community) => <MiniList key={community.id} title={community.name} text={`${community.members} 位成員 · ${community.tags.join('、')}`} onClick={() => navigate(`/community/${community.id}`)} />)}</div> : <EmptyState title="尚未加入社群" text="加入一個主題，讓交流自然開始。" />}
+            <span className="pill w-fit">唯讀資料</span>
+          </div>
+          <div className="mt-5 grid gap-3 sm:grid-cols-2">
+            {importedFields.map(([label, value]) => <Info key={label} label={label} value={value} />)}
+          </div>
         </section>
       </div>
     </PageWrap>
@@ -1272,7 +1235,7 @@ function RulesPage() {
     },
     {
       title: '社群管理',
-      items: ['社群以工作技能、職涯、興趣三類為主，避免主題過度重複。', '創建社群後，請維持清楚簡介、適當標籤與友善討論氣氛。', '熱門問題可以整理成公告、活動或後續交流主題。'],
+      items: ['社群以工作技能、職涯、興趣三類為主，避免主題過度重複。', '創建社群後，請維持清楚簡介、適當標籤與友善討論氣氛。'],
     },
     {
       title: '禁止事項',
