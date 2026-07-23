@@ -334,12 +334,12 @@ const bulletinSeed = [
     title: '聊天室與社群首頁改版更新',
     date: '2026/07/23',
     owner: '平台管理小組',
-    summary: '本次更新將首頁調整為公布欄，並新增聊天室搜尋邀請、創建社群與平台規範頁，讓資訊發布與同仁交流更集中。',
+    summary: '本次更新將首頁調整為塑訊公布欄，並新增聊天室搜尋邀請、創建社群與交流守則頁，讓資訊發布與同仁交流更集中。',
     body: [
-      '首頁已由推薦頁調整為全公司公布欄，集中呈現平台更新、重要公告與社群精選內容。',
+      '首頁已由推薦頁調整為塑訊公布欄，集中呈現平台更新、重要公告與社群精選內容。',
       '聊天室頁調整為一對一交流入口，可搜尋員工姓名或員工編號並發送交流邀請。',
       '社群頁新增創建社群功能，社群分類維持工作技能、職涯、興趣三大類，方便後續整理與管理。',
-      '新增平台規範頁，說明聊天室、社群與資料使用原則，讓交流更清楚也更安心。',
+      '新增交流守則頁，說明聊天室、社群與資料使用原則，讓交流更清楚也更安心。',
     ],
     tags: ['改版更新', '聊天室', '社群'],
     cta: '查看完整內文',
@@ -354,7 +354,7 @@ const bulletinSeed = [
     body: [
       '搜尋框支援輸入同仁姓名、員工編號、部門或職位。',
       '找到同仁後可直接發送交流邀請，對方接受後會開啟一對一聊天室。',
-      '一對一聊天室仍須遵守平台規範，不得傳送企業機密、個人敏感資料或私人交易內容。',
+      '一對一聊天室仍須遵守交流守則，不得傳送企業機密、個人敏感資料或私人交易內容。',
     ],
     tags: ['聊天室', '使用說明', '資訊安全'],
     cta: '查看完整內文',
@@ -645,7 +645,7 @@ function Landing({ navigate }) {
   return (
     <div className="bg-white">
       <header className="mx-auto flex max-w-7xl items-center justify-between px-5 py-5">
-        <button onClick={() => navigate('/')} className="text-left text-2xl font-black tracking-wide text-navy">緣來就塑你</button>
+        <button onClick={() => navigate('/')} className="text-left text-2xl font-black tracking-wide text-navy">塑學圈</button>
         <div className="flex gap-3">
           <button onClick={() => navigate('/login')} className="btn-ghost">登入平台</button>
         </div>
@@ -655,10 +655,10 @@ function Landing({ navigate }) {
         <div className="absolute bottom-[-6rem] left-[-5rem] h-72 w-72 rounded-full bg-skysoft blur-3xl" />
         <div className="mx-auto grid max-w-7xl gap-10 px-5 py-16 lg:grid-cols-[1.1fr_.9fr] lg:items-center lg:py-24">
           <div className="relative z-10">
-            <p className="mb-5 inline-flex rounded-full border border-white/80 bg-white/70 px-4 py-2 text-sm font-semibold text-navy shadow-card">台塑企業員工交流社群平台</p>
-            <h1 className="max-w-3xl text-5xl font-black leading-tight tracking-tight text-ink sm:text-6xl lg:text-7xl">緣來就塑你</h1>
+            <p className="mb-5 inline-flex rounded-full border border-white/80 bg-white/70 px-4 py-2 text-sm font-semibold text-navy shadow-card">台塑企業員工交流與共學平台</p>
+            <h1 className="max-w-3xl text-5xl font-black leading-tight tracking-tight text-ink sm:text-6xl lg:text-7xl">塑學圈</h1>
             <p className="mt-4 max-w-3xl text-2xl font-black leading-tight text-ink sm:text-3xl">找到適合的人、加入有興趣的社群，讓知識交流與合作自然發生。</p>
-            <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-600">緣來就「塑」你透過公布欄、聊天室、主題社群與個人檔案，協助員工跨越公司、部門、職位、世代與工作地點的限制，讓知識交流與合作自然發生。</p>
+            <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-600">塑學圈透過塑訊公布欄、聊天室、塑學社群與員工資料，協助同仁跨越公司、部門、職位、世代與工作地點的限制，讓知識交流與合作自然發生。</p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <button onClick={() => navigate('/login')} className="btn-primary h-13 justify-center px-8 text-base">登入平台</button>
               <span className="flex items-center px-2 text-sm font-semibold text-slate-500">登入後再建立個人檔案</span>
@@ -675,10 +675,10 @@ function Landing({ navigate }) {
                 </div>
                 <p className="mt-8 text-2xl font-bold leading-snug">從一次交流開始，遇見新的職涯可能。</p>
                 <div className="mt-8 grid grid-cols-2 gap-3">
-                  {['公布欄', '聊天室', '社群', '規範'].map((tag) => <span key={tag} className="pill">{tag}</span>)}
+                  {['塑訊公布欄', '塑聊', '塑學社群', '交流守則'].map((tag) => <span key={tag} className="pill">{tag}</span>)}
                 </div>
               </div>
-              <div className="floating-note">登入平台 → 查看公布欄 → 搜尋同仁並開啟聊天室 → 加入或創建社群 → 延續請益與合作討論。</div>
+              <div className="floating-note">登入平台 → 查看塑訊公布欄 → 搜尋同仁並開啟聊天室 → 加入或創建社群 → 延續請益與合作討論。</div>
             </div>
           </div>
         </div>
@@ -689,10 +689,10 @@ function Landing({ navigate }) {
           <h2 className="section-title">四個核心功能，讓交流從認識延伸到合作</h2>
         </div>
         <div className="grid gap-5 md:grid-cols-4">
-          <FeatureCard title="公布欄" text="集中呈現全公司公告、交流活動、社群精選與重要提醒。" />
-          <FeatureCard title="聊天室" text="搜尋同仁姓名或員工編號，發送交流邀請並延續一對一討論。" />
-          <FeatureCard title="社群" text="依工作專業、職涯經驗與生活興趣集中交流，累積熱門問題與工作案例。" />
-          <FeatureCard title="規範" text="清楚說明聊天室、社群與個人資料的使用原則，讓交流更安心。" />
+          <FeatureCard title="塑訊公布欄" text="集中呈現全公司公告、平台更新、社群精選與重要提醒。" />
+          <FeatureCard title="塑聊" text="搜尋同仁姓名或員工編號，發送交流邀請並延續一對一討論。" />
+          <FeatureCard title="塑學社群" text="依工作專業、職涯經驗與生活興趣集中交流，累積熱門問題與工作案例。" />
+          <FeatureCard title="交流守則" text="清楚說明聊天室、社群與個人資料的使用原則，讓交流更安心。" />
         </div>
       </section>
       <section className="border-y border-line bg-mist">
@@ -704,7 +704,7 @@ function Landing({ navigate }) {
           <div className="grid gap-4 lg:grid-cols-4">
             {[
               ['01', '建立個人檔案', '填寫專長、興趣、交流需求與可分享內容。'],
-              ['02', '查看公布欄', '掌握全公司公告、活動與熱門社群動態。'],
+              ['02', '查看塑訊公布欄', '掌握全公司公告、平台更新與熱門社群動態。'],
               ['03', '開啟聊天室', '搜尋同仁並發送交流邀請，延續一對一討論。'],
               ['04', '加入或創建社群', '沉澱熱門問題、工作案例與跨部門經驗。'],
             ].map(([step, title, text]) => (
@@ -748,12 +748,12 @@ function Register({ setProfile, setIsAuthed, navigate, notify }) {
     if (Object.keys(next).length) return
     setProfile({ ...form, favorites: [], joinedCommunities: ['c1'] })
     setIsAuthed(true)
-    notify('個人檔案建立完成，歡迎來到緣來就塑你。')
+    notify('個人檔案建立完成，歡迎來到塑學圈。')
     navigate('/dashboard')
   }
 
   return (
-    <AuthLayout title="建立個人檔案" subtitle="先讓平台認識你的專長、興趣、交流需求與可分享經驗，再開始參與聊天室與主題社群。">
+    <AuthLayout title="建立個人檔案" subtitle="先讓平台認識你的專長、興趣、交流需求與可分享經驗，再開始參與聊天室與塑學社群。">
       <div className="mb-7 flex gap-2">
         <span className={`step-dot ${step === 1 ? 'active' : ''}`}>1 公司匯入資料</span>
         <span className={`step-dot ${step === 2 ? 'active' : ''}`}>2 配對偏好</span>
@@ -829,13 +829,13 @@ function Login({ profile, setIsAuthed, navigate, notify }) {
 function AuthLayout({ title, subtitle, children }) {
   return (
     <div className="min-h-screen bg-gradient-to-br from-white via-mist to-skysoft px-5 py-8">
-      <button onClick={() => (location.hash = '/')} className="mx-auto mb-8 block max-w-4xl text-2xl font-black text-navy">緣來就塑你</button>
+      <button onClick={() => (location.hash = '/')} className="mx-auto mb-8 block max-w-4xl text-2xl font-black text-navy">塑學圈</button>
       <section className="mx-auto grid max-w-5xl overflow-hidden rounded-[28px] border border-white bg-white shadow-soft lg:grid-cols-[.8fr_1.2fr]">
         <div className="bg-navy p-8 text-white lg:p-10">
           <p className="text-sm font-semibold uppercase tracking-[.2em] text-skysoft">Employee Connection</p>
           <h1 className="mt-5 text-4xl font-black leading-tight">{title}</h1>
           <p className="mt-4 leading-7 text-slate-200">{subtitle}</p>
-          <p className="mt-10 rounded-card bg-white/10 p-5 leading-7 text-slate-100">從公布欄、聊天室到主題社群，讓經驗在組織裡真正流動。</p>
+          <p className="mt-10 rounded-card bg-white/10 p-5 leading-7 text-slate-100">從塑訊公布欄、聊天室到塑學社群，讓經驗在組織裡真正流動。</p>
         </div>
         <div className="p-6 sm:p-8 lg:p-10">{children}</div>
       </section>
@@ -850,13 +850,13 @@ function ProfileBuilder(props) {
 function Dashboard({ profile, navigate }) {
   return (
     <PageWrap>
-      <PageTitle eyebrow="Bulletin" title={`Hi，${profile.name}！全公司公布欄`} text="集中查看平台公告、近期交流活動、社群精選與需要大家一起知道的重要資訊。" />
+      <PageTitle eyebrow="Bulletin" title={`Hi，${profile.name}！塑訊公布欄`} text="集中查看平台公告、近期更新、社群精選與需要大家一起知道的重要資訊。" />
       <section className="rounded-[28px] bg-gradient-to-br from-white to-skysoft p-6 shadow-card lg:p-8">
         <div className="grid gap-5 lg:grid-cols-[1.1fr_.9fr] lg:items-center">
           <div>
             <p className="eyebrow">Today</p>
             <h2 className="mt-2 text-3xl font-black">讓重要消息不被聊天訊息淹沒</h2>
-            <p className="mt-4 max-w-2xl leading-7 text-slate-600">公布欄作為全公司資訊入口，整理公告、活動、社群熱門議題與跨部門交流機會，讓同仁可以快速判斷哪些內容值得參與。</p>
+            <p className="mt-4 max-w-2xl leading-7 text-slate-600">塑訊公布欄作為全公司資訊入口，整理公告、平台更新、社群熱門議題與跨部門交流機會，讓同仁可以快速判斷哪些內容值得參與。</p>
           </div>
           <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-1">
             <Info label="本週公告" value={`${bulletinSeed.length} 則`} />
@@ -904,7 +904,7 @@ function BulletinDetail({ id, navigate }) {
   const item = bulletinSeed.find((entry) => entry.id === id) || bulletinSeed[0]
   return (
     <PageWrap>
-      <button className="mb-5 text-sm font-bold text-navy hover:underline" onClick={() => navigate('/dashboard')}>返回公布欄</button>
+      <button className="mb-5 text-sm font-bold text-navy hover:underline" onClick={() => navigate('/dashboard')}>返回塑訊公布欄</button>
       <article className="rounded-[28px] bg-white p-6 shadow-card lg:p-8">
         <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-start">
           <div>
@@ -912,7 +912,7 @@ function BulletinDetail({ id, navigate }) {
             <h1 className="mt-2 max-w-3xl text-4xl font-black leading-tight">{item.title}</h1>
             <p className="mt-3 font-semibold text-slate-500">{item.owner} · {item.date}</p>
           </div>
-          <span className="pill-dark w-fit">公布欄</span>
+          <span className="pill-dark w-fit">塑訊公布欄</span>
         </div>
         <p className="mt-6 rounded-card bg-mist p-5 text-lg font-semibold leading-8 text-slate-700">{item.summary}</p>
         <div className="mt-6 space-y-4 leading-8 text-slate-650">
@@ -936,7 +936,7 @@ function MentorDetail({ id, profile, setProfile, conversations, inviteMentor, se
   }
   return (
     <PageWrap>
-      <button className="mb-5 text-sm font-bold text-navy hover:underline" onClick={() => navigate('/dashboard')}>返回公布欄</button>
+      <button className="mb-5 text-sm font-bold text-navy hover:underline" onClick={() => navigate('/dashboard')}>返回塑訊公布欄</button>
       <section className="grid gap-6 lg:grid-cols-[.82fr_1.18fr]">
         <aside className="rounded-[28px] border border-line bg-white p-6 shadow-card">
           <h1 className="text-4xl font-black">{mentor.name}</h1>
@@ -987,7 +987,7 @@ function CommunitiesPage({ communities, setCommunities, profile, setProfile, nav
   return (
     <PageWrap>
       <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
-        <PageTitle eyebrow="Communities" title="主題社群" text="依專業工作、職涯經驗與生活興趣加入社群，讓知識整理、問題討論與同仁交流持續累積。" />
+        <PageTitle eyebrow="Communities" title="塑學社群" text="依專業工作、職涯經驗與生活興趣加入社群，讓知識整理、問題討論與同仁交流持續累積。" />
         <button className="btn-primary justify-center" onClick={() => setShowCreate(true)}>創建社群</button>
       </div>
       <div className="mb-6 mt-2 grid gap-3 rounded-card border border-line bg-white p-5 shadow-card md:grid-cols-[1fr_220px]">
@@ -1060,7 +1060,7 @@ function ChatPage({ conversations, activeChatId, setActiveChatId, sendChatMessag
 
   return (
     <PageWrap>
-      <PageTitle eyebrow="Chat" title="聊天室" text="搜尋同仁姓名或員工編號，發送交流邀請；對方接受後，就能在這裡延續一對一討論。" />
+      <PageTitle eyebrow="Chat" title="塑聊" text="搜尋同仁姓名或員工編號，發送交流邀請；對方接受後，就能在這裡延續一對一討論。" />
       <EmployeeInviteSearch conversations={conversations} onInvite={inviteMentor} setActiveChatId={setActiveChatId} />
       <IncomingInvites invites={incomingInvites} onAccept={acceptIncomingInvite} onDismiss={dismissIncomingInvite} />
       {activeConversation && activeMentor ? (
@@ -1193,7 +1193,7 @@ function ProfilePage({ profile }) {
 
   return (
     <PageWrap>
-      <PageTitle eyebrow="Employee Profile" title="我的檔案" text="此頁以公司匯入的員工資料為主，僅供平台識別與同仁確認使用；若資料有誤，請洽人資或系統管理單位更新。" />
+      <PageTitle eyebrow="Employee Profile" title="我的員工資料" text="此頁以公司匯入的員工資料為主，僅供平台識別與同仁確認使用；若資料有誤，請洽人資或系統管理單位更新。" />
       <div className="grid gap-6 lg:grid-cols-[.75fr_1.25fr]">
         <section className="rounded-[28px] bg-white p-6 shadow-card">
           <div className="rounded-card bg-mist p-5">
@@ -1244,10 +1244,10 @@ function RulesPage() {
   ]
   return (
     <PageWrap>
-      <PageTitle eyebrow="Guidelines" title="平台規範" text="讓交流保持開放、可信任，也讓每一位同仁都能安心提問、分享與參與社群。" />
+      <PageTitle eyebrow="Guidelines" title="交流守則" text="讓交流保持開放、可信任，也讓每一位同仁都能安心提問、分享與參與社群。" />
       <section className="rounded-[28px] bg-white p-6 shadow-card lg:p-8">
         <h2 className="text-3xl font-black">共同使用原則</h2>
-        <p className="mt-4 max-w-3xl leading-7 text-slate-600">緣來就塑你是企業內部交流平台，內容應聚焦於職涯、工作技能、社群共學與跨部門合作。平台資料僅作為交流參考，不應直接作為績效評價或私人用途。</p>
+        <p className="mt-4 max-w-3xl leading-7 text-slate-600">塑學圈是企業內部交流平台，內容應聚焦於職涯、工作技能、社群共學與跨部門合作。平台資料僅作為交流參考，不應直接作為績效評價或私人用途。</p>
         <div className="mt-6 grid gap-4 md:grid-cols-2">
           {rules.map((group) => (
             <article key={group.title} className="rounded-card bg-mist p-5">
@@ -1269,15 +1269,15 @@ function RulesPage() {
 
 function AppNav({ route, navigate, logout }) {
   const items = [
-    ['公布欄', '/dashboard'],
-    ['聊天室', '/chat'],
-    ['社群', '/communities'],
-    ['規範', '/rules'],
-    ['我的檔案', '/profile'],
+    ['塑訊公布欄', '/dashboard'],
+    ['塑聊', '/chat'],
+    ['塑學社群', '/communities'],
+    ['交流守則', '/rules'],
+    ['我的員工資料', '/profile'],
   ]
   return (
     <aside className="fixed left-5 top-5 z-40 hidden h-[calc(100vh-2.5rem)] w-60 flex-col rounded-[28px] bg-white p-5 shadow-soft lg:flex">
-      <button onClick={() => navigate('/dashboard')} className="mb-9 text-left text-2xl font-black text-navy">緣來就塑你</button>
+      <button onClick={() => navigate('/dashboard')} className="mb-9 text-left text-2xl font-black text-navy">塑學圈</button>
       <nav className="flex flex-1 flex-col gap-2">
         {items.map(([label, path]) => <button key={path} onClick={() => navigate(path)} className={`nav-item ${route === path || route.startsWith(path + '/') ? 'active' : ''}`}>{label}</button>)}
       </nav>
@@ -1288,11 +1288,11 @@ function AppNav({ route, navigate, logout }) {
 
 function MobileTabs({ route, navigate }) {
   const items = [
-    ['公布欄', '/dashboard'],
-    ['聊天', '/chat'],
+    ['塑訊', '/dashboard'],
+    ['塑聊', '/chat'],
     ['社群', '/communities'],
-    ['規範', '/rules'],
-    ['我的', '/profile'],
+    ['守則', '/rules'],
+    ['員工資料', '/profile'],
   ]
   return (
     <nav className="fixed inset-x-3 bottom-3 z-40 grid grid-cols-5 rounded-[22px] border border-line bg-white/95 p-2 shadow-soft backdrop-blur lg:hidden">
