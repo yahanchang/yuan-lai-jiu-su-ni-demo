@@ -334,10 +334,10 @@ const bulletinSeed = [
     title: '聊天室與社群首頁改版更新',
     date: '2026/07/23',
     owner: '平台管理小組',
-    summary: '本次更新將首頁調整為公布欄，並新增全公司聊天室、創建社群與平台規範頁，讓資訊發布與同仁交流更集中。',
+    summary: '本次更新將首頁調整為公布欄，並新增聊天室搜尋邀請、創建社群與平台規範頁，讓資訊發布與同仁交流更集中。',
     body: [
       '首頁已由推薦頁調整為全公司公布欄，集中呈現平台更新、重要公告與社群精選內容。',
-      '聊天室頁新增全公司公開交流大廳，適合提出問題、分享資源與尋找跨部門經驗；一對一邀請仍保留在聊天室頁下方。',
+      '聊天室頁調整為一對一交流入口，可搜尋員工姓名或員工編號並發送交流邀請。',
       '社群頁新增創建社群功能，社群分類維持工作技能、職涯、興趣三大類，方便後續整理與管理。',
       '新增平台規範頁，說明聊天室、社群與資料使用原則，讓交流更清楚也更安心。',
     ],
@@ -347,14 +347,14 @@ const bulletinSeed = [
   {
     id: 'b2',
     type: '功能說明',
-    title: '全公司聊天室使用方式更新',
+    title: '聊天室搜尋邀請功能更新',
     date: '2026/07/25',
     owner: '平台管理小組',
-    summary: '全公司聊天室適合公開請益、資源分享與社群入口推薦；涉及個資、機密或私人邀約的內容請改用一對一聊天室。',
+    summary: '聊天室新增員工搜尋入口，可用姓名、部門、職位或員工編號找到同仁並發送一對一交流邀請。',
     body: [
-      '全公司聊天室是公開交流空間，所有平台使用者都可能看見內容。',
-      '適合張貼的內容包含：工作工具請益、社群推薦、跨部門經驗詢問、公開資源分享。',
-      '不適合張貼的內容包含：企業機密、個人敏感資料、私人交易、商業推銷或未經核准的內部文件。',
+      '搜尋框支援輸入同仁姓名、員工編號、部門或職位。',
+      '找到同仁後可直接發送交流邀請，對方接受後會開啟一對一聊天室。',
+      '一對一聊天室仍須遵守平台規範，不得傳送企業機密、個人敏感資料或私人交易內容。',
     ],
     tags: ['聊天室', '使用說明', '資訊安全'],
     cta: '查看完整內文',
@@ -374,12 +374,6 @@ const bulletinSeed = [
     tags: ['職涯', '新人', '社群討論'],
     cta: '查看完整內文',
   },
-]
-
-const companyChatSeed = [
-  { id: 'company-1', author: '張庭安', meta: '人才發展部', text: '早安，今天公布欄更新了聊天室與社群功能說明，第一次使用的同仁可以先看完整公告。', time: '09:05' },
-  { id: 'company-2', author: '許哲維', meta: '資料平台部', text: '下午會在數位轉型社群分享 5 個自動化小案例，歡迎帶著自己部門的問題一起討論。', time: '09:28' },
-  { id: 'company-3', author: '塑寶', meta: '產品體驗部', text: '我想找有做過跨部門專案的人請益，尤其是需求整理和會議節奏，歡迎推薦社群或同仁。', time: '10:10' },
 ]
 
 const defaultProfile = {
@@ -459,7 +453,6 @@ function resetDemoStorageIfNeeded() {
     localStorage.setItem('yl_conversations', JSON.stringify([]))
     localStorage.setItem('yl_active_chat', JSON.stringify(''))
     localStorage.setItem('yl_incoming_invites', JSON.stringify(incomingInviteSeed))
-    localStorage.setItem('yl_company_chat', JSON.stringify(companyChatSeed))
     localStorage.setItem('yl_storage_version', demoStorageVersion)
   } catch {
     // localStorage can be unavailable in restricted browser modes.
@@ -481,6 +474,10 @@ function canShow(profile, key) {
   return profile.privacy?.[key] ?? true
 }
 
+function employeeCode(mentor) {
+  return `FP-${mentor.id.replace('m', '').padStart(4, '0')}`
+}
+
 function App() {
   const [route, setRoute] = useState(() => location.hash.replace('#', '') || '/')
   const [profile, setProfile] = useState(() => {
@@ -492,7 +489,6 @@ function App() {
   const [conversations, setConversations] = useState(() => storageGet('yl_conversations', []))
   const [activeChatId, setActiveChatId] = useState(() => storageGet('yl_active_chat', ''))
   const [incomingInvites, setIncomingInvites] = useState(() => storageGet('yl_incoming_invites', incomingInviteSeed))
-  const [companyChat, setCompanyChat] = useState(() => storageGet('yl_company_chat', companyChatSeed))
   const [toast, setToast] = useState('')
 
   useEffect(() => {
@@ -507,7 +503,6 @@ function App() {
   useEffect(() => localStorage.setItem('yl_conversations', JSON.stringify(conversations)), [conversations])
   useEffect(() => localStorage.setItem('yl_active_chat', JSON.stringify(activeChatId)), [activeChatId])
   useEffect(() => localStorage.setItem('yl_incoming_invites', JSON.stringify(incomingInvites)), [incomingInvites])
-  useEffect(() => localStorage.setItem('yl_company_chat', JSON.stringify(companyChat)), [companyChat])
 
   const navigate = (path) => {
     location.hash = path
@@ -566,22 +561,6 @@ function App() {
     }))
   }
 
-  const sendCompanyMessage = (text) => {
-    const cleanText = text.trim()
-    if (!cleanText) return
-    setCompanyChat((prev) => [
-      ...prev,
-      {
-        id: `company-${Date.now()}`,
-        author: profile.name,
-        meta: profile.department || profile.role,
-        text: cleanText,
-        time: '剛剛',
-      },
-    ])
-    notify('已送出到全公司聊天室。')
-  }
-
   const acceptIncomingInvite = (invite) => {
     const mentor = mentorSeed.find((item) => item.id === invite.mentorId)
     if (!mentor) return
@@ -626,7 +605,7 @@ function App() {
     navigate('/')
   }
 
-  const appState = { profile, setProfile, isAuthed, setIsAuthed, communities, setCommunities, conversations, activeChatId, setActiveChatId, incomingInvites, acceptIncomingInvite, dismissIncomingInvite, inviteMentor, sendChatMessage, companyChat, sendCompanyMessage, navigate, notify, logout }
+  const appState = { profile, setProfile, isAuthed, setIsAuthed, communities, setCommunities, conversations, activeChatId, setActiveChatId, incomingInvites, acceptIncomingInvite, dismissIncomingInvite, inviteMentor, sendChatMessage, navigate, notify, logout }
   const authedRoutes = ['/dashboard', '/mentors', '/chat', '/communities', '/rules', '/profile']
   const isBulletinDetail = route.startsWith('/bulletin/')
   const isMentorDetail = route.startsWith('/mentor/')
@@ -679,7 +658,7 @@ function Landing({ navigate }) {
             <p className="mb-5 inline-flex rounded-full border border-white/80 bg-white/70 px-4 py-2 text-sm font-semibold text-navy shadow-card">台塑企業員工交流社群平台</p>
             <h1 className="max-w-3xl text-5xl font-black leading-tight tracking-tight text-ink sm:text-6xl lg:text-7xl">緣來就塑你</h1>
             <p className="mt-4 max-w-3xl text-2xl font-black leading-tight text-ink sm:text-3xl">找到適合的人、加入有興趣的社群，讓知識交流與合作自然發生。</p>
-            <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-600">緣來就「塑」你透過公布欄、全公司聊天室、主題社群與個人檔案，協助員工跨越公司、部門、職位、世代與工作地點的限制，讓知識交流與合作自然發生。</p>
+            <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-600">緣來就「塑」你透過公布欄、聊天室、主題社群與個人檔案，協助員工跨越公司、部門、職位、世代與工作地點的限制，讓知識交流與合作自然發生。</p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <button onClick={() => navigate('/login')} className="btn-primary h-13 justify-center px-8 text-base">登入平台</button>
               <span className="flex items-center px-2 text-sm font-semibold text-slate-500">登入後再建立個人檔案</span>
@@ -696,10 +675,10 @@ function Landing({ navigate }) {
                 </div>
                 <p className="mt-8 text-2xl font-bold leading-snug">從一次交流開始，遇見新的職涯可能。</p>
                 <div className="mt-8 grid grid-cols-2 gap-3">
-                  {['公布欄', '全公司聊天室', '社群', '規範'].map((tag) => <span key={tag} className="pill">{tag}</span>)}
+                  {['公布欄', '聊天室', '社群', '規範'].map((tag) => <span key={tag} className="pill">{tag}</span>)}
                 </div>
               </div>
-              <div className="floating-note">登入平台 → 查看公布欄 → 進入全公司聊天室 → 加入或創建社群 → 延續請益與合作討論。</div>
+              <div className="floating-note">登入平台 → 查看公布欄 → 搜尋同仁並開啟聊天室 → 加入或創建社群 → 延續請益與合作討論。</div>
             </div>
           </div>
         </div>
@@ -711,7 +690,7 @@ function Landing({ navigate }) {
         </div>
         <div className="grid gap-5 md:grid-cols-4">
           <FeatureCard title="公布欄" text="集中呈現全公司公告、交流活動、社群精選與重要提醒。" />
-          <FeatureCard title="全公司聊天室" text="讓員工公開提問、分享資源、尋找跨部門經驗與社群入口。" />
+          <FeatureCard title="聊天室" text="搜尋同仁姓名或員工編號，發送交流邀請並延續一對一討論。" />
           <FeatureCard title="社群" text="依工作專業、職涯經驗與生活興趣集中交流，累積熱門問題與工作案例。" />
           <FeatureCard title="規範" text="清楚說明聊天室、社群與個人資料的使用原則，讓交流更安心。" />
         </div>
@@ -726,7 +705,7 @@ function Landing({ navigate }) {
             {[
               ['01', '建立個人檔案', '填寫專長、興趣、交流需求與可分享內容。'],
               ['02', '查看公布欄', '掌握全公司公告、活動與熱門社群動態。'],
-              ['03', '進入全公司聊天室', '公開提問、分享資源或尋找跨部門經驗。'],
+              ['03', '開啟聊天室', '搜尋同仁並發送交流邀請，延續一對一討論。'],
               ['04', '加入或創建社群', '沉澱熱門問題、工作案例與跨部門經驗。'],
             ].map(([step, title, text]) => (
               <article key={step} className="rounded-card border border-line bg-white p-5 shadow-card">
@@ -774,7 +753,7 @@ function Register({ setProfile, setIsAuthed, navigate, notify }) {
   }
 
   return (
-    <AuthLayout title="建立個人檔案" subtitle="先讓平台認識你的專長、興趣、交流需求與可分享經驗，再開始參與全公司聊天室與主題社群。">
+    <AuthLayout title="建立個人檔案" subtitle="先讓平台認識你的專長、興趣、交流需求與可分享經驗，再開始參與聊天室與主題社群。">
       <div className="mb-7 flex gap-2">
         <span className={`step-dot ${step === 1 ? 'active' : ''}`}>1 公司匯入資料</span>
         <span className={`step-dot ${step === 2 ? 'active' : ''}`}>2 配對偏好</span>
@@ -1075,14 +1054,14 @@ function CommunityDetail({ id, communities, setCommunities, profile, setProfile,
   )
 }
 
-function ChatPage({ conversations, activeChatId, setActiveChatId, sendChatMessage, incomingInvites, acceptIncomingInvite, dismissIncomingInvite, companyChat, sendCompanyMessage }) {
+function ChatPage({ conversations, activeChatId, setActiveChatId, sendChatMessage, incomingInvites, acceptIncomingInvite, dismissIncomingInvite, inviteMentor }) {
   const activeConversation = conversations.find((conversation) => conversation.mentorId === activeChatId) || conversations[0]
   const activeMentor = activeConversation ? mentorSeed.find((mentor) => mentor.id === activeConversation.mentorId) : null
 
   return (
     <PageWrap>
-      <PageTitle eyebrow="Company Chat" title="全公司聊天室" text="開放給全公司同仁的即時交流空間，適合提出問題、分享資源、尋找跨部門經驗與社群入口。" />
-      <CompanyChatPanel messages={companyChat} onSend={sendCompanyMessage} />
+      <PageTitle eyebrow="Chat" title="聊天室" text="搜尋同仁姓名或員工編號，發送交流邀請；對方接受後，就能在這裡延續一對一討論。" />
+      <EmployeeInviteSearch conversations={conversations} onInvite={inviteMentor} setActiveChatId={setActiveChatId} />
       <IncomingInvites invites={incomingInvites} onAccept={acceptIncomingInvite} onDismiss={dismissIncomingInvite} />
       {activeConversation && activeMentor ? (
         <section className="mt-6">
@@ -1101,52 +1080,64 @@ function ChatPage({ conversations, activeChatId, setActiveChatId, sendChatMessag
       <section className="mt-8 rounded-card bg-white p-5 shadow-card">
         <h2 className="text-xl font-black">聊天室使用原則</h2>
         <div className="mt-4 grid gap-3 md:grid-cols-3">
-          {['全公司聊天室適合公開請益與資源分享', '一對一聊天室適合延續具體交流', '不得商業推銷、私人交易或散播企業機密'].map((item) => <div key={item} className="rounded-card bg-mist p-4 font-bold text-navy">{item}</div>)}
+          {['先搜尋同仁並發送交流邀請', '一對一聊天室適合延續具體交流', '不得商業推銷、私人交易或散播企業機密'].map((item) => <div key={item} className="rounded-card bg-mist p-4 font-bold text-navy">{item}</div>)}
         </div>
       </section>
     </PageWrap>
   )
 }
 
-function CompanyChatPanel({ messages, onSend }) {
-  const [message, setMessage] = useState('')
-  const submit = () => {
-    if (!message.trim()) return
-    onSend(message)
-    setMessage('')
-  }
+function EmployeeInviteSearch({ conversations, onInvite, setActiveChatId }) {
+  const [query, setQuery] = useState('')
+  const cleanQuery = query.trim().toLowerCase()
+  const results = cleanQuery
+    ? mentorSeed.filter((mentor) => {
+      const searchable = `${employeeCode(mentor)} ${mentor.name} ${mentor.department} ${mentor.role} ${mentor.skills.join(' ')}`.toLowerCase()
+      return searchable.includes(cleanQuery)
+    })
+    : mentorSeed.slice(0, 4)
+
   return (
     <section className="rounded-[28px] border border-line bg-white p-5 shadow-card lg:p-6">
-      <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
-        <div>
-          <h2 className="text-2xl font-black">公開交流大廳</h2>
-          <p className="mt-2 text-slate-600">所有同仁都能看見，適合問問題、找資源、邀請大家加入社群討論。</p>
-        </div>
-        <span className="pill-dark w-fit">{messages.length} 則訊息</span>
+      <div>
+        <h2 className="text-2xl font-black">搜尋同仁並邀請交流</h2>
+        <p className="mt-2 text-slate-600">可輸入姓名、員工編號、部門或職位，找到想請益或交流的同仁。</p>
       </div>
-      <div className="mt-5 max-h-96 space-y-3 overflow-y-auto rounded-[22px] bg-mist p-4">
-        {messages.map((item) => (
-          <article key={item.id} className="rounded-[20px] bg-white p-4 shadow-sm">
-            <div className="flex flex-col justify-between gap-1 sm:flex-row sm:items-center">
-              <h3 className="font-black text-ink">{item.author}</h3>
-              <span className="text-xs font-bold text-slate-400">{item.time}</span>
-            </div>
-            <p className="mt-1 text-sm font-semibold text-slate-500">{item.meta}</p>
-            <p className="mt-3 leading-7 text-slate-700">{item.text}</p>
-          </article>
-        ))}
-      </div>
-      <div className="mt-4 flex flex-col gap-3 sm:flex-row">
-        <input
-          className="field mt-0"
-          value={message}
-          onChange={(event) => setMessage(event.target.value)}
-          onKeyDown={(event) => {
-            if (event.key === 'Enter') submit()
-          }}
-          placeholder="輸入想讓全公司同仁看見的問題、資源或交流邀請..."
-        />
-        <button className="btn-primary justify-center sm:min-w-28" onClick={submit}>送出</button>
+      <input
+        className="field mt-4"
+        value={query}
+        onChange={(event) => setQuery(event.target.value)}
+        placeholder="例如：林若涵、FP-0007、資料平台部、產品經理"
+      />
+      <div className="mt-4 grid gap-4 lg:grid-cols-2">
+        {results.length ? results.map((mentor) => {
+          const hasConversation = conversations.some((conversation) => conversation.mentorId === mentor.id)
+          return (
+            <article key={mentor.id} className="rounded-card bg-mist p-4">
+              <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-start">
+                <div>
+                  <p className="text-xs font-black uppercase tracking-[.16em] text-azure">{employeeCode(mentor)}</p>
+                  <h3 className="mt-1 text-xl font-black">{mentor.name}</h3>
+                  <p className="mt-1 text-sm font-semibold text-slate-500">{mentor.department} · {mentor.role}</p>
+                </div>
+                <span className="pill whitespace-nowrap">{mentor.skills[0]}</span>
+              </div>
+              <p className="mt-3 line-clamp-2 leading-7 text-slate-650">{mentor.intro}</p>
+              <button
+                className="btn-primary mt-4 w-full justify-center"
+                onClick={() => {
+                  if (hasConversation) {
+                    setActiveChatId(mentor.id)
+                    return
+                  }
+                  onInvite(mentor)
+                }}
+              >
+                {hasConversation ? '開啟聊天室' : '邀請交流'}
+              </button>
+            </article>
+          )
+        }) : <EmptyState title="找不到符合的同仁" text="請試試姓名、員工編號或部門關鍵字。" />}
       </div>
     </section>
   )
@@ -1279,7 +1270,7 @@ function RulesPage() {
     },
     {
       title: '聊天室使用',
-      items: ['全公司聊天室適合公開問題、資源分享與社群活動提醒。', '一對一聊天室適合延續邀請後的具體請益與合作討論。', '請避免張貼薪資、考績、健康、家庭或其他敏感個人資料。'],
+      items: ['聊天室需先搜尋同仁並發送交流邀請。', '一對一聊天室適合延續邀請後的具體請益與合作討論。', '請避免張貼薪資、考績、健康、家庭或其他敏感個人資料。'],
     },
     {
       title: '社群管理',
@@ -1318,7 +1309,7 @@ function RulesPage() {
 function AppNav({ route, navigate, logout }) {
   const items = [
     ['公布欄', '/dashboard'],
-    ['全公司聊天室', '/chat'],
+    ['聊天室', '/chat'],
     ['社群', '/communities'],
     ['規範', '/rules'],
     ['我的檔案', '/profile'],
