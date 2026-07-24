@@ -383,11 +383,12 @@ const defaultProfile = {
   age: '28',
   gender: '',
   company: '塑新控股',
-  division: '數位轉型事業部',
-  department: '產品體驗部',
-  role: '產品企劃',
-  seniority: '3',
+  division: '總管理處',
+  department: '人資組',
+  role: '人資管理師',
+  seniority: '5',
   location: '台北總部',
+  adminRole: 'hr',
   canMentor: false,
   seekingMentor: true,
   intro: '',
@@ -404,6 +405,29 @@ const defaultProfile = {
   favorites: [],
   joinedCommunities: ['c1', 'c4'],
 }
+
+const joinRequestSeed = [
+  {
+    id: 'jr-1',
+    communityId: 'c2',
+    requester: '黃冠廷',
+    department: '投資管理部',
+    role: '投資經理',
+    reason: '想加入理財交流社群，整理新鮮人常見理財問題給同仁參考。',
+    time: '今天 09:25',
+    status: '待審核',
+  },
+  {
+    id: 'jr-2',
+    communityId: 'c8',
+    requester: '許哲維',
+    department: '資料平台部',
+    role: '資料工程師',
+    reason: '希望分享自動化報表整理經驗，也想蒐集各部門的工具使用問題。',
+    time: '昨天 16:40',
+    status: '待審核',
+  },
+]
 
 const guidanceOptions = ['職涯發展', '專業技能', '跨部門交流', '領導管理', '工作生活平衡', '理財規劃', '研究所／進修', '其他']
 const mentorPrefOptions = ['同部門', '跨部門', '年資較深', '年齡相近', '共同興趣', '互補專長', '不限']
@@ -424,7 +448,7 @@ const incomingInviteSeed = [
     time: '昨天 16:15',
   },
 ]
-const demoStorageVersion = '2026-07-24-community-moderator-settings'
+const demoStorageVersion = '2026-07-24-hr-admin-console'
 
 function storageGet(key, fallback) {
   try {
@@ -453,6 +477,7 @@ function resetDemoStorageIfNeeded() {
     localStorage.setItem('yl_conversations', JSON.stringify([]))
     localStorage.setItem('yl_active_chat', JSON.stringify(''))
     localStorage.setItem('yl_incoming_invites', JSON.stringify(incomingInviteSeed))
+    localStorage.setItem('yl_join_requests', JSON.stringify(joinRequestSeed))
     localStorage.setItem('yl_storage_version', demoStorageVersion)
   } catch {
     // localStorage can be unavailable in restricted browser modes.
@@ -491,6 +516,10 @@ function communityJoinPolicyLabel(community) {
   return '自由加入'
 }
 
+function isHrAdmin(profile) {
+  return profile.adminRole === 'hr' || profile.department?.includes('人資') || profile.role?.includes('人資')
+}
+
 function canJoinCommunity(profile, community) {
   if (community.joinPolicy !== 'restricted') return true
   const restrictions = community.restrictions || {}
@@ -504,7 +533,7 @@ function canJoinCommunity(profile, community) {
   return true
 }
 
-function toggleCommunityMembership({ community, profile, setProfile, notify }) {
+function toggleCommunityMembership({ community, profile, setProfile, notify, setJoinRequests }) {
   const joined = profile.joinedCommunities.includes(community.id)
   if (joined) {
     setProfile((prev) => ({ ...prev, joinedCommunities: prev.joinedCommunities.filter((item) => item !== community.id) }))
@@ -512,6 +541,22 @@ function toggleCommunityMembership({ community, profile, setProfile, notify }) {
     return
   }
   if (community.joinPolicy === 'approval') {
+    setJoinRequests?.((prev) => {
+      if (prev.some((item) => item.communityId === community.id && item.requester === profile.name && item.status === '待審核')) return prev
+      return [
+        {
+          id: `jr-${Date.now()}`,
+          communityId: community.id,
+          requester: profile.name,
+          department: profile.department,
+          role: profile.role,
+          reason: `想加入「${community.name}」延伸討論與整理經驗。`,
+          time: '剛剛',
+          status: '待審核',
+        },
+        ...prev,
+      ]
+    })
     notify('已送出版主審核申請。')
     return
   }
@@ -542,6 +587,7 @@ function App() {
   const [conversations, setConversations] = useState(() => storageGet('yl_conversations', []))
   const [activeChatId, setActiveChatId] = useState(() => storageGet('yl_active_chat', ''))
   const [incomingInvites, setIncomingInvites] = useState(() => storageGet('yl_incoming_invites', incomingInviteSeed))
+  const [joinRequests, setJoinRequests] = useState(() => storageGet('yl_join_requests', joinRequestSeed))
   const [toast, setToast] = useState('')
 
   useEffect(() => {
@@ -556,6 +602,7 @@ function App() {
   useEffect(() => localStorage.setItem('yl_conversations', JSON.stringify(conversations)), [conversations])
   useEffect(() => localStorage.setItem('yl_active_chat', JSON.stringify(activeChatId)), [activeChatId])
   useEffect(() => localStorage.setItem('yl_incoming_invites', JSON.stringify(incomingInvites)), [incomingInvites])
+  useEffect(() => localStorage.setItem('yl_join_requests', JSON.stringify(joinRequests)), [joinRequests])
 
   const navigate = (path) => {
     location.hash = path
@@ -658,20 +705,25 @@ function App() {
     navigate('/')
   }
 
-  const appState = { profile, setProfile, isAuthed, setIsAuthed, communities, setCommunities, conversations, activeChatId, setActiveChatId, incomingInvites, acceptIncomingInvite, dismissIncomingInvite, inviteMentor, sendChatMessage, navigate, notify, logout }
+  const appState = { profile, setProfile, isAuthed, setIsAuthed, communities, setCommunities, conversations, activeChatId, setActiveChatId, incomingInvites, joinRequests, setJoinRequests, acceptIncomingInvite, dismissIncomingInvite, inviteMentor, sendChatMessage, navigate, notify, logout }
   const authedRoutes = ['/dashboard', '/mentors', '/chat', '/communities', '/rules', '/profile']
+  const adminRoutes = ['/admin', '/admin/communities', '/admin/requests', '/admin/content']
   const isBulletinDetail = route.startsWith('/bulletin/')
   const isMentorDetail = route.startsWith('/mentor/')
   const isCommunityDetail = route.startsWith('/community/')
-  const showShell = isAuthed && (authedRoutes.includes(route) || isBulletinDetail || isMentorDetail || isCommunityDetail)
+  const isAdminRoute = adminRoutes.includes(route)
+  const showShell = isAuthed && !isAdminRoute && (authedRoutes.includes(route) || isBulletinDetail || isMentorDetail || isCommunityDetail)
+  const showAdminShell = isAuthed && isAdminRoute && isHrAdmin(profile)
 
   return (
     <div className="min-h-screen bg-mist text-ink">
-      {showShell && <AppNav route={route} navigate={navigate} logout={logout} />}
-      <main className={showShell ? 'pb-24 pt-5 lg:pb-10 lg:pl-80 lg:pr-8' : ''}>
+      {showShell && <AppNav route={route} profile={profile} navigate={navigate} logout={logout} />}
+      {showAdminShell && <AdminNav route={route} navigate={navigate} logout={logout} />}
+      <main className={showShell || showAdminShell ? 'pb-24 pt-5 lg:pb-10 lg:pl-80 lg:pr-8' : ''}>
         <Router route={route} appState={appState} />
       </main>
       {showShell && <MobileTabs route={route} navigate={navigate} />}
+      {showAdminShell && <AdminMobileTabs route={route} navigate={navigate} />}
       {toast && <div className="fixed bottom-24 left-1/2 z-50 -translate-x-1/2 rounded-full bg-navy px-5 py-3 text-sm text-white shadow-soft lg:bottom-8">{toast}</div>}
     </div>
   )
@@ -681,6 +733,14 @@ function Router({ route, appState }) {
   if (route === '/') return <Landing {...appState} />
   if (route === '/register') return <Login {...appState} />
   if (route === '/login') return <Login {...appState} />
+  if (route === '/choose') return <RoleChoice {...appState} />
+  if (route.startsWith('/admin')) {
+    if (!isHrAdmin(appState.profile)) return <Dashboard {...appState} />
+    if (route === '/admin') return <AdminOverview {...appState} />
+    if (route === '/admin/communities') return <AdminCommunities {...appState} />
+    if (route === '/admin/requests') return <AdminRequests {...appState} />
+    if (route === '/admin/content') return <AdminContent {...appState} />
+  }
   if (route === '/onboarding') return <ProfileBuilder {...appState} />
   if (route === '/dashboard') return <Dashboard {...appState} />
   if (route.startsWith('/bulletin/')) return <BulletinDetail id={route.split('/').pop()} {...appState} />
@@ -791,7 +851,7 @@ function Register({ setProfile, setIsAuthed, navigate, notify }) {
     setProfile({ ...form, favorites: [], joinedCommunities: ['c1'] })
     setIsAuthed(true)
     notify('員工資料確認完成，歡迎來到台塑 Connect。')
-    navigate('/dashboard')
+    navigate(isHrAdmin(form) ? '/choose' : '/dashboard')
   }
 
   return (
@@ -828,8 +888,8 @@ function Login({ profile, setIsAuthed, navigate, notify }) {
       return
     }
     setIsAuthed(true)
-    notify('登入成功，先確認你的員工資料。')
-    navigate('/onboarding')
+    notify(isHrAdmin(profile) ? '登入成功，請選擇使用入口。' : '登入成功，先確認你的員工資料。')
+    navigate(isHrAdmin(profile) ? '/choose' : '/onboarding')
   }
   return (
     <AuthLayout title="登入平台" subtitle="使用企業帳號登入後，確認公司匯入的員工資料。">
@@ -841,6 +901,33 @@ function Login({ profile, setIsAuthed, navigate, notify }) {
         <p className="text-center text-sm font-semibold text-slate-500">登入後會進入員工資料確認流程。</p>
       </div>
     </AuthLayout>
+  )
+}
+
+function RoleChoice({ profile, navigate }) {
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-white via-mist to-skysoft px-5 py-8">
+      <div className="mx-auto max-w-5xl">
+        <h1 className="text-2xl font-black text-navy">台塑 Connect</h1>
+        <section className="mt-10 rounded-[32px] bg-white p-8 shadow-soft lg:p-10">
+          <p className="eyebrow">Welcome Back</p>
+          <h2 className="mt-3 text-4xl font-black text-ink">歡迎回來，{profile.name}</h2>
+          <p className="mt-4 max-w-2xl leading-7 text-slate-600">你目前是 {profile.division} · {profile.department} 的人資管理者，可以選擇使用員工平台，或進入後台查看社群營運與審核資訊。</p>
+          <div className="mt-8 grid gap-4 md:grid-cols-2">
+            <button onClick={() => navigate('/dashboard')} className="rounded-card border border-line bg-mist p-6 text-left transition hover:-translate-y-1 hover:bg-skysoft">
+              <p className="eyebrow">Employee Platform</p>
+              <h3 className="mt-3 text-2xl font-black text-ink">使用台塑 Connect</h3>
+              <p className="mt-3 leading-7 text-slate-600">以一般員工視角瀏覽公布欄、聊天室、學習社群與個人資料。</p>
+            </button>
+            <button onClick={() => navigate('/admin')} className="rounded-card bg-navy p-6 text-left text-white shadow-card transition hover:-translate-y-1">
+              <p className="text-xs font-black uppercase tracking-[.22em] text-white/60">Admin Console</p>
+              <h3 className="mt-3 text-2xl font-black">進入人資後台</h3>
+              <p className="mt-3 leading-7 text-white/75">查看所有社群內容、加入申請、熱門討論與平台營運狀態。</p>
+            </button>
+          </div>
+        </section>
+      </div>
+    </div>
   )
 }
 
@@ -984,7 +1071,7 @@ function MentorDetail({ id, profile, setProfile, conversations, inviteMentor, se
   )
 }
 
-function CommunitiesPage({ communities, setCommunities, profile, setProfile, navigate, notify }) {
+function CommunitiesPage({ communities, setCommunities, profile, setProfile, setJoinRequests, navigate, notify }) {
   const [query, setQuery] = useState('')
   const [category, setCategory] = useState('')
   const [showCreate, setShowCreate] = useState(false)
@@ -1002,21 +1089,22 @@ function CommunitiesPage({ communities, setCommunities, profile, setProfile, nav
       </div>
       {filtered.length ? (
         <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-          {filtered.map((community) => <CommunityCard key={community.id} community={community} navigate={navigate} profile={profile} setProfile={setProfile} notify={notify} />)}
+          {filtered.map((community) => <CommunityCard key={community.id} community={community} navigate={navigate} profile={profile} setProfile={setProfile} setJoinRequests={setJoinRequests} notify={notify} />)}
         </div>
       ) : <EmptyState title="還沒有符合的社群" text="試著換一個關鍵字，或調整主題分類再看看。" />}
-      {showCreate && <CreateCommunityModal onClose={() => setShowCreate(false)} setCommunities={setCommunities} setProfile={setProfile} notify={notify} />}
+      {showCreate && <CreateCommunityModal profile={profile} onClose={() => setShowCreate(false)} setCommunities={setCommunities} setProfile={setProfile} notify={notify} />}
     </PageWrap>
   )
 }
 
-function CommunityDetail({ id, communities, setCommunities, profile, setProfile, navigate, notify }) {
+function CommunityDetail({ id, communities, setCommunities, profile, setProfile, setJoinRequests, navigate, notify }) {
   const community = communities.find((item) => item.id === id) || communities[0]
   const [content, setContent] = useState('')
   const joined = profile.joinedCommunities.includes(community.id)
-  const postsVisible = joined || community.visibility !== 'members'
+  const hrAdmin = isHrAdmin(profile)
+  const postsVisible = hrAdmin || joined || community.visibility !== 'members'
   const toggleJoin = () => {
-    toggleCommunityMembership({ community, profile, setProfile, notify })
+    toggleCommunityMembership({ community, profile, setProfile, notify, setJoinRequests })
   }
   const publish = () => {
     if (!joined) {
@@ -1085,6 +1173,7 @@ function CommunityDetail({ id, communities, setCommunities, profile, setProfile,
           <div className="space-y-4">
             {community.posts.map((post) => <PostCard key={post.id} post={post} canComment={joined} />)}
           </div>
+          {hrAdmin && !joined && <p className="mt-4 rounded-card bg-white p-4 text-sm font-semibold text-slate-500 shadow-card">人資後台權限：你可查看此社群貼文，但仍需加入社群才可用員工身份留言。</p>}
         </section>
       ) : (
         <EmptyState title="貼文內容限成員查看" text="這個社群由版主設定為加入後才能查看貼文，加入或通過審核後即可閱讀完整內容。" />
@@ -1306,7 +1395,167 @@ function RulesPage() {
   )
 }
 
-function AppNav({ route, navigate, logout }) {
+function AdminOverview({ profile, communities, joinRequests, navigate }) {
+  const allPosts = communities.flatMap((community) => community.posts.map((post) => ({ ...post, communityName: community.name })))
+  const pendingRequests = joinRequests.filter((request) => request.status === '待審核')
+  const memberOnlyCommunities = communities.filter((community) => community.visibility === 'members')
+  return (
+    <PageWrap>
+      <PageTitle eyebrow="HR Admin" title="台塑 Connect｜人資後台" text={`${profile.department} 可查看所有社群內容與營運狀態，協助平台維持知識交流品質。`} />
+      <div className="grid gap-4 md:grid-cols-4">
+        <Info label="總社群數" value={`${communities.length} 個`} />
+        <Info label="總貼文數" value={`${allPosts.length} 則`} />
+        <Info label="待審加入申請" value={`${pendingRequests.length} 件`} />
+        <Info label="成員可見社群" value={`${memberOnlyCommunities.length} 個`} />
+      </div>
+      <section className="mt-6 grid gap-5 lg:grid-cols-[1.1fr_.9fr]">
+        <article className="rounded-card border border-line bg-white p-5 shadow-card">
+          <SectionHeader title="需要人資注意" />
+          <div className="space-y-3">
+            {pendingRequests.map((request) => <AdminRequestRow key={request.id} request={request} communities={communities} compact />)}
+            {!pendingRequests.length && <EmptyState title="目前沒有待審申請" text="加入申請處理完畢，平台狀態很乾淨。" />}
+          </div>
+          <button className="btn-secondary mt-4 w-full justify-center" onClick={() => navigate('/admin/requests')}>查看加入申請</button>
+        </article>
+        <article className="rounded-card border border-line bg-white p-5 shadow-card">
+          <SectionHeader title="熱門內容觀察" />
+          <div className="space-y-3">
+            {allPosts.sort((a, b) => (b.saves || b.likes || 0) - (a.saves || a.likes || 0)).slice(0, 3).map((post) => (
+              <div key={post.id} className="rounded-card bg-mist p-4">
+                <p className="text-sm font-black text-navy">{post.communityName}</p>
+                <p className="mt-2 line-clamp-2 leading-7 text-slate-650">{post.content}</p>
+                <p className="mt-2 text-xs font-bold text-slate-500">收藏 {(post.saves ?? post.likes ?? 0)} · 留言 {post.comments ?? 0}</p>
+              </div>
+            ))}
+          </div>
+          <button className="btn-secondary mt-4 w-full justify-center" onClick={() => navigate('/admin/content')}>查看內容觀察</button>
+        </article>
+      </section>
+    </PageWrap>
+  )
+}
+
+function AdminCommunities({ communities, profile, navigate }) {
+  return (
+    <PageWrap>
+      <PageTitle eyebrow="Community Admin" title="社群管理" text="人資組可查看所有社群與貼文可見性設定；社群由員工創建後即成立，建立者自動成為版主。" />
+      <div className="grid gap-4">
+        {communities.map((community) => (
+          <article key={community.id} className="rounded-card border border-line bg-white p-5 shadow-card">
+            <div className="flex flex-col justify-between gap-4 lg:flex-row lg:items-start">
+              <div>
+                <p className="text-sm font-bold text-azure">{community.category}</p>
+                <h2 className="mt-1 text-2xl font-black">{community.name}</h2>
+                <p className="mt-3 max-w-3xl leading-7 text-slate-600">{community.intro}</p>
+                <div className="mt-4 flex flex-wrap gap-2">
+                  <span className="pill-dark">{community.members} 人</span>
+                  <span className="pill">版主：{community.owner || '平台管理小組'}</span>
+                  <span className="pill">{communityVisibilityLabel(community)}</span>
+                  <span className="pill">{communityJoinPolicyLabel(community)}</span>
+                </div>
+              </div>
+              <button className="btn-secondary justify-center" onClick={() => navigate(`/community/${community.id}`)}>以人資查看</button>
+            </div>
+            {community.visibility === 'members' && isHrAdmin(profile) && <p className="mt-4 rounded-card bg-mist p-4 text-sm font-semibold text-slate-500">此社群為成員可見，但人資後台仍可查看內容以利平台管理。</p>}
+          </article>
+        ))}
+      </div>
+    </PageWrap>
+  )
+}
+
+function AdminRequests({ joinRequests, setJoinRequests, communities, notify }) {
+  const pendingRequests = joinRequests.filter((request) => request.status === '待審核')
+  const resolvedRequests = joinRequests.filter((request) => request.status !== '待審核')
+  const updateRequest = (id, status) => {
+    setJoinRequests((prev) => prev.map((request) => request.id === id ? { ...request, status } : request))
+    notify(status === '已核准' ? '已核准加入申請。' : '已退回加入申請。')
+  }
+  return (
+    <PageWrap>
+      <PageTitle eyebrow="Join Requests" title="加入申請" text="只處理版主設定為人工審核的加入申請；社群創建本身不需要審核。" />
+      <section className="rounded-card border border-line bg-white p-5 shadow-card">
+        <SectionHeader title="待審核" />
+        <div className="space-y-3">
+          {pendingRequests.map((request) => (
+            <AdminRequestRow key={request.id} request={request} communities={communities} onApprove={() => updateRequest(request.id, '已核准')} onReject={() => updateRequest(request.id, '已退回')} />
+          ))}
+          {!pendingRequests.length && <EmptyState title="沒有待審核申請" text="目前沒有需要人資處理的加入申請。" />}
+        </div>
+      </section>
+      {resolvedRequests.length > 0 && (
+        <section className="mt-6 rounded-card border border-line bg-white p-5 shadow-card">
+          <SectionHeader title="已處理紀錄" />
+          <div className="space-y-3">
+            {resolvedRequests.map((request) => <AdminRequestRow key={request.id} request={request} communities={communities} compact />)}
+          </div>
+        </section>
+      )}
+    </PageWrap>
+  )
+}
+
+function AdminContent({ communities }) {
+  const allPosts = communities.flatMap((community) => community.posts.map((post) => ({ ...post, communityName: community.name, category: community.category })))
+  return (
+    <PageWrap>
+      <PageTitle eyebrow="Content Monitor" title="內容觀察" text="觀察熱門貼文、常見問題方向與高收藏內容，協助人資判斷哪些知識值得整理成公告或 FAQ。" />
+      <div className="grid gap-5 lg:grid-cols-[.8fr_1.2fr]">
+        <section className="rounded-card border border-line bg-white p-5 shadow-card">
+          <SectionHeader title="常見議題" />
+          <div className="grid gap-3">
+            {['新人找窗口', '跨部門需求整理', '自動化報表', '工具使用流程'].map((topic, index) => (
+              <div key={topic} className="rounded-card bg-mist p-4">
+                <p className="text-2xl font-black text-navy">{index + 1}</p>
+                <p className="mt-1 font-black">{topic}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+        <section className="rounded-card border border-line bg-white p-5 shadow-card">
+          <SectionHeader title="高收藏貼文" />
+          <div className="space-y-3">
+            {allPosts.sort((a, b) => (b.saves || b.likes || 0) - (a.saves || a.likes || 0)).slice(0, 6).map((post) => (
+              <article key={post.id} className="rounded-card bg-mist p-4">
+                <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-start">
+                  <div>
+                    <p className="text-sm font-black text-navy">{post.communityName} · {post.category}</p>
+                    <p className="mt-2 leading-7 text-slate-650">{post.content}</p>
+                  </div>
+                  <span className="pill-dark whitespace-nowrap">收藏 {post.saves ?? post.likes ?? 0}</span>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+      </div>
+    </PageWrap>
+  )
+}
+
+function AdminRequestRow({ request, communities, onApprove, onReject, compact = false }) {
+  const community = communities.find((item) => item.id === request.communityId)
+  return (
+    <article className="rounded-card bg-mist p-4">
+      <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-start">
+        <div>
+          <h3 className="font-black text-ink">{request.requester} 申請加入 {community?.name || '社群'}</h3>
+          <p className="mt-1 text-sm font-semibold text-slate-500">{request.department} · {request.role} · {request.time}</p>
+        </div>
+        <span className={request.status === '待審核' ? 'pill-dark' : 'pill'}>{request.status}</span>
+      </div>
+      {!compact && <p className="mt-3 leading-7 text-slate-650">{request.reason}</p>}
+      {onApprove && onReject && (
+        <div className="mt-4 grid gap-2 sm:grid-cols-2">
+          <button className="btn-primary justify-center" onClick={onApprove}>核准加入</button>
+          <button className="btn-secondary justify-center" onClick={onReject}>退回申請</button>
+        </div>
+      )}
+    </article>
+  )
+}
+
+function AppNav({ route, profile, navigate, logout }) {
   const items = [
     ['Connect News', '公告與常見問題', '/dashboard'],
     ['Connect Chat', '一對一討論', '/chat'],
@@ -1328,6 +1577,37 @@ function AppNav({ route, navigate, logout }) {
           )
         })}
       </nav>
+      {isHrAdmin(profile) && <button onClick={() => navigate('/admin')} className="nav-item text-left">進入人資後台</button>}
+      <button onClick={logout} className="nav-item text-left">登出</button>
+    </aside>
+  )
+}
+
+function AdminNav({ route, navigate, logout }) {
+  const items = [
+    ['Admin Overview', '後台總覽', '/admin'],
+    ['Communities', '社群管理', '/admin/communities'],
+    ['Requests', '加入申請', '/admin/requests'],
+    ['Content Monitor', '內容觀察', '/admin/content'],
+  ]
+  return (
+    <aside className="fixed left-5 top-5 z-40 hidden h-[calc(100vh-2.5rem)] w-72 flex-col rounded-[28px] bg-white p-5 shadow-soft lg:flex">
+      <button onClick={() => navigate('/admin')} className="mb-7 text-left">
+        <span className="block text-2xl font-black text-navy">HR Console</span>
+        <span className="mt-1 block text-sm font-bold text-slate-500">台塑 Connect 後台</span>
+      </button>
+      <nav className="flex flex-1 flex-col gap-2">
+        {items.map(([english, chinese, path]) => {
+          const active = route === path
+          return (
+            <button key={path} onClick={() => navigate(path)} className={`nav-item items-start text-left ${active ? 'active' : ''}`}>
+              <span className="block text-base font-black">{english}</span>
+              <span className={`mt-1 block text-xs font-bold ${active ? 'text-navy/70' : 'text-slate-500'}`}>{chinese}</span>
+            </button>
+          )
+        })}
+      </nav>
+      <button onClick={() => navigate('/dashboard')} className="nav-item text-left">回員工平台</button>
       <button onClick={logout} className="nav-item text-left">登出</button>
     </aside>
   )
@@ -1344,6 +1624,21 @@ function MobileTabs({ route, navigate }) {
   return (
     <nav className="fixed inset-x-3 bottom-3 z-40 grid grid-cols-5 rounded-[22px] border border-line bg-white/95 p-2 shadow-soft backdrop-blur lg:hidden">
       {items.map(([label, path]) => <button key={path} onClick={() => navigate(path)} className={`rounded-2xl px-2 py-3 text-sm font-bold ${route === path || route.startsWith(path + '/') ? 'bg-skysoft text-navy' : 'text-slate-500'}`}>{label}</button>)}
+    </nav>
+  )
+}
+
+function AdminMobileTabs({ route, navigate }) {
+  const items = [
+    ['總覽', '/admin'],
+    ['社群', '/admin/communities'],
+    ['申請', '/admin/requests'],
+    ['內容', '/admin/content'],
+    ['平台', '/dashboard'],
+  ]
+  return (
+    <nav className="fixed inset-x-3 bottom-3 z-40 grid grid-cols-5 rounded-[22px] border border-line bg-white/95 p-2 shadow-soft backdrop-blur lg:hidden">
+      {items.map(([label, path]) => <button key={path} onClick={() => navigate(path)} className={`rounded-2xl px-2 py-3 text-sm font-bold ${route === path ? 'bg-skysoft text-navy' : 'text-slate-500'}`}>{label}</button>)}
     </nav>
   )
 }
@@ -1379,7 +1674,7 @@ function MentorCard({ mentor, profile, setProfile, navigate, notify, inviteMento
   )
 }
 
-function CreateCommunityModal({ onClose, setCommunities, setProfile, notify }) {
+function CreateCommunityModal({ profile, onClose, setCommunities, setProfile, notify }) {
   const [form, setForm] = useState({
     name: '',
     intro: '',
@@ -1405,7 +1700,7 @@ function CreateCommunityModal({ onClose, setCommunities, setProfile, notify }) {
       intro: form.intro.trim(),
       members: 1,
       tags: splitText(form.tags).length ? splitText(form.tags) : [form.category],
-      owner: '塑寶',
+      owner: profile.name,
       visibility: form.visibility,
       joinPolicy: form.joinPolicy,
       restrictions: {
@@ -1416,8 +1711,8 @@ function CreateCommunityModal({ onClose, setCommunities, setProfile, notify }) {
       posts: [
         {
           id: `p${Date.now()}`,
-          author: '塑寶',
-          meta: '社群建立者',
+          author: profile.name,
+          meta: `${profile.department} · 社群版主`,
           time: '剛剛',
           content: `歡迎加入 ${form.name.trim()}，可以先分享一個你想討論的問題或經驗。`,
           likes: 0,
@@ -1555,11 +1850,11 @@ function ChatPanel({ mentor, conversation, conversations = [], setActiveChatId, 
   )
 }
 
-function CommunityCard({ community, profile, setProfile, navigate, notify, horizontal = false }) {
+function CommunityCard({ community, profile, setProfile, setJoinRequests, navigate, notify, horizontal = false }) {
   const joined = profile.joinedCommunities.includes(community.id)
   const toggleJoin = (event) => {
     event.stopPropagation()
-    toggleCommunityMembership({ community, profile, setProfile, notify })
+    toggleCommunityMembership({ community, profile, setProfile, notify, setJoinRequests })
   }
   return (
     <article className={`rounded-card border border-line bg-white p-5 shadow-card transition hover:-translate-y-1 hover:shadow-soft ${horizontal ? 'lg:p-5' : ''}`}>
