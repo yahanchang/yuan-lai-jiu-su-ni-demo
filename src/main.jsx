@@ -21,8 +21,8 @@ const mentorSeed = [
     intro: '擅長把模糊需求變成可落地的產品方向，也喜歡陪新人梳理職涯選擇。',
     canMentor: true,
     match: 96,
-    availability: '週二下午、週五午餐',
-    methods: ['線上', '午餐交流'],
+    availability: '週二下午、週五上午',
+    methods: ['線上', '文字訊息'],
     highlights: ['帶領內部平台從 0 到 1', '跨三個事業部推動數位流程改造'],
     experiences: ['產品 Roadmap 規劃', '利害關係人溝通', '從工程轉產品的路徑'],
   },
@@ -84,16 +84,16 @@ const mentorSeed = [
     seniority: 5,
     location: '台北總部',
     avatar: 'TA',
-    skills: ['職涯諮詢', '學習設計', '活動企劃'],
+    skills: ['職涯諮詢', '學習設計', '知識整理'],
     interests: ['音樂祭', '桌遊', '寫作'],
     topics: ['職涯發展', '工作生活平衡', '跨部門交流'],
     intro: '最喜歡把人與人連起來，讓每一次交流都變成新的可能。',
     canMentor: true,
     match: 88,
-    availability: '週二午餐、週四晚間',
-    methods: ['午餐交流', '文字訊息'],
+    availability: '週二下午、週四晚間',
+    methods: ['線上', '文字訊息'],
     highlights: ['設計新人 Onboarding Journey', '策劃內部學習社群'],
-    experiences: ['自我探索工具', '職涯訪談', '活動設計'],
+    experiences: ['自我探索工具', '職涯訪談', '問題整理'],
   },
   {
     id: 'm5',
@@ -113,8 +113,8 @@ const mentorSeed = [
     intro: '用簡單的語言聊財務，幫你建立長期且安心的規劃方式。',
     canMentor: true,
     match: 86,
-    availability: '週三午餐、週五上午',
-    methods: ['線上', '午餐交流'],
+    availability: '週三下午、週五上午',
+    methods: ['線上', '文字訊息'],
     highlights: ['參與海外投資案評估', '內部財務課程講師'],
     experiences: ['個人理財入門', '財務模型', '投資職涯'],
   },
@@ -136,7 +136,7 @@ const mentorSeed = [
     intro: '喜歡用清楚又有溫度的方式，讓複雜的企業故事被看見。',
     canMentor: true,
     match: 84,
-    availability: '週一下午、週四午餐',
+    availability: '週一下午、週四上午',
     methods: ['實體', '文字訊息'],
     highlights: ['品牌識別更新專案', '年度企業形象影片企劃'],
     experiences: ['內容策略', '品牌轉型', '跨供應商協作'],
@@ -205,8 +205,8 @@ const mentorSeed = [
     intro: '剛走過新人迷惘期，知道那種卡住的感覺，也願意一起拆解。',
     canMentor: true,
     match: 78,
-    availability: '週一午餐、週三晚間',
-    methods: ['文字訊息', '午餐交流'],
+    availability: '週一下午、週三晚間',
+    methods: ['文字訊息', '線上'],
     highlights: ['新人代表分享講者', '跨廠採購流程改善'],
     experiences: ['新人適應', '向上溝通', '採購入門'],
   },
@@ -228,7 +228,7 @@ const mentorSeed = [
     intro: '擅長從客戶視角反推策略，協助夥伴建立影響力與表達力。',
     canMentor: true,
     match: 76,
-    availability: '週二晚間、週五午餐',
+    availability: '週二晚間、週五下午',
     methods: ['線上', '實體'],
     highlights: ['建立客戶成功方法論', '帶領業務與產品共同成長'],
     experiences: ['商務簡報', '客戶溝通', '管理職轉換'],
@@ -240,56 +240,56 @@ const communitySeed = [
     id: 'c1',
     name: '新人職涯探索社群',
     category: '職涯',
-    intro: '一起把第一份工作裡的疑問攤開來聊，把新人常見問題整理成可以共享的經驗。',
+    intro: '把新人常遇到的問題問出來，也把適應公司、理解流程與找資源的方法留下來。',
     members: 238,
-    tags: ['新人', '職涯探索', '跨部門'],
+    tags: ['新人', '職涯探索', '問題解決'],
     posts: [
-      { id: 'p1', author: '張庭安', meta: '人才發展部', time: '今天 10:20', content: '你最近在工作裡最想突破的是什麼？歡迎用一句話留言，我們週五午餐交流會一起聊。', likes: 34, comments: 12 },
-      { id: 'p2', author: '周明翰', meta: '採購專員', time: '昨天 18:05', content: '新人期最有幫助的是把問題整理出來，再找相關部門或社群一起討論。', likes: 28, comments: 8 },
+      { id: 'p1', type: '發問', author: '張庭安', meta: '人才發展部', time: '今天 10:20', content: '新人剛進公司時，最常卡住的是「不知道要問誰」。大家通常怎麼判斷問題該問主管、同部門同事，還是跨部門窗口？', saves: 34, comments: 12, solved: true },
+      { id: 'p2', type: '經驗分享', author: '周明翰', meta: '採購專員', time: '昨天 18:05', content: '我把新人期常問的問題整理成一份「前 30 天問題清單」，包含系統權限、流程窗口、常用表單位置，給剛報到的同仁參考。', saves: 28, comments: 8 },
     ],
   },
   {
     id: 'c2',
     name: '理財交流社群',
     category: '興趣',
-    intro: '用簡單、長期、可持續的方式討論理財，不追求一夜致富，只追求更安心的選擇。',
+    intro: '用簡單、長期、可持續的方式整理理財問題與使用經驗，不追求一夜致富，只追求更安心的選擇。',
     members: 186,
     tags: ['理財規劃', '投資', '生活品質'],
     posts: [
-      { id: 'p3', author: '黃冠廷', meta: '投資管理部', time: '今天 09:12', content: '本週分享主題：新鮮人如何建立第一版現金流表。會附上簡單模板。', likes: 46, comments: 15 },
+      { id: 'p3', type: '經驗分享', author: '黃冠廷', meta: '投資管理部', time: '今天 09:12', content: '分享我自己用的第一版現金流表：先追固定支出、彈性支出、儲蓄比例三欄就好，不用一開始就做得太複雜。', saves: 46, comments: 15 },
     ],
   },
   {
     id: 'c3',
     name: '專案管理社群',
     category: '工作技能',
-    intro: '分享會議、時程、風險與跨部門協作的實戰方法，讓專案不只靠意志力推動。',
+    intro: '分享會議、時程、風險與跨部門協作的實戰做法，讓專案問題可以被拆解、被回覆、被留下來。',
     members: 312,
     tags: ['專案管理', '溝通', 'PM'],
     posts: [
-      { id: 'p4', author: '林若涵', meta: '產品策略部', time: '週一 14:20', content: '推薦大家在專案啟動前先寫一頁 Project Brief，能少掉很多後面的誤會。', likes: 63, comments: 21 },
+      { id: 'p4', type: '經驗分享', author: '林若涵', meta: '產品策略部', time: '週一 14:20', content: '推薦大家在專案啟動前先寫一頁 Project Brief，包含目標、範圍、決策者與風險，能少掉很多後面的誤會。', saves: 63, comments: 21 },
     ],
   },
   {
     id: 'c4',
     name: '跨部門交流社群',
     category: '職涯',
-    intro: '讓經驗不只停留在部門裡，而是流動成彼此的力量。',
+    intro: '把跨部門合作中的問題、窗口經驗與溝通方式整理起來，讓資訊不只停留在單一部門。',
     members: 421,
     tags: ['跨部門', '交流', '組織理解'],
     posts: [
-      { id: 'p5', author: '陳柏宇', meta: '智慧製造部', time: '週二 11:30', content: '這週開放製造現場導覽名額 12 位，歡迎想了解供應鏈與製程的夥伴報名。', likes: 71, comments: 26 },
+      { id: 'p5', type: '發問', author: '陳柏宇', meta: '智慧製造部', time: '週二 11:30', content: '想請問跨部門專案在需求還不明確時，大家會先用什麼格式整理問題，才不會讓對方覺得太零散？', saves: 71, comments: 26 },
     ],
   },
   {
     id: 'c5',
     name: '女性成長社群',
     category: '職涯',
-    intro: '討論職涯、領導、生活與自我照顧，在工作裡長出自己的節奏。',
+    intro: '討論職涯、領導與工作節奏，把不同階段的實務經驗留下來給後續同仁參考。',
     members: 204,
     tags: ['女性成長', '領導', '工作生活平衡'],
     posts: [
-      { id: 'p6', author: '劉怡君', meta: '法遵長', time: '週三 16:40', content: '下次聚會想聊：如何在高壓職務裡維持界線感。歡迎提出你想問的問題。', likes: 58, comments: 18 },
+      { id: 'p6', type: '發問', author: '劉怡君', meta: '法遵長', time: '週三 16:40', content: '在高壓職務裡，大家如何設定工作界線，又不影響跨部門協作的回覆效率？', saves: 58, comments: 18 },
     ],
   },
   {
@@ -300,7 +300,7 @@ const communitySeed = [
     members: 149,
     tags: ['研究所', '進修', '自學'],
     posts: [
-      { id: 'p7', author: '吳品萱', meta: 'ESG 策略部', time: '週四 20:10', content: '在職研究所最難的是時間配置，分享我當時的每週讀書節奏給大家參考。', likes: 37, comments: 11 },
+      { id: 'p7', type: '經驗分享', author: '吳品萱', meta: 'ESG 策略部', time: '週四 20:10', content: '在職研究所最難的是時間配置，我整理了當時每週讀書節奏與請假安排，給正在評估進修的同仁參考。', saves: 37, comments: 11 },
     ],
   },
   {
@@ -311,7 +311,7 @@ const communitySeed = [
     members: 173,
     tags: ['ESG', '永續', '企業責任'],
     posts: [
-      { id: 'p8', author: '吳品萱', meta: '永續專案主任', time: '昨天 12:15', content: '下週會整理一份初學者 ESG 字彙包，歡迎補充你常看到但不確定意思的詞。', likes: 42, comments: 14 },
+      { id: 'p8', type: '發問', author: '吳品萱', meta: '永續專案主任', time: '昨天 12:15', content: '整理 ESG 報告時常看到很多縮寫，大家有沒有推薦的內部或外部字彙表可以參考？', saves: 42, comments: 14 },
     ],
   },
   {
@@ -322,7 +322,7 @@ const communitySeed = [
     members: 267,
     tags: ['數位轉型', 'AI', '自動化'],
     posts: [
-      { id: 'p9', author: '許哲維', meta: '資料平台部', time: '今天 08:45', content: '整理了 5 個部門可先嘗試的自動化場景，下午會放在社群檔案區。', likes: 54, comments: 17 },
+      { id: 'p9', type: '經驗分享', author: '許哲維', meta: '資料平台部', time: '今天 08:45', content: '整理了 5 個部門可以先嘗試的自動化場景：報表彙整、資料清理、通知寄送、表單檢核、文件命名。', saves: 54, comments: 17 },
     ],
   },
 ]
@@ -331,47 +331,47 @@ const bulletinSeed = [
   {
     id: 'b1',
     type: '系統更新',
-    title: '聊天室與社群首頁改版更新',
+    title: '塑學圈定位更新：實名發問與經驗沉澱',
     date: '2026/07/23',
     owner: '平台管理小組',
-    summary: '本次更新將首頁調整為塑訊公布欄，並新增聊天室搜尋邀請、創建社群與交流守則頁，讓資訊發布與同仁交流更集中。',
+    summary: '塑學圈調整為企業內部實名學習交流平台，聚焦發問、回覆、收藏與經驗分享，讓問題與解法可以被後續同仁查找。',
     body: [
-      '首頁已調整為塑訊公布欄，集中呈現平台更新、重要公告與社群精選內容。',
-      '聊天室頁調整為一對一交流入口，可搜尋員工姓名或員工編號並發送交流邀請。',
-      '社群頁新增創建社群功能，社群分類維持工作技能、職涯、興趣三大類，方便後續整理與管理。',
-      '新增交流守則頁，說明聊天室、社群與資料使用原則，讓交流更清楚也更安心。',
+      '平台採公司帳號實名制，發文、留言與聊天室都會顯示公司匯入的姓名與部門職位。',
+      '社群貼文先保留兩種最簡單的類型：發問與經驗分享，方便上線初期降低使用門檻。',
+      '聊天室作為延續討論的空間，可示意支援文字、圖片、檔案與連結分享。',
+      '塑訊公布欄暫時只放系統更新與常見問題，避免資訊過度分散。',
     ],
-    tags: ['改版更新', '聊天室', '社群'],
+    tags: ['實名制', '發問', '經驗分享'],
     cta: '查看完整內文',
   },
   {
     id: 'b2',
-    type: '功能說明',
-    title: '聊天室搜尋邀請功能更新',
+    type: '常見問題',
+    title: '社群發文要選哪一種？',
     date: '2026/07/25',
     owner: '平台管理小組',
-    summary: '聊天室新增員工搜尋入口，可用姓名、部門、職位或員工編號找到同仁並發送一對一交流邀請。',
+    summary: '初版只保留「發問」與「經驗分享」兩種貼文類型：遇到問題就發問，用過的方法就分享。',
     body: [
-      '搜尋框支援輸入同仁姓名、員工編號、部門或職位。',
-      '找到同仁後可直接發送交流邀請，對方接受後會開啟一對一聊天室。',
-      '一對一聊天室仍須遵守交流守則，不得傳送企業機密、個人敏感資料或私人交易內容。',
+      '如果你正在卡關、想知道某個流程怎麼做，請選擇「發問」。',
+      '如果你已經用過某個工具、模板、流程或方法，想整理給別人參考，請選擇「經驗分享」。',
+      '工具教學、資源整理與已解決標記會保留為未來擴充方向，初版先用最簡單的分類降低負擔。',
     ],
-    tags: ['聊天室', '使用說明', '資訊安全'],
+    tags: ['發問', '經驗分享', 'MVP'],
     cta: '查看完整內文',
   },
   {
     id: 'b3',
-    type: '社群精選',
-    title: '新人職涯探索社群：本週熱門提問',
+    type: '常見問題',
+    title: '聊天室可以拿來做什麼？',
     date: '2026/07/26',
-    owner: '人才發展部',
-    summary: '你最近在工作裡最想突破的是什麼？社群將整理大家的回覆，轉成下週午餐交流題綱。',
+    owner: '平台管理小組',
+    summary: '聊天室用來延續一對一討論，可分享文字、圖片、檔案與連結，但不取代社群中可被搜尋的公開經驗整理。',
     body: [
-      '新人職涯探索社群本週最熱門的討論是：你最近在工作裡最想突破的是什麼？',
-      '常見回覆包含跨部門溝通、會議表達、時間安排與不熟悉公司資源。',
-      '社群管理者會將回覆整理為討論題綱，提供後續社群交流使用。',
+      '社群適合留下可被其他同仁搜尋與參考的問題和經驗。',
+      '聊天室適合進一步討論細節、補充圖片或文件、確認後續協作方式。',
+      '請避免在聊天室或社群中上傳企業機密、未核准文件或敏感個人資料。',
     ],
-    tags: ['職涯', '新人', '社群討論'],
+    tags: ['聊天室', '附件', '資訊安全'],
     cta: '查看完整內文',
   },
 ]
@@ -407,7 +407,7 @@ const defaultProfile = {
 
 const guidanceOptions = ['職涯發展', '專業技能', '跨部門交流', '領導管理', '工作生活平衡', '理財規劃', '研究所／進修', '其他']
 const mentorPrefOptions = ['同部門', '跨部門', '年資較深', '年齡相近', '共同興趣', '互補專長', '不限']
-const methodOptions = ['線上', '實體', '午餐交流', '文字訊息']
+const methodOptions = ['線上', '實體', '文字訊息']
 const incomingInviteSeed = [
   {
     id: 'invite-m4',
@@ -424,7 +424,7 @@ const incomingInviteSeed = [
     time: '昨天 16:15',
   },
 ]
-const demoStorageVersion = '2026-07-22-account-reset'
+const demoStorageVersion = '2026-07-24-learning-community-mvp'
 
 function storageGet(key, fallback) {
   try {
@@ -657,11 +657,11 @@ function Landing({ navigate }) {
           <div className="relative z-10">
             <p className="mb-5 inline-flex rounded-full border border-white/80 bg-white/70 px-4 py-2 text-sm font-semibold text-navy shadow-card">台塑企業員工交流與共學平台</p>
             <h1 className="max-w-3xl text-5xl font-black leading-tight tracking-tight text-ink sm:text-6xl lg:text-7xl">塑學圈</h1>
-            <p className="mt-4 max-w-3xl text-2xl font-black leading-tight text-ink sm:text-3xl">把公告、交流與社群共學集中在一起，讓工作經驗在組織裡持續流動。</p>
-            <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-600">塑學圈透過塑訊公布欄、聊天室、塑學社群與員工資料，協助同仁掌握重要資訊、延續一對一交流，並在社群中累積可被共享的工作知識。</p>
+            <p className="mt-4 max-w-3xl text-2xl font-black leading-tight text-ink sm:text-3xl">把問題問出來，把經驗留下來。</p>
+            <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-600">塑學圈是台塑企業內部的實名制員工學習交流平台，讓同仁可以在社群中發問、回覆、分享使用經驗，並把常見問題與解決方式留下來給後續同仁參考。</p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <button onClick={() => navigate('/login')} className="btn-primary h-13 justify-center px-8 text-base">登入平台</button>
-              <span className="flex items-center px-2 text-sm font-semibold text-slate-500">登入後再建立個人檔案</span>
+              <span className="flex items-center px-2 text-sm font-semibold text-slate-500">登入後確認公司匯入資料</span>
             </div>
           </div>
           <div className="relative z-10">
@@ -673,12 +673,12 @@ function Landing({ navigate }) {
                     <h2 className="mt-2 text-3xl font-black">4 個入口</h2>
                   </div>
                 </div>
-                <p className="mt-8 text-2xl font-bold leading-snug">讓公告有脈絡，讓討論有地方沉澱。</p>
+                <p className="mt-8 text-2xl font-bold leading-snug">發問、回覆、收藏，讓答案不只停在一次對話裡。</p>
                 <div className="mt-8 grid grid-cols-2 gap-3">
                   {['塑訊公布欄', '塑聊', '塑學社群', '交流守則'].map((tag) => <span key={tag} className="pill">{tag}</span>)}
                 </div>
               </div>
-              <div className="floating-note">登入平台 → 查看塑訊公布欄 → 搜尋同仁並開啟聊天室 → 加入或創建社群 → 沉澱工作討論與經驗整理。</div>
+              <div className="floating-note">公司帳號登入 → 查看系統更新與常見問題 → 到社群發問或分享經驗 → 用聊天室延續細節討論。</div>
             </div>
           </div>
         </div>
@@ -686,27 +686,27 @@ function Landing({ navigate }) {
       <section className="mx-auto max-w-7xl px-5 py-16">
         <div className="mb-8 max-w-2xl">
           <p className="eyebrow">Core Features</p>
-          <h2 className="section-title">四個核心功能，讓資訊發布、交流與共學更集中</h2>
+          <h2 className="section-title">四個核心功能，讓問題更快被解決、經驗更容易被找到</h2>
         </div>
         <div className="grid gap-5 md:grid-cols-4">
-          <FeatureCard title="塑訊公布欄" text="集中呈現全公司公告、平台更新、社群精選與重要提醒。" />
-          <FeatureCard title="塑聊" text="搜尋同仁姓名或員工編號，發送交流邀請並延續一對一工作討論。" />
-          <FeatureCard title="塑學社群" text="依工作技能、職涯與興趣分類集中討論，累積熱門問題與工作案例。" />
-          <FeatureCard title="交流守則" text="清楚說明聊天室、社群與個人資料的使用原則，讓交流更安心。" />
+          <FeatureCard title="塑訊公布欄" text="只保留系統更新與常見問題，讓平台重要資訊清楚集中。" />
+          <FeatureCard title="塑聊" text="搜尋同仁並延續一對一討論，可示意分享文字、圖片、檔案與連結。" />
+          <FeatureCard title="塑學社群" text="用發問與經驗分享兩種貼文，累積可搜尋、可收藏的工作知識。" />
+          <FeatureCard title="交流守則" text="採公司帳號實名制，清楚說明資訊安全、發文與留言原則。" />
         </div>
       </section>
       <section className="border-y border-line bg-mist">
         <div className="mx-auto max-w-7xl px-5 py-16">
           <div className="mb-8 max-w-3xl">
             <p className="eyebrow">User Journey</p>
-            <h2 className="section-title">從查看公告到參與社群，讓知識有地方流動</h2>
+            <h2 className="section-title">從發問到留下答案，讓知識有地方沉澱</h2>
           </div>
           <div className="grid gap-4 lg:grid-cols-4">
             {[
               ['01', '確認員工資料', '登入後確認公司匯入的基本資料。'],
-              ['02', '查看塑訊公布欄', '掌握全公司公告、平台更新與熱門社群動態。'],
-              ['03', '開啟塑聊', '搜尋同仁並發送交流邀請，延續一對一討論。'],
-              ['04', '加入或創建社群', '沉澱熱門問題、工作案例與跨部門經驗。'],
+              ['02', '查看塑訊公布欄', '掌握系統更新與常見問題。'],
+              ['03', '進入塑學社群', '用發問或經驗分享留下可被搜尋的內容。'],
+              ['04', '開啟塑聊', '需要補充細節時，用聊天室延續一對一討論。'],
             ].map(([step, title, text]) => (
               <article key={step} className="rounded-card border border-line bg-white p-5 shadow-card">
                 <p className="text-4xl font-black text-blueprint">{step}</p>
@@ -775,7 +775,7 @@ function Login({ profile, setIsAuthed, navigate, notify }) {
       return
     }
     setIsAuthed(true)
-    notify('登入成功，先建立你的個人檔案。')
+    notify('登入成功，先確認你的員工資料。')
     navigate('/onboarding')
   }
   return (
@@ -785,7 +785,7 @@ function Login({ profile, setIsAuthed, navigate, notify }) {
         <Input label="密碼" type="password" value={password} onChange={setPassword} />
         {error && <p className="form-error">{error}</p>}
         <button className="btn-primary w-full justify-center" onClick={submit}>登入</button>
-        <p className="text-center text-sm font-semibold text-slate-500">登入後會進入個人檔案建立流程。</p>
+        <p className="text-center text-sm font-semibold text-slate-500">登入後會進入員工資料確認流程。</p>
       </div>
     </AuthLayout>
   )
@@ -815,22 +815,22 @@ function ProfileBuilder(props) {
 function Dashboard({ profile, navigate }) {
   return (
     <PageWrap>
-      <PageTitle eyebrow="Bulletin" title={`Hi，${profile.name}！塑訊公布欄`} text="集中查看平台公告、近期更新、社群精選與需要大家一起知道的重要資訊。" />
+      <PageTitle eyebrow="Bulletin" title={`Hi，${profile.name}！塑訊公布欄`} text="集中查看系統更新與常見問題，避免重要平台資訊散落在聊天室或社群貼文裡。" />
       <section className="rounded-[28px] bg-gradient-to-br from-white to-skysoft p-6 shadow-card lg:p-8">
         <div className="grid gap-5 lg:grid-cols-[1.1fr_.9fr] lg:items-center">
           <div>
             <p className="eyebrow">Today</p>
-            <h2 className="mt-2 text-3xl font-black">讓重要消息不被聊天訊息淹沒</h2>
-            <p className="mt-4 max-w-2xl leading-7 text-slate-600">塑訊公布欄作為全公司資訊入口，整理公告、平台更新、社群熱門議題與跨部門交流機會，讓同仁可以快速判斷哪些內容值得參與。</p>
+            <h2 className="mt-2 text-3xl font-black">系統更新與常見問題放在這裡</h2>
+            <p className="mt-4 max-w-2xl leading-7 text-slate-600">塑訊公布欄只放平台相關的系統更新與常見問題，讓同仁快速掌握功能變更、使用方式與資訊安全提醒。</p>
           </div>
           <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-1">
-            <Info label="本週公告" value={`${bulletinSeed.length} 則`} />
-            <Info label="熱門社群" value="新人、數位、跨部門" />
+            <Info label="系統更新" value={`${bulletinSeed.filter((item) => item.type === '系統更新').length} 則`} />
+            <Info label="常見問題" value={`${bulletinSeed.filter((item) => item.type === '常見問題').length} 則`} />
           </div>
         </div>
       </section>
       <section className="mt-6">
-        <SectionHeader title="最新公告" />
+        <SectionHeader title="系統更新與常見問題" />
         <div className="grid gap-5 lg:grid-cols-3">
           {bulletinSeed.map((item) => (
             <article key={item.id} className="rounded-card border border-line bg-white p-5 shadow-card transition hover:-translate-y-1 hover:shadow-soft">
@@ -848,18 +848,6 @@ function Dashboard({ profile, navigate }) {
             </article>
           ))}
         </div>
-      </section>
-      <section className="mt-8">
-        <DetailBlock title="熱門社群動態">
-          <div className="space-y-3">
-            {communitySeed.slice(0, 3).map((community) => (
-              <button key={community.id} className="w-full rounded-card bg-mist p-4 text-left transition hover:bg-skysoft" onClick={() => navigate(`/community/${community.id}`)}>
-                <p className="font-black text-ink">{community.name}</p>
-                <p className="mt-1 text-sm text-slate-600">{community.posts[0]?.content}</p>
-              </button>
-            ))}
-          </div>
-        </DetailBlock>
       </section>
     </PageWrap>
   )
@@ -932,9 +920,9 @@ function MentorDetail({ id, profile, setProfile, conversations, inviteMentor, se
           <DetailBlock title="過去經歷亮點"><ul className="space-y-2">{mentor.highlights.map((item) => <li key={item}>・{item}</li>)}</ul></DetailBlock>
           <DetailBlock title="興趣與生活面向"><TagList tags={mentor.interests} /></DetailBlock>
           <DetailBlock title="可交流時間"><p>{mentor.availability}，支援 {mentor.methods.join('、')}。</p></DetailBlock>
-          <DetailBlock title="適合找他／她交流的情境">
+          <DetailBlock title="可以延伸討論的情境">
             <div className="grid gap-3 sm:grid-cols-2">
-              {['你想了解跨部門工作內容', '你想請益一項實務技能', '你想聽聽不同職涯路徑', '你想找同仁討論工作合作'].map((item) => <div key={item} className="rounded-card bg-mist p-4 font-semibold">{item}</div>)}
+              {['你想了解跨部門工作內容', '你想確認一項實務流程', '你想整理工作經驗或模板', '你想延續社群貼文裡的細節討論'].map((item) => <div key={item} className="rounded-card bg-mist p-4 font-semibold">{item}</div>)}
             </div>
           </DetailBlock>
         </div>
@@ -972,6 +960,7 @@ function CommunitiesPage({ communities, setCommunities, profile, setProfile, nav
 function CommunityDetail({ id, communities, setCommunities, profile, setProfile, navigate, notify }) {
   const community = communities.find((item) => item.id === id) || communities[0]
   const [content, setContent] = useState('')
+  const [postType, setPostType] = useState('發問')
   const joined = profile.joinedCommunities.includes(community.id)
   const toggleJoin = () => {
     setProfile((prev) => ({ ...prev, joinedCommunities: joined ? prev.joinedCommunities.filter((item) => item !== community.id) : [...prev.joinedCommunities, community.id] }))
@@ -982,7 +971,7 @@ function CommunityDetail({ id, communities, setCommunities, profile, setProfile,
       notify('先寫一點想分享的內容吧。')
       return
     }
-    const post = { id: `p${Date.now()}`, author: profile.name, meta: profile.department || profile.role, time: '剛剛', content, likes: 0, comments: 0 }
+    const post = { id: `p${Date.now()}`, type: postType, author: profile.name, meta: `${profile.department} · ${profile.role}`, time: '剛剛', content, saves: 0, comments: 0 }
     setCommunities((prev) => prev.map((item) => item.id === community.id ? { ...item, posts: [post, ...item.posts] } : item))
     setContent('')
     notify('貼文已發布。')
@@ -1006,11 +995,16 @@ function CommunityDetail({ id, communities, setCommunities, profile, setProfile,
       </section>
       <section className="mt-6 rounded-card border border-line bg-white p-5 shadow-card">
         <h2 className="mb-3 text-xl font-black">發布貼文</h2>
-        <textarea value={content} onChange={(e) => setContent(e.target.value)} placeholder="分享一個最近的提問、觀察或想約大家討論的主題..." className="field min-h-28" />
+        <div className="mb-3 flex flex-wrap gap-2">
+          {['發問', '經驗分享'].map((type) => (
+            <button key={type} type="button" onClick={() => setPostType(type)} className={postType === type ? 'chip active' : 'chip'}>{type}</button>
+          ))}
+        </div>
+        <textarea value={content} onChange={(e) => setContent(e.target.value)} placeholder={postType === '發問' ? '把遇到的問題、卡住的情境或想確認的流程寫下來...' : '整理一個你用過的方法、工具、模板或流程，給其他同仁參考...'} className="field min-h-28" />
         <div className="mt-3 flex justify-end"><button className="btn-primary" onClick={publish}>發布</button></div>
       </section>
       <section className="mt-6">
-        <SectionHeader title="熱門貼文" />
+        <SectionHeader title="社群貼文" />
         <div className="space-y-4">
           {community.posts.map((post) => <PostCard key={post.id} post={post} />)}
         </div>
@@ -1025,7 +1019,7 @@ function ChatPage({ conversations, activeChatId, setActiveChatId, sendChatMessag
 
   return (
     <PageWrap>
-      <PageTitle eyebrow="Chat" title="塑聊" text="搜尋同仁姓名或員工編號，發送交流邀請；對方接受後，就能在這裡延續一對一討論。" />
+      <PageTitle eyebrow="Chat" title="塑聊" text="搜尋同仁姓名或員工編號，發送交流邀請；對方接受後，就能用文字、圖片、檔案與連結延續一對一討論。" />
       <EmployeeInviteSearch conversations={conversations} onInvite={inviteMentor} setActiveChatId={setActiveChatId} />
       <IncomingInvites invites={incomingInvites} onAccept={acceptIncomingInvite} onDismiss={dismissIncomingInvite} />
       {activeConversation && activeMentor ? (
@@ -1045,7 +1039,7 @@ function ChatPage({ conversations, activeChatId, setActiveChatId, sendChatMessag
       <section className="mt-8 rounded-card bg-white p-5 shadow-card">
         <h2 className="text-xl font-black">聊天室使用原則</h2>
         <div className="mt-4 grid gap-3 md:grid-cols-3">
-          {['先搜尋同仁並發送交流邀請', '一對一聊天室適合延續具體交流', '不得商業推銷、私人交易或散播企業機密'].map((item) => <div key={item} className="rounded-card bg-mist p-4 font-bold text-navy">{item}</div>)}
+          {['公司實名制交流', '可分享文字、圖片、檔案與連結', '不得商業推銷、私人交易或散播企業機密'].map((item) => <div key={item} className="rounded-card bg-mist p-4 font-bold text-navy">{item}</div>)}
         </div>
       </section>
     </PageWrap>
@@ -1066,7 +1060,7 @@ function EmployeeInviteSearch({ conversations, onInvite, setActiveChatId }) {
     <section className="rounded-[28px] border border-line bg-white p-5 shadow-card lg:p-6">
       <div>
         <h2 className="text-2xl font-black">搜尋同仁並邀請交流</h2>
-        <p className="mt-2 text-slate-600">可輸入姓名、員工編號、部門或職位，找到想請益或交流的同仁。</p>
+        <p className="mt-2 text-slate-600">可輸入姓名、員工編號、部門或職位，找到想延續討論或確認細節的同仁。</p>
       </div>
       <input
         className="field mt-4"
@@ -1191,16 +1185,16 @@ function ProfilePage({ profile }) {
 function RulesPage() {
   const rules = [
     {
-      title: '交流目的',
-      items: ['以知識交流、工作經驗分享、跨部門請益與社群討論為主。', '鼓勵具體提問、善意回覆與可被其他同仁參考的經驗整理。'],
+      title: '平台定位',
+      items: ['塑學圈採公司帳號實名制，發文、留言與聊天室以公司匯入資料識別。', '平台聚焦於發問、回覆、經驗分享與常見問題沉澱，讓討論內容可以被信任與管理。'],
+    },
+    {
+      title: '社群發文',
+      items: ['初版貼文只分為發問與經驗分享，讓同仁不用花太多時間判斷分類。', '發問時請盡量描述問題背景、已嘗試的方法與希望獲得的協助。', '經驗分享可整理工具使用心得、流程做法、模板說明或常見錯誤。'],
     },
     {
       title: '聊天室使用',
-      items: ['聊天室需先搜尋同仁並發送交流邀請。', '一對一聊天室適合延續邀請後的具體請益與合作討論。', '請避免張貼薪資、考績、健康、家庭或其他敏感個人資料。'],
-    },
-    {
-      title: '社群管理',
-      items: ['社群以工作技能、職涯、興趣三類為主，避免主題過度重複。', '創建社群後，請維持清楚簡介、適當標籤與友善討論氣氛。'],
+      items: ['聊天室適合延續一對一討論，可分享文字、圖片、檔案與連結。', '社群貼文適合留下可搜尋的問題與經驗，聊天室適合補充細節與後續確認。', '請避免張貼薪資、考績、健康、家庭或其他敏感個人資料。'],
     },
     {
       title: '禁止事項',
@@ -1209,10 +1203,10 @@ function RulesPage() {
   ]
   return (
     <PageWrap>
-      <PageTitle eyebrow="Guidelines" title="交流守則" text="讓交流保持開放、可信任，也讓每一位同仁都能安心提問、分享與參與社群。" />
+      <PageTitle eyebrow="Guidelines" title="交流守則" text="塑學圈採公司實名制，讓每一則發問、回覆與經驗分享都能被信任，也讓資訊安全與交流品質被妥善管理。" />
       <section className="rounded-[28px] bg-white p-6 shadow-card lg:p-8">
         <h2 className="text-3xl font-black">共同使用原則</h2>
-        <p className="mt-4 max-w-3xl leading-7 text-slate-600">塑學圈是企業內部交流平台，內容應聚焦於職涯、工作技能、社群共學與跨部門合作。平台資料僅作為交流參考，不應直接作為績效評價或私人用途。</p>
+        <p className="mt-4 max-w-3xl leading-7 text-slate-600">塑學圈是企業內部學習交流平台，內容應聚焦於問題解決、工作經驗分享、工具使用心得與跨部門知識流動。平台資料僅作為交流與知識沉澱用途，不應直接作為績效評價或私人用途。</p>
         <div className="mt-6 grid gap-4 md:grid-cols-2">
           {rules.map((group) => (
             <article key={group.title} className="rounded-card bg-mist p-5">
@@ -1405,9 +1399,13 @@ function ChatPanel({ mentor, conversation, conversations = [], setActiveChatId, 
           onKeyDown={(event) => {
             if (event.key === 'Enter') submit()
           }}
-          placeholder={`輸入想和 ${mentor.name} 討論的請益、分享或合作問題...`}
+          placeholder={`輸入想和 ${mentor.name} 討論的問題、檔案說明或連結補充...`}
         />
         <button className="btn-primary justify-center sm:min-w-28" onClick={submit}>送出</button>
+      </div>
+      <div className="mt-3 flex flex-wrap gap-2">
+        {['圖片', '檔案', '連結'].map((item) => <button key={item} type="button" className="chip">{item}</button>)}
+        <span className="flex items-center text-sm font-semibold text-slate-400">Demo 顯示附件入口，正式版可串接上傳與權限控管。</span>
       </div>
     </div>
   )
@@ -1433,7 +1431,7 @@ function CommunityCard({ community, profile, setProfile, navigate, notify, horiz
       <div className="mt-4 flex flex-wrap gap-2">
         {community.tags.map((tag) => <span key={tag} className="pill">{tag}</span>)}
       </div>
-      <p className="mt-4 text-sm font-semibold text-slate-500">熱門討論：{community.posts[0]?.content.slice(0, 28)}...</p>
+      <p className="mt-4 text-sm font-semibold text-slate-500">最新貼文：{community.posts[0]?.type || '發問'} · {community.posts[0]?.content.slice(0, 26)}...</p>
       <div className="mt-5 grid grid-cols-2 gap-2">
         <button className={joined ? 'btn-secondary justify-center' : 'btn-primary justify-center'} onClick={toggleJoin}>{joined ? '已加入' : '加入社群'}</button>
         <button className="btn-secondary justify-center" onClick={() => navigate(`/community/${community.id}`)}>查看詳情</button>
@@ -1545,13 +1543,13 @@ function TagList({ tags }) {
 function getPostReplies(post) {
   const replies = {
     p1: [
-      { author: '周明翰', text: '我最近想突破的是跨部門溝通，常常不知道怎麼把需求講得更清楚。' },
-      { author: '林若涵', text: '可以先把問題、影響對象、希望得到的協助拆開寫，午餐交流會比較好討論。' },
-      { author: '吳品萱', text: '我也想聊時間管理，尤其是同時處理例行工作和專案的節奏。' },
+      { author: '周明翰', text: '我會先問直屬主管確認方向，再把問題整理成三點去找窗口，避免直接丟一大串訊息。' },
+      { author: '林若涵', text: '可以先寫清楚背景、目前卡點、希望對方協助的地方，跨部門窗口比較容易回覆。' },
+      { author: '吳品萱', text: '我會先搜尋社群有沒有相似問題，再決定要公開發問或私訊補細節。' },
     ],
     p2: [
-      { author: '張庭安', text: '很認同，願意問問題的人通常適應得更快。' },
-      { author: '陳柏宇', text: '新人期可以先建立三位固定請益對象，會少走很多路。' },
+      { author: '張庭安', text: '這份清單很實用，尤其是常用表單位置，很多新人第一週都會問。' },
+      { author: '陳柏宇', text: '建議可以加一欄「負責窗口」，未來查找會更快。' },
     ],
     p3: [
       { author: '塑寶', text: '想知道現金流表要先追哪些項目，期待模板。' },
@@ -1585,9 +1583,15 @@ function PostCard({ post }) {
 
   return (
     <article className="rounded-card border border-line bg-white p-5 shadow-card">
-      <div>
-        <h3 className="font-black">{post.author}</h3>
-        <p className="text-sm text-slate-500">{post.meta} · {post.time}</p>
+      <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-start">
+        <div>
+          <h3 className="font-black">{post.author}</h3>
+          <p className="text-sm text-slate-500">{post.meta} · {post.time}</p>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <span className="pill-dark">{post.type || '發問'}</span>
+          {post.solved && <span className="pill">已解決</span>}
+        </div>
       </div>
       <p className="mt-4 leading-7 text-slate-700">{post.content}</p>
       <div className="mt-4 flex gap-4 text-sm font-bold text-slate-500">
