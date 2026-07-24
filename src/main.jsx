@@ -243,6 +243,8 @@ const communitySeed = [
     intro: '把新人常遇到的問題問出來，也把適應公司、理解流程與找資源的方法留下來。',
     members: 238,
     tags: ['新人', '職涯探索', '問題解決'],
+    visibility: 'public',
+    joinPolicy: 'approval',
     posts: [
       { id: 'p1', author: '張庭安', meta: '人才發展部', time: '今天 10:20', content: '新人剛進公司時，最常卡住的是「不知道要問誰」。大家通常怎麼判斷問題該問主管、同部門同事，還是跨部門窗口？', saves: 34, comments: 12 },
       { id: 'p2', author: '周明翰', meta: '採購專員', time: '昨天 18:05', content: '我把新人期常問的問題整理成一份「前 30 天問題清單」，包含系統權限、流程窗口、常用表單位置，給剛報到的同仁參考。', saves: 28, comments: 8 },
@@ -325,7 +327,37 @@ const communitySeed = [
       { id: 'p9', author: '許哲維', meta: '資料平台部', time: '今天 08:45', content: '整理了 5 個部門可以先嘗試的自動化場景：報表彙整、資料清理、通知寄送、表單檢核、文件命名。', saves: 54, comments: 17 },
     ],
   },
+  {
+    id: 'c9',
+    name: '平台建議社群',
+    category: '工作技能',
+    intro: '如果使用台塑 Connect 時遇到問題、想建議新功能，或不知道某個功能怎麼用，可以集中在這裡發問與回饋。',
+    members: 96,
+    tags: ['平台建議', '使用問題', '功能回饋'],
+    visibility: 'public',
+    joinPolicy: 'open',
+    posts: [
+      { id: 'p10', author: '塑寶', meta: '人資組', time: '今天 11:05', content: '歡迎把平台使用問題、功能建議或操作上不清楚的地方留在這裡，平台管理小組會定期整理常見問題。', saves: 22, comments: 9 },
+      { id: 'p11', author: '許哲維', meta: '資料平台部', time: '昨天 15:30', content: '建議社群搜尋可以支援用標籤快速篩選，這樣找工具教學或流程問題會更快。', saves: 17, comments: 5 },
+    ],
+  },
 ]
+
+const activeUserAnalytics = {
+  ageGroups: [
+    { label: '20-29 歲', value: 142 },
+    { label: '30-39 歲', value: 186 },
+    { label: '40-49 歲', value: 118 },
+    { label: '50 歲以上', value: 64 },
+  ],
+  departments: [
+    { label: '產品體驗部', value: 86 },
+    { label: '資料平台部', value: 74 },
+    { label: '人才發展部', value: 68 },
+    { label: '智慧製造部', value: 61 },
+    { label: '採購管理部', value: 45 },
+  ],
+}
 
 const bulletinSeed = [
   {
@@ -448,7 +480,7 @@ const incomingInviteSeed = [
     time: '昨天 16:15',
   },
 ]
-const demoStorageVersion = '2026-07-24-admin-post-filter-requests'
+const demoStorageVersion = '2026-07-24-admin-analytics-platform-community'
 
 function storageGet(key, fallback) {
   try {
@@ -1399,7 +1431,7 @@ function RulesPage() {
 function AdminOverview({ profile, communities, joinRequests, navigate }) {
   const allPosts = communities.flatMap((community) => community.posts.map((post) => ({ ...post, communityId: community.id, communityName: community.name, category: community.category })))
   const pendingRequests = joinRequests.filter((request) => request.status === '待審核')
-  const memberOnlyCommunities = communities.filter((community) => community.visibility === 'members')
+  const approvalCommunities = communities.filter((community) => community.joinPolicy === 'approval')
   return (
     <PageWrap>
       <PageTitle eyebrow="HR Admin" title="台塑 Connect｜人資後台" text={`${profile.department} 可查看所有社群內容與營運狀態，協助平台維持知識交流品質。`} />
@@ -1407,8 +1439,21 @@ function AdminOverview({ profile, communities, joinRequests, navigate }) {
         <Info label="總社群數" value={`${communities.length} 個`} />
         <Info label="總貼文數" value={`${allPosts.length} 則`} />
         <Info label="待審加入申請" value={`${pendingRequests.length} 件`} />
-        <Info label="成員可見社群" value={`${memberOnlyCommunities.length} 個`} />
+        <Info label="審核加入社群" value={`${approvalCommunities.length} 個`} />
       </div>
+      <section className="mt-6 rounded-card border border-line bg-white p-5 shadow-card">
+        <div className="mb-4 flex flex-col justify-between gap-2 sm:flex-row sm:items-end">
+          <div>
+            <p className="eyebrow">Monthly Active Users</p>
+            <h2 className="mt-1 text-2xl font-black">活躍用戶觀察</h2>
+          </div>
+          <span className="pill-dark w-fit">本月活躍 510 人</span>
+        </div>
+        <div className="grid gap-5 lg:grid-cols-2">
+          <BarList title="年齡層分布" items={activeUserAnalytics.ageGroups} />
+          <BarList title="部門分布" items={activeUserAnalytics.departments} />
+        </div>
+      </section>
       <section className="mt-6 grid gap-5 lg:grid-cols-[1.1fr_.9fr]">
         <article className="rounded-card border border-line bg-white p-5 shadow-card">
           <SectionHeader title="需要人資注意" />
@@ -1433,6 +1478,28 @@ function AdminOverview({ profile, communities, joinRequests, navigate }) {
         </article>
       </section>
     </PageWrap>
+  )
+}
+
+function BarList({ title, items }) {
+  const max = Math.max(...items.map((item) => item.value), 1)
+  return (
+    <div className="rounded-card bg-mist p-4">
+      <h3 className="text-lg font-black text-ink">{title}</h3>
+      <div className="mt-4 space-y-4">
+        {items.map((item) => (
+          <div key={item.label}>
+            <div className="mb-2 flex items-center justify-between gap-3">
+              <span className="text-sm font-bold text-slate-600">{item.label}</span>
+              <span className="text-sm font-black text-navy">{item.value} 人</span>
+            </div>
+            <div className="h-3 overflow-hidden rounded-full bg-white">
+              <div className="h-full rounded-full bg-azure" style={{ width: `${Math.max((item.value / max) * 100, 8)}%` }} />
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
   )
 }
 
