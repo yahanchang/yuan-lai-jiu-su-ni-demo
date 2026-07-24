@@ -87,7 +87,7 @@
   }
 
   .nav-item {
-    @apply rounded-2xl px-4 py-3 font-bold text-slate-500 transition hover:bg-mist hover:text-ink;
+    @apply w-full rounded-2xl px-4 py-3 text-left font-bold text-slate-500 transition hover:bg-mist hover:text-ink;
   }
 
   .nav-item.active {

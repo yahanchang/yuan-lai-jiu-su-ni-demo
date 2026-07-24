@@ -244,8 +244,8 @@ const communitySeed = [
     members: 238,
     tags: ['新人', '職涯探索', '問題解決'],
     posts: [
-      { id: 'p1', type: '發問', author: '張庭安', meta: '人才發展部', time: '今天 10:20', content: '新人剛進公司時，最常卡住的是「不知道要問誰」。大家通常怎麼判斷問題該問主管、同部門同事，還是跨部門窗口？', saves: 34, comments: 12, solved: true },
-      { id: 'p2', type: '經驗分享', author: '周明翰', meta: '採購專員', time: '昨天 18:05', content: '我把新人期常問的問題整理成一份「前 30 天問題清單」，包含系統權限、流程窗口、常用表單位置，給剛報到的同仁參考。', saves: 28, comments: 8 },
+      { id: 'p1', author: '張庭安', meta: '人才發展部', time: '今天 10:20', content: '新人剛進公司時，最常卡住的是「不知道要問誰」。大家通常怎麼判斷問題該問主管、同部門同事，還是跨部門窗口？', saves: 34, comments: 12 },
+      { id: 'p2', author: '周明翰', meta: '採購專員', time: '昨天 18:05', content: '我把新人期常問的問題整理成一份「前 30 天問題清單」，包含系統權限、流程窗口、常用表單位置，給剛報到的同仁參考。', saves: 28, comments: 8 },
     ],
   },
   {
@@ -256,7 +256,7 @@ const communitySeed = [
     members: 186,
     tags: ['理財規劃', '投資', '生活品質'],
     posts: [
-      { id: 'p3', type: '經驗分享', author: '黃冠廷', meta: '投資管理部', time: '今天 09:12', content: '分享我自己用的第一版現金流表：先追固定支出、彈性支出、儲蓄比例三欄就好，不用一開始就做得太複雜。', saves: 46, comments: 15 },
+      { id: 'p3', author: '黃冠廷', meta: '投資管理部', time: '今天 09:12', content: '分享我自己用的第一版現金流表：先追固定支出、彈性支出、儲蓄比例三欄就好，不用一開始就做得太複雜。', saves: 46, comments: 15 },
     ],
   },
   {
@@ -267,7 +267,7 @@ const communitySeed = [
     members: 312,
     tags: ['專案管理', '溝通', 'PM'],
     posts: [
-      { id: 'p4', type: '經驗分享', author: '林若涵', meta: '產品策略部', time: '週一 14:20', content: '推薦大家在專案啟動前先寫一頁 Project Brief，包含目標、範圍、決策者與風險，能少掉很多後面的誤會。', saves: 63, comments: 21 },
+      { id: 'p4', author: '林若涵', meta: '產品策略部', time: '週一 14:20', content: '推薦大家在專案啟動前先寫一頁 Project Brief，包含目標、範圍、決策者與風險，能少掉很多後面的誤會。', saves: 63, comments: 21 },
     ],
   },
   {
@@ -278,7 +278,7 @@ const communitySeed = [
     members: 421,
     tags: ['跨部門', '交流', '組織理解'],
     posts: [
-      { id: 'p5', type: '發問', author: '陳柏宇', meta: '智慧製造部', time: '週二 11:30', content: '想請問跨部門專案在需求還不明確時，大家會先用什麼格式整理問題，才不會讓對方覺得太零散？', saves: 71, comments: 26 },
+      { id: 'p5', author: '陳柏宇', meta: '智慧製造部', time: '週二 11:30', content: '想請問跨部門專案在需求還不明確時，大家會先用什麼格式整理問題，才不會讓對方覺得太零散？', saves: 71, comments: 26 },
     ],
   },
   {
@@ -289,7 +289,7 @@ const communitySeed = [
     members: 204,
     tags: ['女性成長', '領導', '工作生活平衡'],
     posts: [
-      { id: 'p6', type: '發問', author: '劉怡君', meta: '法遵長', time: '週三 16:40', content: '在高壓職務裡，大家如何設定工作界線，又不影響跨部門協作的回覆效率？', saves: 58, comments: 18 },
+      { id: 'p6', author: '劉怡君', meta: '法遵長', time: '週三 16:40', content: '在高壓職務裡，大家如何設定工作界線，又不影響跨部門協作的回覆效率？', saves: 58, comments: 18 },
     ],
   },
   {
@@ -300,7 +300,7 @@ const communitySeed = [
     members: 149,
     tags: ['研究所', '進修', '自學'],
     posts: [
-      { id: 'p7', type: '經驗分享', author: '吳品萱', meta: 'ESG 策略部', time: '週四 20:10', content: '在職研究所最難的是時間配置，我整理了當時每週讀書節奏與請假安排，給正在評估進修的同仁參考。', saves: 37, comments: 11 },
+      { id: 'p7', author: '吳品萱', meta: 'ESG 策略部', time: '週四 20:10', content: '在職研究所最難的是時間配置，我整理了當時每週讀書節奏與請假安排，給正在評估進修的同仁參考。', saves: 37, comments: 11 },
     ],
   },
   {
@@ -311,7 +311,7 @@ const communitySeed = [
     members: 173,
     tags: ['ESG', '永續', '企業責任'],
     posts: [
-      { id: 'p8', type: '發問', author: '吳品萱', meta: '永續專案主任', time: '昨天 12:15', content: '整理 ESG 報告時常看到很多縮寫，大家有沒有推薦的內部或外部字彙表可以參考？', saves: 42, comments: 14 },
+      { id: 'p8', author: '吳品萱', meta: '永續專案主任', time: '昨天 12:15', content: '整理 ESG 報告時常看到很多縮寫，大家有沒有推薦的內部或外部字彙表可以參考？', saves: 42, comments: 14 },
     ],
   },
   {
@@ -322,7 +322,7 @@ const communitySeed = [
     members: 267,
     tags: ['數位轉型', 'AI', '自動化'],
     posts: [
-      { id: 'p9', type: '經驗分享', author: '許哲維', meta: '資料平台部', time: '今天 08:45', content: '整理了 5 個部門可以先嘗試的自動化場景：報表彙整、資料清理、通知寄送、表單檢核、文件命名。', saves: 54, comments: 17 },
+      { id: 'p9', author: '許哲維', meta: '資料平台部', time: '今天 08:45', content: '整理了 5 個部門可以先嘗試的自動化場景：報表彙整、資料清理、通知寄送、表單檢核、文件命名。', saves: 54, comments: 17 },
     ],
   },
 ]
@@ -331,32 +331,32 @@ const bulletinSeed = [
   {
     id: 'b1',
     type: '系統更新',
-    title: '台塑 Connect 定位更新：實名發問與經驗沉澱',
+    title: '台塑 Connect 定位更新：實名發文與經驗沉澱',
     date: '2026/07/23',
     owner: '平台管理小組',
-    summary: '台塑 Connect 調整為企業內部實名學習交流平台，聚焦發問、回覆、收藏與經驗分享，讓問題與解法可以被後續同仁查找。',
+    summary: '台塑 Connect 調整為企業內部實名學習交流平台，聚焦發文、留言、收藏與使用經驗整理，讓問題與解法可以被後續同仁查找。',
     body: [
       '平台採公司帳號實名制，發文、留言與聊天室都會顯示公司匯入的姓名與部門職位。',
-      '社群貼文先保留兩種最簡單的類型：發問與經驗分享，方便上線初期降低使用門檻。',
+      '社群貼文改為單一發文入口，讓同仁直接留下問題、使用經驗、流程提醒或常見錯誤。',
       '聊天室作為延續討論的空間，可示意支援文字、圖片、檔案與連結分享。',
       'Connect News 目前只放系統更新與常見問題，避免資訊過度分散。',
     ],
-    tags: ['實名制', '發問', '經驗分享'],
+    tags: ['實名制', '發文', '收藏'],
     cta: '查看完整內文',
   },
   {
     id: 'b2',
     type: '常見問題',
-    title: '社群發文要選哪一種？',
+    title: '社群發文可以寫什麼？',
     date: '2026/07/25',
     owner: '平台管理小組',
-    summary: '初版只保留「發問」與「經驗分享」兩種貼文類型：遇到問題就發問，用過的方法就分享。',
+    summary: '社群發文不需要先選類別，遇到問題、用過的方法、流程提醒或常見錯誤都可以直接寫成貼文。',
     body: [
-      '如果你正在卡關、想知道某個流程怎麼做，請選擇「發問」。',
-      '如果你已經用過某個工具、模板、流程或方法，想整理給別人參考，請選擇「經驗分享」。',
-      '發問貼文可由發問者或管理員把最有幫助的留言設為最佳回覆，系統會將該貼文顯示為已解決。',
+      '如果你正在卡關，可以直接描述問題背景、卡住的地方與希望大家協助的內容。',
+      '如果你已經用過某個工具、模板、流程或方法，可以整理成貼文給其他同仁參考。',
+      '貼文可以被收藏，也可以透過留言補充不同部門的做法。',
     ],
-    tags: ['發問', '經驗分享', 'MVP'],
+    tags: ['發文', '留言', '收藏'],
     cta: '查看完整內文',
   },
   {
@@ -424,7 +424,7 @@ const incomingInviteSeed = [
     time: '昨天 16:15',
   },
 ]
-const demoStorageVersion = '2026-07-24-learning-community-mvp'
+const demoStorageVersion = '2026-07-24-simple-posts-connect-nav'
 
 function storageGet(key, fallback) {
   try {
@@ -691,7 +691,7 @@ function Landing({ navigate }) {
         <div className="grid gap-5 md:grid-cols-4">
           <FeatureCard title="Connect News｜公告與常見問題" text="只保留系統更新與常見問題，讓平台重要資訊清楚集中。" />
           <FeatureCard title="Connect Chat｜一對一討論" text="搜尋同仁並延續一對一討論，可示意分享文字、圖片、檔案與連結。" />
-          <FeatureCard title="Connect Hub｜學習社群" text="用發問與經驗分享兩種貼文，累積可搜尋、可收藏的工作知識。" />
+          <FeatureCard title="Connect Hub｜學習社群" text="用發文、留言與收藏，累積可搜尋、可回看的工作知識。" />
           <FeatureCard title="Connect Guide｜交流守則" text="採公司帳號實名制，清楚說明資訊安全、發文與留言原則。" />
         </div>
       </section>
@@ -705,7 +705,7 @@ function Landing({ navigate }) {
             {[
               ['01', '確認員工資料', '登入後確認公司匯入的基本資料。'],
               ['02', '查看 Connect News', '掌握公告與常見問題。'],
-              ['03', '進入 Connect Hub', '用發問或經驗分享留下可被搜尋的內容。'],
+              ['03', '進入 Connect Hub', '用發文與留言留下可被搜尋的內容。'],
               ['04', '開啟 Connect Chat', '需要補充細節時，用聊天室延續一對一討論。'],
             ].map(([step, title, text]) => (
               <article key={step} className="rounded-card border border-line bg-white p-5 shadow-card">
@@ -960,7 +960,6 @@ function CommunitiesPage({ communities, setCommunities, profile, setProfile, nav
 function CommunityDetail({ id, communities, setCommunities, profile, setProfile, navigate, notify }) {
   const community = communities.find((item) => item.id === id) || communities[0]
   const [content, setContent] = useState('')
-  const [postType, setPostType] = useState('發問')
   const joined = profile.joinedCommunities.includes(community.id)
   const toggleJoin = () => {
     setProfile((prev) => ({ ...prev, joinedCommunities: joined ? prev.joinedCommunities.filter((item) => item !== community.id) : [...prev.joinedCommunities, community.id] }))
@@ -971,7 +970,7 @@ function CommunityDetail({ id, communities, setCommunities, profile, setProfile,
       notify('先寫一點想分享的內容吧。')
       return
     }
-    const post = { id: `p${Date.now()}`, type: postType, author: profile.name, meta: `${profile.department} · ${profile.role}`, time: '剛剛', content, saves: 0, comments: 0 }
+    const post = { id: `p${Date.now()}`, author: profile.name, meta: `${profile.department} · ${profile.role}`, time: '剛剛', content, saves: 0, comments: 0 }
     setCommunities((prev) => prev.map((item) => item.id === community.id ? { ...item, posts: [post, ...item.posts] } : item))
     setContent('')
     notify('貼文已發布。')
@@ -995,12 +994,7 @@ function CommunityDetail({ id, communities, setCommunities, profile, setProfile,
       </section>
       <section className="mt-6 rounded-card border border-line bg-white p-5 shadow-card">
         <h2 className="mb-3 text-xl font-black">發布貼文</h2>
-        <div className="mb-3 flex flex-wrap gap-2">
-          {['發問', '經驗分享'].map((type) => (
-            <button key={type} type="button" onClick={() => setPostType(type)} className={postType === type ? 'chip active' : 'chip'}>{type}</button>
-          ))}
-        </div>
-        <textarea value={content} onChange={(e) => setContent(e.target.value)} placeholder={postType === '發問' ? '把遇到的問題、卡住的情境或想確認的流程寫下來...' : '整理一個你用過的方法、工具、模板或流程，給其他同仁參考...'} className="field min-h-28" />
+        <textarea value={content} onChange={(e) => setContent(e.target.value)} placeholder="寫下想問的問題、用過的方法、流程提醒或給同仁參考的內容..." className="field min-h-28" />
         <div className="mt-3 flex justify-end"><button className="btn-primary" onClick={publish}>發布</button></div>
       </section>
       <section className="mt-6">
@@ -1186,11 +1180,11 @@ function RulesPage() {
   const rules = [
     {
       title: '平台定位',
-      items: ['台塑 Connect 採公司帳號實名制，發文、留言與聊天室以公司匯入資料識別。', '平台聚焦於發問、回覆、經驗分享與常見問題沉澱，讓討論內容可以被信任與管理。'],
+      items: ['台塑 Connect 採公司帳號實名制，發文、留言與聊天室以公司匯入資料識別。', '平台聚焦於發文、留言、收藏與常見問題沉澱，讓討論內容可以被信任與管理。'],
     },
     {
       title: '社群發文',
-      items: ['初版貼文只分為發問與經驗分享，讓同仁不用花太多時間判斷分類。', '發問時請盡量描述問題背景、已嘗試的方法與希望獲得的協助。', '發問者或管理員可將最有幫助的留言設為最佳回覆，貼文會顯示為已解決。', '經驗分享可整理工具使用心得、流程做法、模板說明或常見錯誤。'],
+      items: ['社群發文不需要先選類別，直接寫下問題、使用經驗、流程提醒或常見錯誤。', '發文時請盡量描述背景、已嘗試的方法與希望獲得的協助。', '回覆時請提供具體做法、參考文件位置或可被其他同仁理解的經驗。'],
     },
     {
       title: '聊天室使用',
@@ -1203,10 +1197,10 @@ function RulesPage() {
   ]
   return (
     <PageWrap>
-      <PageTitle eyebrow="Guidelines" title="Connect Guide｜交流守則" text="台塑 Connect 採公司實名制，讓每一則發問、回覆與經驗分享都能被信任，也讓資訊安全與交流品質被妥善管理。" />
+      <PageTitle eyebrow="Guidelines" title="Connect Guide｜交流守則" text="台塑 Connect 採公司實名制，讓每一則發文、留言與討論都能被信任，也讓資訊安全與交流品質被妥善管理。" />
       <section className="rounded-[28px] bg-white p-6 shadow-card lg:p-8">
         <h2 className="text-3xl font-black">共同使用原則</h2>
-        <p className="mt-4 max-w-3xl leading-7 text-slate-600">台塑 Connect 是企業內部學習交流平台，內容應聚焦於問題解決、工作經驗分享、工具使用心得與跨部門知識流動。平台資料僅作為交流與知識沉澱用途，不應直接作為績效評價或私人用途。</p>
+        <p className="mt-4 max-w-3xl leading-7 text-slate-600">台塑 Connect 是企業內部學習交流平台，內容應聚焦於問題解決、工作使用經驗、工具心得與跨部門知識流動。平台資料僅作為交流與知識沉澱用途，不應直接作為績效評價或私人用途。</p>
         <div className="mt-6 grid gap-4 md:grid-cols-2">
           {rules.map((group) => (
             <article key={group.title} className="rounded-card bg-mist p-5">
@@ -1228,17 +1222,25 @@ function RulesPage() {
 
 function AppNav({ route, navigate, logout }) {
   const items = [
-    ['Connect News｜公告與常見問題', '/dashboard'],
-    ['Connect Chat｜一對一討論', '/chat'],
-    ['Connect Hub｜學習社群', '/communities'],
-    ['Connect Guide｜交流守則', '/rules'],
-    ['My Profile｜我的資料', '/profile'],
+    ['Connect News', '公告與常見問題', '/dashboard'],
+    ['Connect Chat', '一對一討論', '/chat'],
+    ['Connect Hub', '學習社群', '/communities'],
+    ['Connect Guide', '交流守則', '/rules'],
+    ['My Profile', '我的資料', '/profile'],
   ]
   return (
     <aside className="fixed left-5 top-5 z-40 hidden h-[calc(100vh-2.5rem)] w-72 flex-col rounded-[28px] bg-white p-5 shadow-soft lg:flex">
       <button onClick={() => navigate('/dashboard')} className="mb-9 text-left text-2xl font-black text-navy">台塑 Connect</button>
       <nav className="flex flex-1 flex-col gap-2">
-        {items.map(([label, path]) => <button key={path} onClick={() => navigate(path)} className={`nav-item ${route === path || route.startsWith(path + '/') ? 'active' : ''}`}>{label}</button>)}
+        {items.map(([english, chinese, path]) => {
+          const active = route === path || route.startsWith(path + '/')
+          return (
+            <button key={path} onClick={() => navigate(path)} className={`nav-item items-start text-left ${active ? 'active' : ''}`}>
+              <span className="block text-base font-black">{english}</span>
+              <span className={`mt-1 block text-xs font-bold ${active ? 'text-navy/70' : 'text-slate-500'}`}>{chinese}</span>
+            </button>
+          )
+        })}
       </nav>
       <button onClick={logout} className="nav-item text-left">登出</button>
     </aside>
@@ -1431,7 +1433,7 @@ function CommunityCard({ community, profile, setProfile, navigate, notify, horiz
       <div className="mt-4 flex flex-wrap gap-2">
         {community.tags.map((tag) => <span key={tag} className="pill">{tag}</span>)}
       </div>
-      <p className="mt-4 text-sm font-semibold text-slate-500">最新貼文：{community.posts[0]?.type || '發問'} · {community.posts[0]?.content.slice(0, 26)}...</p>
+      <p className="mt-4 text-sm font-semibold text-slate-500">最新貼文：{community.posts[0]?.content.slice(0, 32)}...</p>
       <div className="mt-5 grid grid-cols-2 gap-2">
         <button className={joined ? 'btn-secondary justify-center' : 'btn-primary justify-center'} onClick={toggleJoin}>{joined ? '已加入' : '加入社群'}</button>
         <button className="btn-secondary justify-center" onClick={() => navigate(`/community/${community.id}`)}>查看詳情</button>
@@ -1571,12 +1573,8 @@ function PostCard({ post }) {
   const [showComments, setShowComments] = useState(false)
   const [commentText, setCommentText] = useState('')
   const [localComments, setLocalComments] = useState([])
-  const [selectedSolutionId, setSelectedSolutionId] = useState(post.solved ? `${post.id}-r2` : '')
   const existingReplies = getPostReplies(post)
   const allReplies = [...existingReplies, ...localComments]
-  const solution = allReplies.find((reply) => reply.id === selectedSolutionId)
-  const isQuestion = (post.type || '發問') === '發問'
-  const isSolved = isQuestion && Boolean(solution)
   const saveCount = (post.saves ?? post.likes ?? 0) + (saved ? 1 : 0)
   const commentCount = (post.comments ?? existingReplies.length) + localComments.length
   const submitComment = () => {
@@ -1593,45 +1591,18 @@ function PostCard({ post }) {
           <h3 className="font-black">{post.author}</h3>
           <p className="text-sm text-slate-500">{post.meta} · {post.time}</p>
         </div>
-        <div className="flex flex-wrap gap-2">
-          <span className="pill-dark">{post.type || '發問'}</span>
-          {isSolved && <span className="pill">已解決</span>}
-        </div>
       </div>
       <p className="mt-4 leading-7 text-slate-700">{post.content}</p>
-      {solution && (
-        <div className="mt-4 rounded-card border border-skysoft bg-mist p-4">
-          <div className="mb-2 flex flex-wrap items-center gap-2">
-            <span className="pill-dark">最佳回覆</span>
-            <span className="text-sm font-semibold text-slate-500">由發問者或管理員標記</span>
-          </div>
-          <p className="text-sm leading-7 text-slate-700"><span className="font-black text-ink">{solution.author}：</span>{solution.text}</p>
-        </div>
-      )}
       <div className="mt-4 flex gap-4 text-sm font-bold text-slate-500">
         <button className={saved ? 'text-navy' : 'hover:text-navy'} onClick={() => setSaved((value) => !value)}>{saved ? '已收藏' : '收藏'} {saveCount}</button>
         <button className="hover:text-navy" onClick={() => setShowComments((value) => !value)}>留言 {commentCount}</button>
       </div>
       {showComments && (
         <div className="mt-4 rounded-card bg-mist p-4">
-          {isQuestion && (
-            <p className="mb-3 text-sm font-semibold leading-6 text-slate-500">發問貼文可由發問者或管理員選出一則最佳回覆；選定後，貼文會顯示為已解決。</p>
-          )}
           <div className="space-y-3">
             {allReplies.map((reply) => (
-              <div key={reply.id} className={`rounded-2xl bg-white p-3 text-sm text-slate-700 ${reply.id === selectedSolutionId ? 'ring-2 ring-skysoft' : ''}`}>
-                <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
-                  <p className="leading-6"><span className="font-black text-ink">{reply.author}：</span>{reply.text}</p>
-                  {isQuestion && (
-                    <button
-                      type="button"
-                      className={`shrink-0 text-xs font-black ${reply.id === selectedSolutionId ? 'text-navy' : 'text-slate-400 hover:text-navy'}`}
-                      onClick={() => setSelectedSolutionId(reply.id)}
-                    >
-                      {reply.id === selectedSolutionId ? '最佳回覆' : '設為最佳'}
-                    </button>
-                  )}
-                </div>
+              <div key={reply.id} className="rounded-2xl bg-white p-3 text-sm text-slate-700">
+                <p className="leading-6"><span className="font-black text-ink">{reply.author}：</span>{reply.text}</p>
               </div>
             ))}
           </div>
