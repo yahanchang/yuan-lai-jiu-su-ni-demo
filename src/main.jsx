@@ -331,15 +331,15 @@ const bulletinSeed = [
   {
     id: 'b1',
     type: '系統更新',
-    title: '塑學圈定位更新：實名發問與經驗沉澱',
+    title: '台塑 Connect 定位更新：實名發問與經驗沉澱',
     date: '2026/07/23',
     owner: '平台管理小組',
-    summary: '塑學圈調整為企業內部實名學習交流平台，聚焦發問、回覆、收藏與經驗分享，讓問題與解法可以被後續同仁查找。',
+    summary: '台塑 Connect 調整為企業內部實名學習交流平台，聚焦發問、回覆、收藏與經驗分享，讓問題與解法可以被後續同仁查找。',
     body: [
       '平台採公司帳號實名制，發文、留言與聊天室都會顯示公司匯入的姓名與部門職位。',
       '社群貼文先保留兩種最簡單的類型：發問與經驗分享，方便上線初期降低使用門檻。',
       '聊天室作為延續討論的空間，可示意支援文字、圖片、檔案與連結分享。',
-      '塑訊公布欄暫時只放系統更新與常見問題，避免資訊過度分散。',
+      'Connect News 目前只放系統更新與常見問題，避免資訊過度分散。',
     ],
     tags: ['實名制', '發問', '經驗分享'],
     cta: '查看完整內文',
@@ -615,7 +615,7 @@ function App() {
   return (
     <div className="min-h-screen bg-mist text-ink">
       {showShell && <AppNav route={route} navigate={navigate} logout={logout} />}
-      <main className={showShell ? 'pb-24 pt-5 lg:pb-10 lg:pl-72 lg:pr-8' : ''}>
+      <main className={showShell ? 'pb-24 pt-5 lg:pb-10 lg:pl-80 lg:pr-8' : ''}>
         <Router route={route} appState={appState} />
       </main>
       {showShell && <MobileTabs route={route} navigate={navigate} />}
@@ -645,7 +645,7 @@ function Landing({ navigate }) {
   return (
     <div className="bg-white">
       <header className="mx-auto flex max-w-7xl items-center justify-between px-5 py-5">
-        <button onClick={() => navigate('/')} className="text-left text-2xl font-black tracking-wide text-navy">塑學圈</button>
+        <button onClick={() => navigate('/')} className="text-left text-2xl font-black tracking-wide text-navy">台塑 Connect</button>
         <div className="flex gap-3">
           <button onClick={() => navigate('/login')} className="btn-ghost">登入平台</button>
         </div>
@@ -656,9 +656,9 @@ function Landing({ navigate }) {
         <div className="mx-auto grid max-w-7xl gap-10 px-5 py-16 lg:grid-cols-[1.1fr_.9fr] lg:items-center lg:py-24">
           <div className="relative z-10">
             <p className="mb-5 inline-flex rounded-full border border-white/80 bg-white/70 px-4 py-2 text-sm font-semibold text-navy shadow-card">台塑企業員工交流與共學平台</p>
-            <h1 className="max-w-3xl text-5xl font-black leading-tight tracking-tight text-ink sm:text-6xl lg:text-7xl">塑學圈</h1>
+            <h1 className="max-w-3xl text-5xl font-black leading-tight tracking-tight text-ink sm:text-6xl lg:text-7xl">台塑 Connect</h1>
             <p className="mt-4 max-w-3xl text-2xl font-black leading-tight text-ink sm:text-3xl">把問題問出來，把經驗留下來。</p>
-            <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-600">塑學圈是台塑企業內部的實名制員工學習交流平台，讓同仁可以在社群中發問、回覆、分享使用經驗，並把常見問題與解決方式留下來給後續同仁參考。</p>
+            <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-600">台塑 Connect 是台塑企業內部的實名制員工學習交流平台，讓同仁可以在社群中發問、回覆、分享使用經驗，並把常見問題與解決方式留下來給後續同仁參考。</p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <button onClick={() => navigate('/login')} className="btn-primary h-13 justify-center px-8 text-base">登入平台</button>
               <span className="flex items-center px-2 text-sm font-semibold text-slate-500">登入後確認公司匯入資料</span>
@@ -675,7 +675,7 @@ function Landing({ navigate }) {
                 </div>
                 <p className="mt-8 text-2xl font-bold leading-snug">發問、回覆、收藏，讓答案不只停在一次對話裡。</p>
                 <div className="mt-8 grid grid-cols-2 gap-3">
-                  {['塑訊公布欄', '塑聊', '塑學社群', '交流守則'].map((tag) => <span key={tag} className="pill">{tag}</span>)}
+                  {['Connect News｜公告與常見問題', 'Connect Chat｜一對一討論', 'Connect Hub｜學習社群', 'Connect Guide｜交流守則'].map((tag) => <span key={tag} className="pill">{tag}</span>)}
                 </div>
               </div>
               <div className="floating-note">公司帳號登入 → 查看系統更新與常見問題 → 到社群發問或分享經驗 → 用聊天室延續細節討論。</div>
@@ -689,10 +689,10 @@ function Landing({ navigate }) {
           <h2 className="section-title">四個核心功能，讓問題更快被解決、經驗更容易被找到</h2>
         </div>
         <div className="grid gap-5 md:grid-cols-4">
-          <FeatureCard title="塑訊公布欄" text="只保留系統更新與常見問題，讓平台重要資訊清楚集中。" />
-          <FeatureCard title="塑聊" text="搜尋同仁並延續一對一討論，可示意分享文字、圖片、檔案與連結。" />
-          <FeatureCard title="塑學社群" text="用發問與經驗分享兩種貼文，累積可搜尋、可收藏的工作知識。" />
-          <FeatureCard title="交流守則" text="採公司帳號實名制，清楚說明資訊安全、發文與留言原則。" />
+          <FeatureCard title="Connect News｜公告與常見問題" text="只保留系統更新與常見問題，讓平台重要資訊清楚集中。" />
+          <FeatureCard title="Connect Chat｜一對一討論" text="搜尋同仁並延續一對一討論，可示意分享文字、圖片、檔案與連結。" />
+          <FeatureCard title="Connect Hub｜學習社群" text="用發問與經驗分享兩種貼文，累積可搜尋、可收藏的工作知識。" />
+          <FeatureCard title="Connect Guide｜交流守則" text="採公司帳號實名制，清楚說明資訊安全、發文與留言原則。" />
         </div>
       </section>
       <section className="border-y border-line bg-mist">
@@ -704,9 +704,9 @@ function Landing({ navigate }) {
           <div className="grid gap-4 lg:grid-cols-4">
             {[
               ['01', '確認員工資料', '登入後確認公司匯入的基本資料。'],
-              ['02', '查看塑訊公布欄', '掌握系統更新與常見問題。'],
-              ['03', '進入塑學社群', '用發問或經驗分享留下可被搜尋的內容。'],
-              ['04', '開啟塑聊', '需要補充細節時，用聊天室延續一對一討論。'],
+              ['02', '查看 Connect News', '掌握公告與常見問題。'],
+              ['03', '進入 Connect Hub', '用發問或經驗分享留下可被搜尋的內容。'],
+              ['04', '開啟 Connect Chat', '需要補充細節時，用聊天室延續一對一討論。'],
             ].map(([step, title, text]) => (
               <article key={step} className="rounded-card border border-line bg-white p-5 shadow-card">
                 <p className="text-4xl font-black text-blueprint">{step}</p>
@@ -737,12 +737,12 @@ function Register({ setProfile, setIsAuthed, navigate, notify }) {
   const submit = () => {
     setProfile({ ...form, favorites: [], joinedCommunities: ['c1'] })
     setIsAuthed(true)
-    notify('員工資料確認完成，歡迎來到塑學圈。')
+    notify('員工資料確認完成，歡迎來到台塑 Connect。')
     navigate('/dashboard')
   }
 
   return (
-    <AuthLayout title="確認員工資料" subtitle="以下資料由企業帳號與人資系統匯入，平台不提供自行填寫或編輯。確認無誤後即可進入塑學圈。">
+    <AuthLayout title="確認員工資料" subtitle="以下資料由企業帳號與人資系統匯入，平台不提供自行填寫或編輯。確認無誤後即可進入台塑 Connect。">
       <div className="space-y-5">
         <div className="rounded-card bg-mist p-5">
           <h2 className="text-xl font-black text-ink">公司已匯入你的基本資料</h2>
@@ -794,13 +794,13 @@ function Login({ profile, setIsAuthed, navigate, notify }) {
 function AuthLayout({ title, subtitle, children }) {
   return (
     <div className="min-h-screen bg-gradient-to-br from-white via-mist to-skysoft px-5 py-8">
-      <button onClick={() => (location.hash = '/')} className="mx-auto mb-8 block max-w-4xl text-2xl font-black text-navy">塑學圈</button>
+      <button onClick={() => (location.hash = '/')} className="mx-auto mb-8 block max-w-4xl text-2xl font-black text-navy">台塑 Connect</button>
       <section className="mx-auto grid max-w-5xl overflow-hidden rounded-[28px] border border-white bg-white shadow-soft lg:grid-cols-[.8fr_1.2fr]">
         <div className="bg-navy p-8 text-white lg:p-10">
           <p className="text-sm font-semibold uppercase tracking-[.2em] text-skysoft">Employee Connection</p>
           <h1 className="mt-5 text-4xl font-black leading-tight">{title}</h1>
           <p className="mt-4 leading-7 text-slate-200">{subtitle}</p>
-          <p className="mt-10 rounded-card bg-white/10 p-5 leading-7 text-slate-100">從塑訊公布欄、聊天室到塑學社群，讓經驗在組織裡真正流動。</p>
+          <p className="mt-10 rounded-card bg-white/10 p-5 leading-7 text-slate-100">從 Connect News、Connect Chat 到 Connect Hub，讓經驗在組織裡真正流動。</p>
         </div>
         <div className="p-6 sm:p-8 lg:p-10">{children}</div>
       </section>
@@ -815,13 +815,13 @@ function ProfileBuilder(props) {
 function Dashboard({ profile, navigate }) {
   return (
     <PageWrap>
-      <PageTitle eyebrow="Bulletin" title={`Hi，${profile.name}！塑訊公布欄`} text="集中查看系統更新與常見問題，避免重要平台資訊散落在聊天室或社群貼文裡。" />
+      <PageTitle eyebrow="Bulletin" title={`Hi，${profile.name}！Connect News｜公告與常見問題`} text="集中查看系統更新與常見問題，避免重要平台資訊散落在聊天室或社群貼文裡。" />
       <section className="rounded-[28px] bg-gradient-to-br from-white to-skysoft p-6 shadow-card lg:p-8">
         <div className="grid gap-5 lg:grid-cols-[1.1fr_.9fr] lg:items-center">
           <div>
             <p className="eyebrow">Today</p>
             <h2 className="mt-2 text-3xl font-black">系統更新與常見問題放在這裡</h2>
-            <p className="mt-4 max-w-2xl leading-7 text-slate-600">塑訊公布欄只放平台相關的系統更新與常見問題，讓同仁快速掌握功能變更、使用方式與資訊安全提醒。</p>
+            <p className="mt-4 max-w-2xl leading-7 text-slate-600">Connect News 只放平台相關的系統更新與常見問題，讓同仁快速掌握功能變更、使用方式與資訊安全提醒。</p>
           </div>
           <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-1">
             <Info label="系統更新" value={`${bulletinSeed.filter((item) => item.type === '系統更新').length} 則`} />
@@ -857,7 +857,7 @@ function BulletinDetail({ id, navigate }) {
   const item = bulletinSeed.find((entry) => entry.id === id) || bulletinSeed[0]
   return (
     <PageWrap>
-      <button className="mb-5 text-sm font-bold text-navy hover:underline" onClick={() => navigate('/dashboard')}>返回塑訊公布欄</button>
+      <button className="mb-5 text-sm font-bold text-navy hover:underline" onClick={() => navigate('/dashboard')}>返回 Connect News</button>
       <article className="rounded-[28px] bg-white p-6 shadow-card lg:p-8">
         <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-start">
           <div>
@@ -865,7 +865,7 @@ function BulletinDetail({ id, navigate }) {
             <h1 className="mt-2 max-w-3xl text-4xl font-black leading-tight">{item.title}</h1>
             <p className="mt-3 font-semibold text-slate-500">{item.owner} · {item.date}</p>
           </div>
-          <span className="pill-dark w-fit">塑訊公布欄</span>
+          <span className="pill-dark w-fit">Connect News｜公告與常見問題</span>
         </div>
         <p className="mt-6 rounded-card bg-mist p-5 text-lg font-semibold leading-8 text-slate-700">{item.summary}</p>
         <div className="mt-6 space-y-4 leading-8 text-slate-650">
@@ -889,7 +889,7 @@ function MentorDetail({ id, profile, setProfile, conversations, inviteMentor, se
   }
   return (
     <PageWrap>
-      <button className="mb-5 text-sm font-bold text-navy hover:underline" onClick={() => navigate('/dashboard')}>返回塑訊公布欄</button>
+      <button className="mb-5 text-sm font-bold text-navy hover:underline" onClick={() => navigate('/dashboard')}>返回 Connect News</button>
       <section className="grid gap-6 lg:grid-cols-[.82fr_1.18fr]">
         <aside className="rounded-[28px] border border-line bg-white p-6 shadow-card">
           <h1 className="text-4xl font-black">{mentor.name}</h1>
@@ -940,7 +940,7 @@ function CommunitiesPage({ communities, setCommunities, profile, setProfile, nav
   return (
     <PageWrap>
       <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
-        <PageTitle eyebrow="Communities" title="塑學社群" text="依專業工作、職涯經驗與生活興趣加入社群，讓知識整理、問題討論與同仁交流持續累積。" />
+        <PageTitle eyebrow="Communities" title="Connect Hub｜學習社群" text="依專業工作、職涯經驗與生活興趣加入社群，讓知識整理、問題討論與同仁交流持續累積。" />
         <button className="btn-primary justify-center" onClick={() => setShowCreate(true)}>創建社群</button>
       </div>
       <div className="mb-6 mt-2 grid gap-3 rounded-card border border-line bg-white p-5 shadow-card md:grid-cols-[1fr_220px]">
@@ -1019,7 +1019,7 @@ function ChatPage({ conversations, activeChatId, setActiveChatId, sendChatMessag
 
   return (
     <PageWrap>
-      <PageTitle eyebrow="Chat" title="塑聊" text="搜尋同仁姓名或員工編號，發送交流邀請；對方接受後，就能用文字、圖片、檔案與連結延續一對一討論。" />
+      <PageTitle eyebrow="Chat" title="Connect Chat｜一對一討論" text="搜尋同仁姓名或員工編號，發送交流邀請；對方接受後，就能用文字、圖片、檔案與連結延續一對一討論。" />
       <EmployeeInviteSearch conversations={conversations} onInvite={inviteMentor} setActiveChatId={setActiveChatId} />
       <IncomingInvites invites={incomingInvites} onAccept={acceptIncomingInvite} onDismiss={dismissIncomingInvite} />
       {activeConversation && activeMentor ? (
@@ -1152,7 +1152,7 @@ function ProfilePage({ profile }) {
 
   return (
     <PageWrap>
-      <PageTitle eyebrow="Employee Profile" title="我的員工資料" text="此頁以公司匯入的員工資料為主，僅供平台識別與同仁確認使用；若資料有誤，請洽人資或系統管理單位更新。" />
+      <PageTitle eyebrow="Employee Profile" title="My Profile｜我的資料" text="此頁以公司匯入的員工資料為主，僅供平台識別與同仁確認使用；若資料有誤，請洽人資或系統管理單位更新。" />
       <div className="grid gap-6 lg:grid-cols-[.75fr_1.25fr]">
         <section className="rounded-[28px] bg-white p-6 shadow-card">
           <div className="rounded-card bg-mist p-5">
@@ -1186,7 +1186,7 @@ function RulesPage() {
   const rules = [
     {
       title: '平台定位',
-      items: ['塑學圈採公司帳號實名制，發文、留言與聊天室以公司匯入資料識別。', '平台聚焦於發問、回覆、經驗分享與常見問題沉澱，讓討論內容可以被信任與管理。'],
+      items: ['台塑 Connect 採公司帳號實名制，發文、留言與聊天室以公司匯入資料識別。', '平台聚焦於發問、回覆、經驗分享與常見問題沉澱，讓討論內容可以被信任與管理。'],
     },
     {
       title: '社群發文',
@@ -1203,10 +1203,10 @@ function RulesPage() {
   ]
   return (
     <PageWrap>
-      <PageTitle eyebrow="Guidelines" title="交流守則" text="塑學圈採公司實名制，讓每一則發問、回覆與經驗分享都能被信任，也讓資訊安全與交流品質被妥善管理。" />
+      <PageTitle eyebrow="Guidelines" title="Connect Guide｜交流守則" text="台塑 Connect 採公司實名制，讓每一則發問、回覆與經驗分享都能被信任，也讓資訊安全與交流品質被妥善管理。" />
       <section className="rounded-[28px] bg-white p-6 shadow-card lg:p-8">
         <h2 className="text-3xl font-black">共同使用原則</h2>
-        <p className="mt-4 max-w-3xl leading-7 text-slate-600">塑學圈是企業內部學習交流平台，內容應聚焦於問題解決、工作經驗分享、工具使用心得與跨部門知識流動。平台資料僅作為交流與知識沉澱用途，不應直接作為績效評價或私人用途。</p>
+        <p className="mt-4 max-w-3xl leading-7 text-slate-600">台塑 Connect 是企業內部學習交流平台，內容應聚焦於問題解決、工作經驗分享、工具使用心得與跨部門知識流動。平台資料僅作為交流與知識沉澱用途，不應直接作為績效評價或私人用途。</p>
         <div className="mt-6 grid gap-4 md:grid-cols-2">
           {rules.map((group) => (
             <article key={group.title} className="rounded-card bg-mist p-5">
@@ -1228,15 +1228,15 @@ function RulesPage() {
 
 function AppNav({ route, navigate, logout }) {
   const items = [
-    ['塑訊公布欄', '/dashboard'],
-    ['塑聊', '/chat'],
-    ['塑學社群', '/communities'],
-    ['交流守則', '/rules'],
-    ['我的員工資料', '/profile'],
+    ['Connect News｜公告與常見問題', '/dashboard'],
+    ['Connect Chat｜一對一討論', '/chat'],
+    ['Connect Hub｜學習社群', '/communities'],
+    ['Connect Guide｜交流守則', '/rules'],
+    ['My Profile｜我的資料', '/profile'],
   ]
   return (
-    <aside className="fixed left-5 top-5 z-40 hidden h-[calc(100vh-2.5rem)] w-60 flex-col rounded-[28px] bg-white p-5 shadow-soft lg:flex">
-      <button onClick={() => navigate('/dashboard')} className="mb-9 text-left text-2xl font-black text-navy">塑學圈</button>
+    <aside className="fixed left-5 top-5 z-40 hidden h-[calc(100vh-2.5rem)] w-72 flex-col rounded-[28px] bg-white p-5 shadow-soft lg:flex">
+      <button onClick={() => navigate('/dashboard')} className="mb-9 text-left text-2xl font-black text-navy">台塑 Connect</button>
       <nav className="flex flex-1 flex-col gap-2">
         {items.map(([label, path]) => <button key={path} onClick={() => navigate(path)} className={`nav-item ${route === path || route.startsWith(path + '/') ? 'active' : ''}`}>{label}</button>)}
       </nav>
@@ -1247,11 +1247,11 @@ function AppNav({ route, navigate, logout }) {
 
 function MobileTabs({ route, navigate }) {
   const items = [
-    ['塑訊', '/dashboard'],
-    ['塑聊', '/chat'],
-    ['社群', '/communities'],
-    ['守則', '/rules'],
-    ['員工資料', '/profile'],
+    ['News', '/dashboard'],
+    ['Chat', '/chat'],
+    ['Hub', '/communities'],
+    ['Guide', '/rules'],
+    ['My', '/profile'],
   ]
   return (
     <nav className="fixed inset-x-3 bottom-3 z-40 grid grid-cols-5 rounded-[22px] border border-line bg-white/95 p-2 shadow-soft backdrop-blur lg:hidden">
