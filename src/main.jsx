@@ -1445,26 +1445,30 @@ function CreateCommunityModal({ onClose, setCommunities, setProfile, notify }) {
           <Textarea label="社群簡介" value={form.intro} onChange={(value) => setForm({ ...form, intro: value })} />
           <Select label="社群分類" value={form.category} onChange={(value) => setForm({ ...form, category: value })} options={['工作技能', '職涯', '興趣']} />
           <Input label="社群標籤（以逗號分隔）" value={form.tags} onChange={(value) => setForm({ ...form, tags: value })} />
-          <div className="grid gap-4 md:grid-cols-2">
-            <Select
+          <div className="rounded-card border border-line bg-white p-4">
+            <p className="label">版主設定</p>
+            <p className="mb-4 text-sm font-semibold text-slate-500">預設不加入也能看社群，加入後才能發文與留言；版主可在這裡加上更嚴格的限制。</p>
+            <ChoiceButtons
               label="貼文可見性"
               value={form.visibility}
               onChange={(value) => setForm({ ...form, visibility: value })}
               options={[
-                { value: 'public', label: '不加入也可以看貼文' },
-                { value: 'members', label: '加入後才能看貼文' },
+                ['public', '不加入也可以看貼文'],
+                ['members', '加入後才能看貼文'],
               ]}
             />
-            <Select
-              label="加入方式"
-              value={form.joinPolicy}
-              onChange={(value) => setForm({ ...form, joinPolicy: value })}
-              options={[
-                { value: 'open', label: '自由加入' },
-                { value: 'restricted', label: '符合條件才能加入' },
-                { value: 'approval', label: '版主人工審核' },
-              ]}
-            />
+            <div className="mt-4">
+              <ChoiceButtons
+                label="加入方式"
+                value={form.joinPolicy}
+                onChange={(value) => setForm({ ...form, joinPolicy: value })}
+                options={[
+                  ['open', '自由加入'],
+                  ['restricted', '符合條件才能加入'],
+                  ['approval', '版主人工審核'],
+                ]}
+              />
+            </div>
           </div>
           {form.joinPolicy === 'restricted' && (
             <div className="rounded-card bg-mist p-4">
@@ -1640,6 +1644,21 @@ function CheckGroup({ label, options, values, onToggle }) {
       <p className="label">{label}</p>
       <div className="flex flex-wrap gap-2">
         {options.map((option) => <button key={option} type="button" onClick={() => onToggle(option)} className={values.includes(option) ? 'chip active' : 'chip'}>{option}</button>)}
+      </div>
+    </div>
+  )
+}
+
+function ChoiceButtons({ label, options, value, onChange }) {
+  return (
+    <div>
+      <p className="label">{label}</p>
+      <div className="flex flex-wrap gap-2">
+        {options.map(([optionValue, optionLabel]) => (
+          <button key={optionValue} type="button" onClick={() => onChange(optionValue)} className={value === optionValue ? 'chip active' : 'chip'}>
+            {optionLabel}
+          </button>
+        ))}
       </div>
     </div>
   )
