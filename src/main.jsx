@@ -354,7 +354,7 @@ const bulletinSeed = [
     body: [
       '如果你正在卡關、想知道某個流程怎麼做，請選擇「發問」。',
       '如果你已經用過某個工具、模板、流程或方法，想整理給別人參考，請選擇「經驗分享」。',
-      '工具教學、資源整理與已解決標記會保留為未來擴充方向，初版先用最簡單的分類降低負擔。',
+      '發問貼文可由發問者或管理員把最有幫助的留言設為最佳回覆，系統會將該貼文顯示為已解決。',
     ],
     tags: ['發問', '經驗分享', 'MVP'],
     cta: '查看完整內文',
@@ -1190,7 +1190,7 @@ function RulesPage() {
     },
     {
       title: '社群發文',
-      items: ['初版貼文只分為發問與經驗分享，讓同仁不用花太多時間判斷分類。', '發問時請盡量描述問題背景、已嘗試的方法與希望獲得的協助。', '經驗分享可整理工具使用心得、流程做法、模板說明或常見錯誤。'],
+      items: ['初版貼文只分為發問與經驗分享，讓同仁不用花太多時間判斷分類。', '發問時請盡量描述問題背景、已嘗試的方法與希望獲得的協助。', '發問者或管理員可將最有幫助的留言設為最佳回覆，貼文會顯示為已解決。', '經驗分享可整理工具使用心得、流程做法、模板說明或常見錯誤。'],
     },
     {
       title: '聊天室使用',
@@ -1543,26 +1543,26 @@ function TagList({ tags }) {
 function getPostReplies(post) {
   const replies = {
     p1: [
-      { author: '周明翰', text: '我會先問直屬主管確認方向，再把問題整理成三點去找窗口，避免直接丟一大串訊息。' },
-      { author: '林若涵', text: '可以先寫清楚背景、目前卡點、希望對方協助的地方，跨部門窗口比較容易回覆。' },
-      { author: '吳品萱', text: '我會先搜尋社群有沒有相似問題，再決定要公開發問或私訊補細節。' },
+      { id: 'p1-r1', author: '周明翰', text: '我會先問直屬主管確認方向，再把問題整理成三點去找窗口，避免直接丟一大串訊息。' },
+      { id: 'p1-r2', author: '林若涵', text: '可以先寫清楚背景、目前卡點、希望對方協助的地方，跨部門窗口比較容易回覆。' },
+      { id: 'p1-r3', author: '吳品萱', text: '我會先搜尋社群有沒有相似問題，再決定要公開發問或私訊補細節。' },
     ],
     p2: [
-      { author: '張庭安', text: '這份清單很實用，尤其是常用表單位置，很多新人第一週都會問。' },
-      { author: '陳柏宇', text: '建議可以加一欄「負責窗口」，未來查找會更快。' },
+      { id: 'p2-r1', author: '張庭安', text: '這份清單很實用，尤其是常用表單位置，很多新人第一週都會問。' },
+      { id: 'p2-r2', author: '陳柏宇', text: '建議可以加一欄「負責窗口」，未來查找會更快。' },
     ],
     p3: [
-      { author: '塑寶', text: '想知道現金流表要先追哪些項目，期待模板。' },
-      { author: '劉怡君', text: '簡單可持續很重要，初版不用太複雜。' },
+      { id: 'p3-r1', author: '塑寶', text: '想知道現金流表要先追哪些項目，期待模板。' },
+      { id: 'p3-r2', author: '劉怡君', text: '簡單可持續很重要，初版不用太複雜。' },
     ],
     p4: [
-      { author: '張庭安', text: 'Project Brief 很適合給新人理解專案全貌。' },
-      { author: '許哲維', text: '如果可以加一欄資料需求會更完整。' },
+      { id: 'p4-r1', author: '張庭安', text: 'Project Brief 很適合給新人理解專案全貌。' },
+      { id: 'p4-r2', author: '許哲維', text: '如果可以加一欄資料需求會更完整。' },
     ],
   }
   return replies[post.id] || [
-    { author: '陳柏宇', text: '這個主題很值得延伸討論，我也想聽聽其他部門的做法。' },
-    { author: '林若涵', text: '可以把問題情境再寫具體一點，大家比較容易提供經驗。' },
+    { id: `${post.id}-r1`, author: '陳柏宇', text: '這個主題很值得延伸討論，我也想聽聽其他部門的做法。' },
+    { id: `${post.id}-r2`, author: '林若涵', text: '可以把問題情境再寫具體一點，大家比較容易提供經驗。' },
   ]
 }
 
@@ -1571,12 +1571,17 @@ function PostCard({ post }) {
   const [showComments, setShowComments] = useState(false)
   const [commentText, setCommentText] = useState('')
   const [localComments, setLocalComments] = useState([])
+  const [selectedSolutionId, setSelectedSolutionId] = useState(post.solved ? `${post.id}-r2` : '')
   const existingReplies = getPostReplies(post)
+  const allReplies = [...existingReplies, ...localComments]
+  const solution = allReplies.find((reply) => reply.id === selectedSolutionId)
+  const isQuestion = (post.type || '發問') === '發問'
+  const isSolved = isQuestion && Boolean(solution)
   const saveCount = (post.saves ?? post.likes ?? 0) + (saved ? 1 : 0)
   const commentCount = (post.comments ?? existingReplies.length) + localComments.length
   const submitComment = () => {
     if (!commentText.trim()) return
-    setLocalComments((prev) => [...prev, { id: Date.now(), author: '塑寶', text: commentText.trim() }])
+    setLocalComments((prev) => [...prev, { id: `local-${Date.now()}`, author: '塑寶', text: commentText.trim() }])
     setCommentText('')
     setShowComments(true)
   }
@@ -1590,27 +1595,43 @@ function PostCard({ post }) {
         </div>
         <div className="flex flex-wrap gap-2">
           <span className="pill-dark">{post.type || '發問'}</span>
-          {post.solved && <span className="pill">已解決</span>}
+          {isSolved && <span className="pill">已解決</span>}
         </div>
       </div>
       <p className="mt-4 leading-7 text-slate-700">{post.content}</p>
+      {solution && (
+        <div className="mt-4 rounded-card border border-skysoft bg-mist p-4">
+          <div className="mb-2 flex flex-wrap items-center gap-2">
+            <span className="pill-dark">最佳回覆</span>
+            <span className="text-sm font-semibold text-slate-500">由發問者或管理員標記</span>
+          </div>
+          <p className="text-sm leading-7 text-slate-700"><span className="font-black text-ink">{solution.author}：</span>{solution.text}</p>
+        </div>
+      )}
       <div className="mt-4 flex gap-4 text-sm font-bold text-slate-500">
         <button className={saved ? 'text-navy' : 'hover:text-navy'} onClick={() => setSaved((value) => !value)}>{saved ? '已收藏' : '收藏'} {saveCount}</button>
         <button className="hover:text-navy" onClick={() => setShowComments((value) => !value)}>留言 {commentCount}</button>
       </div>
       {showComments && (
         <div className="mt-4 rounded-card bg-mist p-4">
+          {isQuestion && (
+            <p className="mb-3 text-sm font-semibold leading-6 text-slate-500">發問貼文可由發問者或管理員選出一則最佳回覆；選定後，貼文會顯示為已解決。</p>
+          )}
           <div className="space-y-3">
-            {existingReplies.map((reply) => (
-              <div key={`${post.id}-${reply.author}-${reply.text}`} className="rounded-2xl bg-white p-3 text-sm text-slate-700">
-                <span className="font-black text-ink">{reply.author}：</span>
-                {reply.text}
-              </div>
-            ))}
-            {localComments.map((comment) => (
-              <div key={comment.id} className="rounded-2xl bg-white p-3 text-sm text-slate-700">
-                <span className="font-black text-ink">{comment.author}：</span>
-                {comment.text}
+            {allReplies.map((reply) => (
+              <div key={reply.id} className={`rounded-2xl bg-white p-3 text-sm text-slate-700 ${reply.id === selectedSolutionId ? 'ring-2 ring-skysoft' : ''}`}>
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                  <p className="leading-6"><span className="font-black text-ink">{reply.author}：</span>{reply.text}</p>
+                  {isQuestion && (
+                    <button
+                      type="button"
+                      className={`shrink-0 text-xs font-black ${reply.id === selectedSolutionId ? 'text-navy' : 'text-slate-400 hover:text-navy'}`}
+                      onClick={() => setSelectedSolutionId(reply.id)}
+                    >
+                      {reply.id === selectedSolutionId ? '最佳回覆' : '設為最佳'}
+                    </button>
+                  )}
+                </div>
               </div>
             ))}
           </div>
