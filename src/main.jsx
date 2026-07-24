@@ -409,21 +409,21 @@ const defaultProfile = {
 const joinRequestSeed = [
   {
     id: 'jr-1',
-    communityId: 'c2',
-    requester: '黃冠廷',
-    department: '投資管理部',
-    role: '投資經理',
-    reason: '想加入理財交流社群，整理新鮮人常見理財問題給同仁參考。',
+    communityId: 'c1',
+    requester: '周明翰',
+    department: '採購部',
+    role: '採購專員',
+    reason: '新人報到時常不知道流程窗口，希望加入新人職涯探索社群整理前 30 天常見問題。',
     time: '今天 09:25',
     status: '待審核',
   },
   {
     id: 'jr-2',
-    communityId: 'c8',
-    requester: '許哲維',
-    department: '資料平台部',
-    role: '資料工程師',
-    reason: '希望分享自動化報表整理經驗，也想蒐集各部門的工具使用問題。',
+    communityId: 'c1',
+    requester: '劉怡君',
+    department: '法遵室',
+    role: '法遵專員',
+    reason: '想了解新進同仁常見的適應問題，協助補充公司規範與問答整理。',
     time: '昨天 16:40',
     status: '待審核',
   },
@@ -448,7 +448,7 @@ const incomingInviteSeed = [
     time: '昨天 16:15',
   },
 ]
-const demoStorageVersion = '2026-07-24-hr-admin-console'
+const demoStorageVersion = '2026-07-24-admin-post-filter-requests'
 
 function storageGet(key, fallback) {
   try {
@@ -711,7 +711,7 @@ function App() {
   const isBulletinDetail = route.startsWith('/bulletin/')
   const isMentorDetail = route.startsWith('/mentor/')
   const isCommunityDetail = route.startsWith('/community/')
-  const isAdminRoute = adminRoutes.includes(route)
+  const isAdminRoute = adminRoutes.includes(route) || route.startsWith('/admin/post/')
   const showShell = isAuthed && !isAdminRoute && (authedRoutes.includes(route) || isBulletinDetail || isMentorDetail || isCommunityDetail)
   const showAdminShell = isAuthed && isAdminRoute && isHrAdmin(profile)
 
@@ -736,6 +736,7 @@ function Router({ route, appState }) {
   if (route === '/choose') return <RoleChoice {...appState} />
   if (route.startsWith('/admin')) {
     if (!isHrAdmin(appState.profile)) return <Dashboard {...appState} />
+    if (route.startsWith('/admin/post/')) return <AdminPostDetail postId={route.split('/').pop()} {...appState} />
     if (route === '/admin') return <AdminOverview {...appState} />
     if (route === '/admin/communities') return <AdminCommunities {...appState} />
     if (route === '/admin/requests') return <AdminRequests {...appState} />
@@ -1396,7 +1397,7 @@ function RulesPage() {
 }
 
 function AdminOverview({ profile, communities, joinRequests, navigate }) {
-  const allPosts = communities.flatMap((community) => community.posts.map((post) => ({ ...post, communityName: community.name })))
+  const allPosts = communities.flatMap((community) => community.posts.map((post) => ({ ...post, communityId: community.id, communityName: community.name, category: community.category })))
   const pendingRequests = joinRequests.filter((request) => request.status === '待審核')
   const memberOnlyCommunities = communities.filter((community) => community.visibility === 'members')
   return (
@@ -1421,11 +1422,11 @@ function AdminOverview({ profile, communities, joinRequests, navigate }) {
           <SectionHeader title="熱門內容觀察" />
           <div className="space-y-3">
             {allPosts.sort((a, b) => (b.saves || b.likes || 0) - (a.saves || a.likes || 0)).slice(0, 3).map((post) => (
-              <div key={post.id} className="rounded-card bg-mist p-4">
+              <button key={post.id} className="w-full rounded-card bg-mist p-4 text-left transition hover:-translate-y-0.5 hover:bg-skysoft" onClick={() => navigate(`/admin/post/${post.id}`)}>
                 <p className="text-sm font-black text-navy">{post.communityName}</p>
                 <p className="mt-2 line-clamp-2 leading-7 text-slate-650">{post.content}</p>
                 <p className="mt-2 text-xs font-bold text-slate-500">收藏 {(post.saves ?? post.likes ?? 0)} · 留言 {post.comments ?? 0}</p>
-              </div>
+              </button>
             ))}
           </div>
           <button className="btn-secondary mt-4 w-full justify-center" onClick={() => navigate('/admin/content')}>查看內容觀察</button>
@@ -1495,8 +1496,12 @@ function AdminRequests({ joinRequests, setJoinRequests, communities, notify }) {
   )
 }
 
-function AdminContent({ communities }) {
+function AdminContent({ communities, navigate }) {
+  const [period, setPeriod] = useState('week')
   const allPosts = communities.flatMap((community) => community.posts.map((post) => ({ ...post, communityName: community.name, category: community.category })))
+  const visiblePosts = allPosts
+    .sort((a, b) => (b.saves || b.likes || 0) - (a.saves || a.likes || 0))
+    .slice(0, period === 'week' ? 4 : period === 'month' ? 6 : allPosts.length)
   return (
     <PageWrap>
       <PageTitle eyebrow="Content Monitor" title="內容觀察" text="觀察熱門貼文、常見問題方向與高收藏內容，協助人資判斷哪些知識值得整理成公告或 FAQ。" />
@@ -1513,10 +1518,22 @@ function AdminContent({ communities }) {
           </div>
         </section>
         <section className="rounded-card border border-line bg-white p-5 shadow-card">
-          <SectionHeader title="高收藏貼文" />
+          <div className="mb-4 flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
+            <h2 className="text-2xl font-black">熱門貼文</h2>
+            <ChoiceButtons
+              label="統計區間"
+              value={period}
+              onChange={setPeriod}
+              options={[
+                ['week', '本週'],
+                ['month', '本月'],
+                ['quarter', '本季'],
+              ]}
+            />
+          </div>
           <div className="space-y-3">
-            {allPosts.sort((a, b) => (b.saves || b.likes || 0) - (a.saves || a.likes || 0)).slice(0, 6).map((post) => (
-              <article key={post.id} className="rounded-card bg-mist p-4">
+            {visiblePosts.map((post) => (
+              <button key={post.id} className="w-full rounded-card bg-mist p-4 text-left transition hover:-translate-y-0.5 hover:bg-skysoft" onClick={() => navigate(`/admin/post/${post.id}`)}>
                 <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-start">
                   <div>
                     <p className="text-sm font-black text-navy">{post.communityName} · {post.category}</p>
@@ -1524,11 +1541,38 @@ function AdminContent({ communities }) {
                   </div>
                   <span className="pill-dark whitespace-nowrap">收藏 {post.saves ?? post.likes ?? 0}</span>
                 </div>
-              </article>
+              </button>
             ))}
           </div>
         </section>
       </div>
+    </PageWrap>
+  )
+}
+
+function AdminPostDetail({ postId, communities, navigate }) {
+  const community = communities.find((item) => item.posts.some((post) => post.id === postId))
+  const post = community?.posts.find((item) => item.id === postId)
+  if (!community || !post) {
+    return (
+      <PageWrap>
+        <button className="mb-5 text-sm font-bold text-navy hover:underline" onClick={() => navigate('/admin/content')}>返回內容觀察</button>
+        <EmptyState title="找不到這篇貼文" text="可能是貼文已被移除，或目前資料尚未同步。" />
+      </PageWrap>
+    )
+  }
+  return (
+    <PageWrap>
+      <button className="mb-5 text-sm font-bold text-navy hover:underline" onClick={() => navigate('/admin/content')}>返回內容觀察</button>
+      <PageTitle eyebrow="Post Detail" title="貼文詳情" text="人資可從熱門貼文直接查看完整內容與留言脈絡，判斷是否需要整理成公告、FAQ 或內部知識文件。" />
+      <section className="rounded-card border border-line bg-white p-5 shadow-card">
+        <div className="mb-4 flex flex-wrap gap-2">
+          <span className="pill-dark">{community.name}</span>
+          <span className="pill">{community.category}</span>
+          <span className="pill">版主：{community.owner || '平台管理小組'}</span>
+        </div>
+        <PostCard post={post} canComment={false} />
+      </section>
     </PageWrap>
   )
 }
