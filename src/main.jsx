@@ -243,7 +243,7 @@ const communitySeed = [
     intro: '把新人常遇到的問題問出來，也把適應公司、理解流程與找資源的方法留下來。',
     members: 238,
     tags: ['新人訓', '同梯交流', '問題解決'],
-    visibility: 'public',
+    visibility: 'members',
     joinPolicy: 'approval',
     eligibilityRule: '員工編號 FP-0001 至 FP-0030，或屬於 2026 七月新人訓梯次',
     posts: [
@@ -485,7 +485,7 @@ const incomingInviteSeed = [
     time: '昨天 16:15',
   },
 ]
-const demoStorageVersion = '2026-07-24-newcomer-cohort-approval'
+const demoStorageVersion = '2026-07-24-newcomer-members-only'
 
 function storageGet(key, fallback) {
   try {
