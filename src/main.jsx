@@ -424,7 +424,7 @@ const incomingInviteSeed = [
     time: '昨天 16:15',
   },
 ]
-const demoStorageVersion = '2026-07-24-simple-posts-connect-nav'
+const demoStorageVersion = '2026-07-24-community-moderator-settings'
 
 function storageGet(key, fallback) {
   try {
@@ -467,7 +467,60 @@ function normalizeCommunityCategory(category) {
 }
 
 function normalizeCommunities(items) {
-  return items.map((item) => ({ ...item, category: normalizeCommunityCategory(item.category) }))
+  return items.map((item) => ({
+    ...item,
+    category: normalizeCommunityCategory(item.category),
+    owner: item.owner || '平台管理小組',
+    visibility: item.visibility || 'public',
+    joinPolicy: item.joinPolicy || 'open',
+    restrictions: {
+      companies: item.restrictions?.companies || [],
+      departments: item.restrictions?.departments || [],
+      minSeniority: item.restrictions?.minSeniority || '',
+    },
+  }))
+}
+
+function communityVisibilityLabel(community) {
+  return community.visibility === 'members' ? '加入後查看貼文' : '公開瀏覽'
+}
+
+function communityJoinPolicyLabel(community) {
+  if (community.joinPolicy === 'approval') return '版主審核'
+  if (community.joinPolicy === 'restricted') return '條件加入'
+  return '自由加入'
+}
+
+function canJoinCommunity(profile, community) {
+  if (community.joinPolicy !== 'restricted') return true
+  const restrictions = community.restrictions || {}
+  const companies = restrictions.companies || []
+  const departments = restrictions.departments || []
+  const minSeniority = Number(restrictions.minSeniority || 0)
+  const userSeniority = Number(profile.seniority || 0)
+  if (companies.length && !companies.includes(profile.company)) return false
+  if (departments.length && !departments.includes(profile.department)) return false
+  if (minSeniority && userSeniority < minSeniority) return false
+  return true
+}
+
+function toggleCommunityMembership({ community, profile, setProfile, notify }) {
+  const joined = profile.joinedCommunities.includes(community.id)
+  if (joined) {
+    setProfile((prev) => ({ ...prev, joinedCommunities: prev.joinedCommunities.filter((item) => item !== community.id) }))
+    notify('已退出社群。')
+    return
+  }
+  if (community.joinPolicy === 'approval') {
+    notify('已送出版主審核申請。')
+    return
+  }
+  if (!canJoinCommunity(profile, community)) {
+    notify('目前員工資料未符合這個社群的加入條件。')
+    return
+  }
+  setProfile((prev) => ({ ...prev, joinedCommunities: [...prev.joinedCommunities, community.id] }))
+  notify('已加入社群。')
 }
 
 function canShow(profile, key) {
@@ -952,7 +1005,7 @@ function CommunitiesPage({ communities, setCommunities, profile, setProfile, nav
           {filtered.map((community) => <CommunityCard key={community.id} community={community} navigate={navigate} profile={profile} setProfile={setProfile} notify={notify} />)}
         </div>
       ) : <EmptyState title="還沒有符合的社群" text="試著換一個關鍵字，或調整主題分類再看看。" />}
-      {showCreate && <CreateCommunityModal onClose={() => setShowCreate(false)} setCommunities={setCommunities} notify={notify} />}
+      {showCreate && <CreateCommunityModal onClose={() => setShowCreate(false)} setCommunities={setCommunities} setProfile={setProfile} notify={notify} />}
     </PageWrap>
   )
 }
@@ -961,11 +1014,15 @@ function CommunityDetail({ id, communities, setCommunities, profile, setProfile,
   const community = communities.find((item) => item.id === id) || communities[0]
   const [content, setContent] = useState('')
   const joined = profile.joinedCommunities.includes(community.id)
+  const postsVisible = joined || community.visibility !== 'members'
   const toggleJoin = () => {
-    setProfile((prev) => ({ ...prev, joinedCommunities: joined ? prev.joinedCommunities.filter((item) => item !== community.id) : [...prev.joinedCommunities, community.id] }))
-    notify(joined ? '已退出社群。' : '已加入社群。')
+    toggleCommunityMembership({ community, profile, setProfile, notify })
   }
   const publish = () => {
+    if (!joined) {
+      notify('加入社群後才能發布貼文。')
+      return
+    }
     if (!content.trim()) {
       notify('先寫一點想分享的內容吧。')
       return
@@ -986,6 +1043,8 @@ function CommunityDetail({ id, communities, setCommunities, profile, setProfile,
             <p className="mt-4 max-w-3xl leading-7 text-slate-600">{community.intro}</p>
             <div className="mt-5 flex flex-wrap items-center gap-2">
               <span className="pill-dark">{community.members} 位成員</span>
+              <span className="pill">{communityVisibilityLabel(community)}</span>
+              <span className="pill">{communityJoinPolicyLabel(community)}</span>
               {community.tags.map((tag) => <span key={tag} className="pill">{tag}</span>)}
             </div>
           </div>
@@ -993,16 +1052,43 @@ function CommunityDetail({ id, communities, setCommunities, profile, setProfile,
         </div>
       </section>
       <section className="mt-6 rounded-card border border-line bg-white p-5 shadow-card">
-        <h2 className="mb-3 text-xl font-black">發布貼文</h2>
-        <textarea value={content} onChange={(e) => setContent(e.target.value)} placeholder="寫下想問的問題、用過的方法、流程提醒或給同仁參考的內容..." className="field min-h-28" />
-        <div className="mt-3 flex justify-end"><button className="btn-primary" onClick={publish}>發布</button></div>
-      </section>
-      <section className="mt-6">
-        <SectionHeader title="社群貼文" />
-        <div className="space-y-4">
-          {community.posts.map((post) => <PostCard key={post.id} post={post} />)}
+        <h2 className="text-xl font-black">社群加入與瀏覽規則</h2>
+        <div className="mt-4 grid gap-3 md:grid-cols-3">
+          <Info label="貼文可見性" value={communityVisibilityLabel(community)} />
+          <Info label="加入方式" value={communityJoinPolicyLabel(community)} />
+          <Info label="版主" value={community.owner || '平台管理小組'} />
         </div>
+        {community.joinPolicy === 'restricted' && (
+          <p className="mt-4 rounded-card bg-mist p-4 text-sm font-semibold leading-7 text-slate-600">
+            加入條件：
+            {community.restrictions?.companies?.length ? ` 公司為 ${community.restrictions.companies.join('、')}。` : ' 不限公司。'}
+            {community.restrictions?.departments?.length ? ` 部門為 ${community.restrictions.departments.join('、')}。` : ' 不限部門。'}
+            {community.restrictions?.minSeniority ? ` 年資 ${community.restrictions.minSeniority} 年以上。` : ' 不限年資。'}
+          </p>
+        )}
       </section>
+      {joined ? (
+        <section className="mt-6 rounded-card border border-line bg-white p-5 shadow-card">
+          <h2 className="mb-3 text-xl font-black">發布貼文</h2>
+          <textarea value={content} onChange={(e) => setContent(e.target.value)} placeholder="寫下想問的問題、用過的方法、流程提醒或給同仁參考的內容..." className="field min-h-28" />
+          <div className="mt-3 flex justify-end"><button className="btn-primary" onClick={publish}>發布</button></div>
+        </section>
+      ) : (
+        <section className="mt-6 rounded-card border border-dashed border-line bg-white p-5 text-center shadow-card">
+          <h2 className="text-xl font-black">加入社群後即可發文與留言</h2>
+          <p className="mt-2 text-slate-500">{community.joinPolicy === 'approval' ? '此社群需要版主審核，送出申請後等待確認。' : '先加入社群，再一起把問題問出來、把經驗留下來。'}</p>
+        </section>
+      )}
+      {postsVisible ? (
+        <section className="mt-6">
+          <SectionHeader title="社群貼文" />
+          <div className="space-y-4">
+            {community.posts.map((post) => <PostCard key={post.id} post={post} canComment={joined} />)}
+          </div>
+        </section>
+      ) : (
+        <EmptyState title="貼文內容限成員查看" text="這個社群由版主設定為加入後才能查看貼文，加入或通過審核後即可閱讀完整內容。" />
+      )}
     </PageWrap>
   )
 }
@@ -1293,21 +1379,40 @@ function MentorCard({ mentor, profile, setProfile, navigate, notify, inviteMento
   )
 }
 
-function CreateCommunityModal({ onClose, setCommunities, notify }) {
-  const [form, setForm] = useState({ name: '', intro: '', category: '工作技能', tags: '' })
+function CreateCommunityModal({ onClose, setCommunities, setProfile, notify }) {
+  const [form, setForm] = useState({
+    name: '',
+    intro: '',
+    category: '工作技能',
+    tags: '',
+    visibility: 'public',
+    joinPolicy: 'open',
+    companies: '',
+    departments: '',
+    minSeniority: '',
+  })
   const [error, setError] = useState('')
   const create = () => {
     if (!form.name.trim() || !form.intro.trim()) {
       setError('請填寫社群名稱與簡介')
       return
     }
+    const newCommunityId = `c${Date.now()}`
     const newCommunity = {
-      id: `c${Date.now()}`,
+      id: newCommunityId,
       name: form.name.trim(),
       category: form.category,
       intro: form.intro.trim(),
       members: 1,
       tags: splitText(form.tags).length ? splitText(form.tags) : [form.category],
+      owner: '塑寶',
+      visibility: form.visibility,
+      joinPolicy: form.joinPolicy,
+      restrictions: {
+        companies: splitText(form.companies),
+        departments: splitText(form.departments),
+        minSeniority: form.minSeniority,
+      },
       posts: [
         {
           id: `p${Date.now()}`,
@@ -1321,12 +1426,13 @@ function CreateCommunityModal({ onClose, setCommunities, notify }) {
       ],
     }
     setCommunities((prev) => [newCommunity, ...prev])
+    setProfile((prev) => ({ ...prev, joinedCommunities: [...prev.joinedCommunities, newCommunityId] }))
     notify('社群已建立。')
     onClose()
   }
   return (
     <div className="fixed inset-0 z-50 grid place-items-center bg-navy/30 px-4 backdrop-blur-sm">
-      <div className="w-full max-w-xl rounded-[28px] bg-white p-6 shadow-soft">
+      <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-[28px] bg-white p-6 shadow-soft">
         <div className="mb-5 flex items-start justify-between gap-5">
           <div>
             <h2 className="text-2xl font-black">創建社群</h2>
@@ -1339,6 +1445,38 @@ function CreateCommunityModal({ onClose, setCommunities, notify }) {
           <Textarea label="社群簡介" value={form.intro} onChange={(value) => setForm({ ...form, intro: value })} />
           <Select label="社群分類" value={form.category} onChange={(value) => setForm({ ...form, category: value })} options={['工作技能', '職涯', '興趣']} />
           <Input label="社群標籤（以逗號分隔）" value={form.tags} onChange={(value) => setForm({ ...form, tags: value })} />
+          <div className="grid gap-4 md:grid-cols-2">
+            <Select
+              label="貼文可見性"
+              value={form.visibility}
+              onChange={(value) => setForm({ ...form, visibility: value })}
+              options={[
+                { value: 'public', label: '不加入也可以看貼文' },
+                { value: 'members', label: '加入後才能看貼文' },
+              ]}
+            />
+            <Select
+              label="加入方式"
+              value={form.joinPolicy}
+              onChange={(value) => setForm({ ...form, joinPolicy: value })}
+              options={[
+                { value: 'open', label: '自由加入' },
+                { value: 'restricted', label: '符合條件才能加入' },
+                { value: 'approval', label: '版主人工審核' },
+              ]}
+            />
+          </div>
+          {form.joinPolicy === 'restricted' && (
+            <div className="rounded-card bg-mist p-4">
+              <h3 className="font-black text-ink">加入限制條件</h3>
+              <p className="mt-1 text-sm font-semibold text-slate-500">可擇一或多項設定，空白代表不限。</p>
+              <div className="mt-4 grid gap-4 md:grid-cols-2">
+                <Input label="限定公司（以逗號分隔）" value={form.companies} onChange={(value) => setForm({ ...form, companies: value })} />
+                <Input label="限定部門（以逗號分隔）" value={form.departments} onChange={(value) => setForm({ ...form, departments: value })} />
+                <Input label="最低年資" value={form.minSeniority} onChange={(value) => setForm({ ...form, minSeniority: value })} type="number" />
+              </div>
+            </div>
+          )}
           {error && <p className="form-error">{error}</p>}
           <button className="btn-primary w-full justify-center" onClick={create}>建立社群</button>
         </div>
@@ -1417,8 +1555,7 @@ function CommunityCard({ community, profile, setProfile, navigate, notify, horiz
   const joined = profile.joinedCommunities.includes(community.id)
   const toggleJoin = (event) => {
     event.stopPropagation()
-    setProfile((prev) => ({ ...prev, joinedCommunities: joined ? prev.joinedCommunities.filter((item) => item !== community.id) : [...prev.joinedCommunities, community.id] }))
-    notify(joined ? '已退出社群。' : '已加入社群。')
+    toggleCommunityMembership({ community, profile, setProfile, notify })
   }
   return (
     <article className={`rounded-card border border-line bg-white p-5 shadow-card transition hover:-translate-y-1 hover:shadow-soft ${horizontal ? 'lg:p-5' : ''}`}>
@@ -1431,6 +1568,8 @@ function CommunityCard({ community, profile, setProfile, navigate, notify, horiz
       </div>
       <p className="mt-4 line-clamp-3 leading-7 text-slate-600">{community.intro}</p>
       <div className="mt-4 flex flex-wrap gap-2">
+        <span className="pill">{communityVisibilityLabel(community)}</span>
+        <span className="pill">{communityJoinPolicyLabel(community)}</span>
         {community.tags.map((tag) => <span key={tag} className="pill">{tag}</span>)}
       </div>
       <p className="mt-4 text-sm font-semibold text-slate-500">最新貼文：{community.posts[0]?.content.slice(0, 32)}...</p>
@@ -1467,7 +1606,11 @@ function Select({ label, value, onChange, options, dense = false }) {
     <label className="block">
       <span className="label">{label}</span>
       <select className={`field ${dense ? 'py-2.5' : ''}`} value={value} onChange={(e) => onChange(e.target.value)}>
-        {options.map((option) => <option key={option} value={option}>{option || '不限'}</option>)}
+        {options.map((option) => {
+          const optionValue = typeof option === 'string' ? option : option.value
+          const optionLabel = typeof option === 'string' ? (option || '不限') : option.label
+          return <option key={optionValue} value={optionValue}>{optionLabel}</option>
+        })}
       </select>
     </label>
   )
@@ -1568,7 +1711,7 @@ function getPostReplies(post) {
   ]
 }
 
-function PostCard({ post }) {
+function PostCard({ post, canComment = true }) {
   const [saved, setSaved] = useState(false)
   const [showComments, setShowComments] = useState(false)
   const [commentText, setCommentText] = useState('')
@@ -1578,6 +1721,7 @@ function PostCard({ post }) {
   const saveCount = (post.saves ?? post.likes ?? 0) + (saved ? 1 : 0)
   const commentCount = (post.comments ?? existingReplies.length) + localComments.length
   const submitComment = () => {
+    if (!canComment) return
     if (!commentText.trim()) return
     setLocalComments((prev) => [...prev, { id: `local-${Date.now()}`, author: '塑寶', text: commentText.trim() }])
     setCommentText('')
@@ -1606,18 +1750,22 @@ function PostCard({ post }) {
               </div>
             ))}
           </div>
-          <div className="mt-3 flex flex-col gap-2 sm:flex-row">
-            <input
-              className="field mt-0 bg-white"
-              value={commentText}
-              onChange={(event) => setCommentText(event.target.value)}
-              onKeyDown={(event) => {
-                if (event.key === 'Enter') submitComment()
-              }}
-              placeholder="寫下你的留言..."
-            />
-            <button className="btn-primary justify-center sm:min-w-24" onClick={submitComment}>送出</button>
-          </div>
+          {canComment ? (
+            <div className="mt-3 flex flex-col gap-2 sm:flex-row">
+              <input
+                className="field mt-0 bg-white"
+                value={commentText}
+                onChange={(event) => setCommentText(event.target.value)}
+                onKeyDown={(event) => {
+                  if (event.key === 'Enter') submitComment()
+                }}
+                placeholder="寫下你的留言..."
+              />
+              <button className="btn-primary justify-center sm:min-w-24" onClick={submitComment}>送出</button>
+            </div>
+          ) : (
+            <p className="mt-3 rounded-2xl bg-white p-3 text-sm font-semibold text-slate-500">加入社群後才能留言。</p>
+          )}
         </div>
       )}
     </article>
