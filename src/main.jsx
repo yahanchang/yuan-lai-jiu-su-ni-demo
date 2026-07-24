@@ -499,6 +499,42 @@ const incomingInviteSeed = [
     time: '昨天 16:15',
   },
 ]
+const groupChatSeed = [
+  {
+    id: 'g1',
+    name: '新人訓 2026 七月梯',
+    members: ['塑寶', '周明翰', '劉怡君', '張庭安'],
+    topic: '新人訓同梯問題整理',
+    unread: 3,
+    messages: [
+      { id: 'g1-m1', author: '張庭安', meta: '人才發展部', text: '大家如果今天系統權限還沒開，可以先把缺的項目列在這串，我下午一起整理給 IT。', time: '09:18' },
+      { id: 'g1-m2', author: '周明翰', meta: '採購部', text: '我缺採購系統和差勤系統，已經先整理截圖。', time: '09:26' },
+      { id: 'g1-m3', author: '塑寶', meta: '人資組', text: '收到，這串我會整理成新人常見問題放到 Connect News。', time: '09:31' },
+    ],
+  },
+  {
+    id: 'g2',
+    name: 'AI 工具導入小組',
+    members: ['塑寶', '林若涵', '許哲維', '吳品萱'],
+    topic: '企業 AI 平台試用與安全提醒',
+    unread: 1,
+    messages: [
+      { id: 'g2-m1', author: '林若涵', meta: '產品策略部', text: '我先放一版提示詞模板，大家可以試著套在各自部門的情境。', time: '昨天 16:40' },
+      { id: 'g2-m2', author: '許哲維', meta: '資料平台部', text: '建議大家測試時不要貼真實客戶資料，可以先用假資料驗證流程。', time: '昨天 16:52' },
+    ],
+  },
+  {
+    id: 'g3',
+    name: 'HeyGen 內訓影片小組',
+    members: ['塑寶', '許哲維', '張庭安'],
+    topic: '內訓影片腳本、字幕與審稿',
+    unread: 0,
+    messages: [
+      { id: 'g3-m1', author: '許哲維', meta: '資料平台部', text: '我把 90 秒教學影片流程拆成腳本、角色、字幕三段，今天先測一版。', time: '週三 14:05' },
+      { id: 'g3-m2', author: '張庭安', meta: '人才發展部', text: '字幕可以統一用條列式，會比較像內訓教材。', time: '週三 14:18' },
+    ],
+  },
+]
 const demoStorageVersion = '2026-07-24-chat-groups-owner-approval-ai'
 
 function storageGet(key, fallback) {
@@ -843,10 +879,10 @@ function Landing({ navigate }) {
                 </div>
                 <p className="mt-8 text-2xl font-bold leading-snug">發問、回覆、收藏，讓答案不只停在一次對話裡。</p>
                 <div className="mt-8 grid grid-cols-2 gap-3">
-                  {['Connect News｜公告與常見問題', 'Connect Chat｜一對一討論', 'Connect Hub｜學習社群', 'Connect Guide｜交流守則'].map((tag) => <span key={tag} className="pill">{tag}</span>)}
+                  {['Connect News｜公告與常見問題', 'Connect Chat｜群組網', 'Connect Hub｜學習社群', 'Connect Guide｜交流守則'].map((tag) => <span key={tag} className="pill">{tag}</span>)}
                 </div>
               </div>
-              <div className="floating-note">公司帳號登入 → 查看系統更新與常見問題 → 到社群發問或分享經驗 → 用聊天室延續細節討論。</div>
+              <div className="floating-note">公司帳號登入 → 查看系統更新與常見問題 → 到社群發問或分享經驗 → 用群組網延續一對一與多人討論。</div>
             </div>
           </div>
         </div>
@@ -858,7 +894,7 @@ function Landing({ navigate }) {
         </div>
         <div className="grid gap-5 md:grid-cols-4">
           <FeatureCard title="Connect News｜公告與常見問題" text="只保留系統更新與常見問題，讓平台重要資訊清楚集中。" />
-          <FeatureCard title="Connect Chat｜一對一討論" text="搜尋同仁並延續一對一討論，可示意分享文字、圖片、檔案與連結。" />
+          <FeatureCard title="Connect Chat｜群組網" text="搜尋同仁開啟一對一對話，也能進入多人群組討論，示意分享文字、圖片、檔案與連結。" />
           <FeatureCard title="Connect Hub｜學習社群" text="用發文、留言與收藏，累積可搜尋、可回看的工作知識。" />
           <FeatureCard title="Connect Guide｜交流守則" text="採公司帳號實名制，清楚說明資訊安全、發文與留言原則。" />
         </div>
@@ -874,7 +910,7 @@ function Landing({ navigate }) {
               ['01', '確認員工資料', '登入後確認公司匯入的基本資料。'],
               ['02', '查看 Connect News', '掌握公告與常見問題。'],
               ['03', '進入 Connect Hub', '用發文與留言留下可被搜尋的內容。'],
-              ['04', '開啟 Connect Chat', '需要補充細節時，用聊天室延續一對一討論。'],
+              ['04', '進入 Connect Chat', '需要補充細節時，用群組網延續一對一或多人討論。'],
             ].map(([step, title, text]) => (
               <article key={step} className="rounded-card border border-line bg-white p-5 shadow-card">
                 <p className="text-4xl font-black text-blueprint">{step}</p>
@@ -995,7 +1031,7 @@ function AuthLayout({ title, subtitle, children }) {
           <p className="text-sm font-semibold uppercase tracking-[.2em] text-skysoft">Employee Connection</p>
           <h1 className="mt-5 text-4xl font-black leading-tight">{title}</h1>
           <p className="mt-4 leading-7 text-slate-200">{subtitle}</p>
-          <p className="mt-10 rounded-card bg-white/10 p-5 leading-7 text-slate-100">從 Connect News、Connect Chat 到 Connect Hub，讓經驗在組織裡真正流動。</p>
+          <p className="mt-10 rounded-card bg-white/10 p-5 leading-7 text-slate-100">從 Connect News、Connect Chat｜群組網到 Connect Hub，讓經驗在組織裡真正流動。</p>
         </div>
         <div className="p-6 sm:p-8 lg:p-10">{children}</div>
       </section>
@@ -1272,49 +1308,62 @@ function CommunityDetail({ id, communities, setCommunities, profile, setProfile,
   )
 }
 
-function ChatPage({ conversations, activeChatId, setActiveChatId, sendChatMessage, inviteMentor, communities, profile, navigate }) {
+function ChatPage({ conversations, activeChatId, setActiveChatId, sendChatMessage, inviteMentor }) {
+  const [chatMode, setChatMode] = useState('friend')
+  const [activeGroupId, setActiveGroupId] = useState(groupChatSeed[0]?.id || '')
+  const [groupChats, setGroupChats] = useState(groupChatSeed)
   const activeConversation = conversations.find((conversation) => conversation.mentorId === activeChatId) || conversations[0]
   const activeMentor = activeConversation ? mentorSeed.find((mentor) => mentor.id === activeConversation.mentorId) : null
-  const joinedCommunities = communities.filter((community) => profile.joinedCommunities.includes(community.id)).slice(0, 4)
+  const activeGroup = groupChats.find((group) => group.id === activeGroupId) || groupChats[0]
+  const openFriendChat = (mentor) => {
+    setChatMode('friend')
+    inviteMentor(mentor)
+  }
+  const openExistingFriendChat = (mentorId) => {
+    setChatMode('friend')
+    setActiveChatId(mentorId)
+  }
+  const openGroupChat = (groupId) => {
+    setChatMode('group')
+    setActiveGroupId(groupId)
+  }
+  const sendGroupMessage = (groupId, text) => {
+    const cleanText = text.trim()
+    if (!cleanText) return
+    setGroupChats((prev) => prev.map((group) => group.id === groupId ? {
+      ...group,
+      messages: [
+        ...group.messages,
+        { id: `group-msg-${Date.now()}`, author: '塑寶', meta: '人資組', text: cleanText, time: '剛剛' },
+      ],
+    } : group))
+  }
 
   return (
     <PageWrap>
-      <PageTitle eyebrow="Chat" title="Connect Chat｜訊息中心" text="直接搜尋同仁開啟對話，也可以從已加入的社群進入群組討論，讓問題、檔案、連結與後續確認集中在這裡。" />
-      <section className="grid gap-5 xl:grid-cols-[1fr_.9fr]">
-        <EmployeeInviteSearch conversations={conversations} onInvite={inviteMentor} setActiveChatId={setActiveChatId} />
-        <section className="rounded-[28px] border border-line bg-white p-5 shadow-card lg:p-6">
-          <h2 className="text-2xl font-black">群組</h2>
-          <p className="mt-2 text-slate-600">從已加入的社群進入群組討論，適合多人一起補充經驗與資源。</p>
-          <div className="mt-4 space-y-3">
-            {joinedCommunities.map((community) => (
-              <button key={community.id} className="w-full rounded-card bg-mist p-4 text-left transition hover:bg-skysoft" onClick={() => navigate(`/community/${community.id}`)}>
-                <div className="flex items-center justify-between gap-3">
-                  <div>
-                    <h3 className="font-black text-ink">{community.name}</h3>
-                    <p className="mt-1 text-sm font-semibold text-slate-500">{community.members} 位成員 · {community.category}</p>
-                  </div>
-                  <span className="pill whitespace-nowrap">進入群組</span>
-                </div>
-              </button>
-            ))}
-            {!joinedCommunities.length && <EmptyState title="尚未加入群組" text="加入社群後，群組討論入口會出現在這裡。" />}
-          </div>
+      <PageTitle eyebrow="Chat" title="Connect Chat｜群組網" text="直接搜尋同仁開啟一對一對話，也可以進入多人群組討論。群組是聊天室群組，不等同於公開社群版面。" />
+      <section className="grid gap-5 xl:grid-cols-[.9fr_1.1fr]">
+        <div className="space-y-5">
+          <EmployeeInviteSearch conversations={conversations} onInvite={openFriendChat} setActiveChatId={openExistingFriendChat} />
+          <GroupChatList groups={groupChats} activeGroupId={activeGroup?.id} onOpen={openGroupChat} />
+        </div>
+        <section>
+          <SectionHeader title="對話" />
+          {chatMode === 'group' && activeGroup ? (
+            <GroupChatPanel group={activeGroup} onSend={(text) => sendGroupMessage(activeGroup.id, text)} />
+          ) : activeConversation && activeMentor ? (
+            <ChatPanel
+              mentor={activeMentor}
+              conversation={activeConversation}
+              conversations={conversations}
+              setActiveChatId={openExistingFriendChat}
+              onSend={(text) => sendChatMessage(activeMentor.id, text)}
+            />
+          ) : (
+            <EmptyState title="尚未建立對話" text="從好友搜尋直接開啟對話，或點選多人群組開始討論。" />
+          )}
         </section>
       </section>
-      {activeConversation && activeMentor ? (
-        <section className="mt-6">
-          <SectionHeader title="對話" />
-          <ChatPanel
-            mentor={activeMentor}
-            conversation={activeConversation}
-            conversations={conversations}
-            setActiveChatId={setActiveChatId}
-            onSend={(text) => sendChatMessage(activeMentor.id, text)}
-          />
-        </section>
-      ) : (
-        <EmptyState title="尚未建立對話" text="從好友搜尋直接開啟對話後，聊天內容會出現在這裡。" />
-      )}
       <section className="mt-8 rounded-card bg-white p-5 shadow-card">
         <h2 className="text-xl font-black">聊天室使用原則</h2>
         <div className="mt-4 grid gap-3 md:grid-cols-3">
@@ -1322,6 +1371,79 @@ function ChatPage({ conversations, activeChatId, setActiveChatId, sendChatMessag
         </div>
       </section>
     </PageWrap>
+  )
+}
+
+function GroupChatList({ groups, activeGroupId, onOpen }) {
+  return (
+    <section className="rounded-[28px] border border-line bg-white p-5 shadow-card lg:p-6">
+      <h2 className="text-2xl font-black">群組</h2>
+      <p className="mt-2 text-slate-600">多人群組適合小組協作、同梯討論與工具導入追蹤，不會同步成社群貼文。</p>
+      <div className="mt-4 space-y-3">
+        {groups.map((group) => (
+          <button
+            key={group.id}
+            className={`w-full rounded-card p-4 text-left transition hover:bg-skysoft ${activeGroupId === group.id ? 'bg-skysoft' : 'bg-mist'}`}
+            onClick={() => onOpen(group.id)}
+          >
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <h3 className="font-black text-ink">{group.name}</h3>
+                <p className="mt-1 text-sm font-semibold text-slate-500">{group.members.length} 人 · {group.topic}</p>
+              </div>
+              {group.unread > 0 && <span className="pill-dark whitespace-nowrap">{group.unread} 未讀</span>}
+            </div>
+          </button>
+        ))}
+      </div>
+    </section>
+  )
+}
+
+function GroupChatPanel({ group, onSend }) {
+  const [message, setMessage] = useState('')
+  const submit = () => {
+    if (!message.trim()) return
+    onSend(message)
+    setMessage('')
+  }
+  return (
+    <div className="rounded-[28px] border border-line bg-white p-5 shadow-card lg:p-6">
+      <div className="flex flex-col justify-between gap-3 md:flex-row md:items-start">
+        <div>
+          <h3 className="text-xl font-black">{group.name}</h3>
+          <p className="mt-1 text-sm font-semibold text-slate-500">{group.members.length} 位成員 · {group.topic}</p>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {group.members.slice(0, 4).map((member) => <span key={member} className="pill">{member}</span>)}
+        </div>
+      </div>
+      <div className="mt-5 max-h-[28rem] space-y-3 overflow-y-auto rounded-[22px] bg-mist p-4">
+        {group.messages.map((item) => (
+          <div key={item.id} className={`flex ${item.author === '塑寶' ? 'justify-end' : 'justify-start'}`}>
+            <div className={`max-w-[86%] rounded-[20px] px-4 py-3 shadow-sm ${item.author === '塑寶' ? 'bg-blueprint text-white' : 'bg-white text-ink'}`}>
+              <p className={`text-xs font-black ${item.author === '塑寶' ? 'text-white/75' : 'text-navy'}`}>{item.author} · {item.meta}</p>
+              <p className="mt-1 leading-7">{item.text}</p>
+              <p className={`mt-1 text-xs font-semibold ${item.author === '塑寶' ? 'text-white/70' : 'text-slate-400'}`}>{item.time}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="mt-4 flex flex-col gap-3 sm:flex-row">
+        <input
+          className="field mt-0"
+          value={message}
+          onChange={(event) => setMessage(event.target.value)}
+          onKeyDown={(event) => { if (event.key === 'Enter') submit() }}
+          placeholder={`傳訊息到 ${group.name}...`}
+        />
+        <button className="btn-primary justify-center sm:min-w-28" onClick={submit}>送出</button>
+      </div>
+      <div className="mt-3 flex flex-wrap gap-2">
+        {['圖片', '檔案', '連結'].map((item) => <button key={item} type="button" className="chip">{item}</button>)}
+        <span className="flex items-center text-sm font-semibold text-slate-400">Demo 顯示附件入口，正式版可串接上傳與權限控管。</span>
+      </div>
+    </div>
   )
 }
 
@@ -1748,7 +1870,7 @@ function AdminRequestRow({ request, communities, onApprove, onReject, compact = 
 function AppNav({ route, profile, navigate, logout }) {
   const items = [
     ['Connect News', '公告與常見問題', '/dashboard'],
-    ['Connect Chat', '一對一討論', '/chat'],
+    ['Connect Chat', '群組網', '/chat'],
     ['Connect Hub', '學習社群', '/communities'],
     ['Connect Guide', '交流守則', '/rules'],
     ['My Profile', '我的資料', '/profile'],
