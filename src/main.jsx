@@ -253,13 +253,13 @@ const communitySeed = [
   },
   {
     id: 'c2',
-    name: '理財交流社群',
-    category: '興趣',
-    intro: '用簡單、長期、可持續的方式整理理財問題與使用經驗，不追求一夜致富，只追求更安心的選擇。',
+    name: 'HeyGen 交流社群',
+    category: '工作技能',
+    intro: '分享 HeyGen 影片製作、腳本撰寫、虛擬人設定與內部教學素材應用經驗，讓影音工具更快被用在工作場景。',
     members: 186,
-    tags: ['理財規劃', '投資', '生活品質'],
+    tags: ['HeyGen', '影音工具', '教學素材'],
     posts: [
-      { id: 'p3', author: '黃冠廷', meta: '投資管理部', time: '今天 09:12', content: '分享我自己用的第一版現金流表：先追固定支出、彈性支出、儲蓄比例三欄就好，不用一開始就做得太複雜。', saves: 46, comments: 15 },
+      { id: 'p3', author: '許哲維', meta: '資料平台部', time: '今天 09:12', content: '我整理了一份 HeyGen 影片製作流程：先寫 90 秒腳本，再做角色設定，最後統一字幕格式，給要做內訓素材的同仁參考。', saves: 46, comments: 15 },
     ],
   },
   {
@@ -340,6 +340,20 @@ const communitySeed = [
     posts: [
       { id: 'p10', author: '塑寶', meta: '人資組', time: '今天 11:05', content: '歡迎把平台使用問題、功能建議或操作上不清楚的地方留在這裡，平台管理小組會定期整理常見問題。', saves: 22, comments: 9 },
       { id: 'p11', author: '許哲維', meta: '資料平台部', time: '昨天 15:30', content: '建議社群搜尋可以支援用標籤快速篩選，這樣找工具教學或流程問題會更快。', saves: 17, comments: 5 },
+    ],
+  },
+  {
+    id: 'c10',
+    name: '企業 AI 平台交流社群',
+    category: '工作技能',
+    intro: '討論企業 AI 平台的使用情境、提示詞寫法、資料安全注意事項與部門導入經驗，讓 AI 工具更穩定地支援日常工作。',
+    members: 254,
+    tags: ['企業AI', '提示詞', '資安'],
+    visibility: 'public',
+    joinPolicy: 'open',
+    posts: [
+      { id: 'p12', author: '林若涵', meta: '產品策略部', time: '今天 13:20', content: '分享一個我常用的提示詞格式：先寫角色、任務、輸入資料、輸出格式，再補充限制條件，產出的內容會穩很多。', saves: 61, comments: 18 },
+      { id: 'p13', author: '吳品萱', meta: 'ESG 策略部', time: '昨天 17:45', content: '想請問大家用企業 AI 平台整理會議紀錄時，會怎麼避免放入不適合上傳的敏感資訊？', saves: 39, comments: 12 },
     ],
   },
 ]
@@ -485,7 +499,7 @@ const incomingInviteSeed = [
     time: '昨天 16:15',
   },
 ]
-const demoStorageVersion = '2026-07-24-newcomer-members-only'
+const demoStorageVersion = '2026-07-24-chat-groups-owner-approval-ai'
 
 function storageGet(key, fallback) {
   try {
@@ -660,12 +674,12 @@ function App() {
       return [
         {
           mentorId: mentor.id,
-          status: '邀請已送出',
+          status: '討論中',
           messages: [
             {
               id: `msg-${Date.now()}`,
               from: 'mentor',
-              text: `嗨，我是${mentor.name}。謝謝你的邀請，可以先跟我說說你最近最想討論的主題。`,
+              text: `嗨，我是${mentor.name}。可以直接把想討論的問題、連結或檔案說明放在這裡。`,
               time: '剛剛',
             },
           ],
@@ -674,7 +688,7 @@ function App() {
       ]
     })
     setActiveChatId(mentor.id)
-    notify(`已送出交流邀請給 ${mentor.name}，可以開始討論。`)
+    notify(`已開啟與 ${mentor.name} 的對話。`)
   }
 
   const sendChatMessage = (mentorId, text) => {
@@ -1082,7 +1096,7 @@ function MentorDetail({ id, profile, setProfile, conversations, inviteMentor, se
             <Info label="員工編號" value={employeeCode(mentor)} />
           </div>
           <div className="mt-6 flex flex-col gap-3">
-            <button className="btn-primary justify-center" onClick={() => inviteMentor(mentor)}>{conversation ? '已建立交流，繼續聊' : '邀請交流'}</button>
+            <button className="btn-primary justify-center" onClick={() => inviteMentor(mentor)}>{conversation ? '已建立對話，繼續聊' : '開始對話'}</button>
             <button className="btn-secondary justify-center" onClick={toggleFavorite}>{isFav ? '取消收藏' : '收藏此同仁'}</button>
           </div>
         </aside>
@@ -1138,14 +1152,22 @@ function CommunitiesPage({ communities, setCommunities, profile, setProfile, set
   )
 }
 
-function CommunityDetail({ id, communities, setCommunities, profile, setProfile, setJoinRequests, navigate, notify, adminMode = false }) {
+function CommunityDetail({ id, communities, setCommunities, profile, setProfile, joinRequests, setJoinRequests, navigate, notify, adminMode = false }) {
   const community = communities.find((item) => item.id === id) || communities[0]
   const [content, setContent] = useState('')
   const joined = profile.joinedCommunities.includes(community.id)
   const hrAdmin = isHrAdmin(profile)
   const postsVisible = hrAdmin || joined || community.visibility !== 'members'
+  const isOwner = community.owner === profile.name
   const toggleJoin = () => {
     toggleCommunityMembership({ community, profile, setProfile, notify, setJoinRequests })
+  }
+  const reviewOwnerRequest = (requestId, status) => {
+    setJoinRequests((prev) => prev.map((request) => request.id === requestId ? { ...request, status } : request))
+    if (status === '已核准') {
+      setCommunities((prev) => prev.map((item) => item.id === community.id ? { ...item, members: item.members + 1 } : item))
+    }
+    notify(status === '已核准' ? '已核准加入社群。' : '已退回加入申請。')
   }
   const publish = () => {
     if (!joined && !adminMode) {
@@ -1215,6 +1237,14 @@ function CommunityDetail({ id, communities, setCommunities, profile, setProfile,
           </p>
         )}
       </section>
+      {!adminMode && isOwner && community.joinPolicy === 'approval' && (
+        <CommunityOwnerReviewPanel
+          community={community}
+          requests={joinRequests.filter((request) => request.communityId === community.id && request.status === '待審核')}
+          onApprove={(request) => reviewOwnerRequest(request.id, '已核准')}
+          onReject={(request) => reviewOwnerRequest(request.id, '已退回')}
+        />
+      )}
       {joined || adminMode ? (
         <section className="mt-6 rounded-card border border-line bg-white p-5 shadow-card">
           <h2 className="mb-3 text-xl font-black">{adminMode ? '發布平台貼文' : '發布貼文'}</h2>
@@ -1242,18 +1272,38 @@ function CommunityDetail({ id, communities, setCommunities, profile, setProfile,
   )
 }
 
-function ChatPage({ conversations, activeChatId, setActiveChatId, sendChatMessage, incomingInvites, acceptIncomingInvite, dismissIncomingInvite, inviteMentor }) {
+function ChatPage({ conversations, activeChatId, setActiveChatId, sendChatMessage, inviteMentor, communities, profile, navigate }) {
   const activeConversation = conversations.find((conversation) => conversation.mentorId === activeChatId) || conversations[0]
   const activeMentor = activeConversation ? mentorSeed.find((mentor) => mentor.id === activeConversation.mentorId) : null
+  const joinedCommunities = communities.filter((community) => profile.joinedCommunities.includes(community.id)).slice(0, 4)
 
   return (
     <PageWrap>
-      <PageTitle eyebrow="Chat" title="Connect Chat｜一對一討論" text="搜尋同仁姓名或員工編號，發送交流邀請；對方接受後，就能用文字、圖片、檔案與連結延續一對一討論。" />
-      <EmployeeInviteSearch conversations={conversations} onInvite={inviteMentor} setActiveChatId={setActiveChatId} />
-      <IncomingInvites invites={incomingInvites} onAccept={acceptIncomingInvite} onDismiss={dismissIncomingInvite} />
+      <PageTitle eyebrow="Chat" title="Connect Chat｜訊息中心" text="直接搜尋同仁開啟對話，也可以從已加入的社群進入群組討論，讓問題、檔案、連結與後續確認集中在這裡。" />
+      <section className="grid gap-5 xl:grid-cols-[1fr_.9fr]">
+        <EmployeeInviteSearch conversations={conversations} onInvite={inviteMentor} setActiveChatId={setActiveChatId} />
+        <section className="rounded-[28px] border border-line bg-white p-5 shadow-card lg:p-6">
+          <h2 className="text-2xl font-black">群組</h2>
+          <p className="mt-2 text-slate-600">從已加入的社群進入群組討論，適合多人一起補充經驗與資源。</p>
+          <div className="mt-4 space-y-3">
+            {joinedCommunities.map((community) => (
+              <button key={community.id} className="w-full rounded-card bg-mist p-4 text-left transition hover:bg-skysoft" onClick={() => navigate(`/community/${community.id}`)}>
+                <div className="flex items-center justify-between gap-3">
+                  <div>
+                    <h3 className="font-black text-ink">{community.name}</h3>
+                    <p className="mt-1 text-sm font-semibold text-slate-500">{community.members} 位成員 · {community.category}</p>
+                  </div>
+                  <span className="pill whitespace-nowrap">進入群組</span>
+                </div>
+              </button>
+            ))}
+            {!joinedCommunities.length && <EmptyState title="尚未加入群組" text="加入社群後，群組討論入口會出現在這裡。" />}
+          </div>
+        </section>
+      </section>
       {activeConversation && activeMentor ? (
         <section className="mt-6">
-          <SectionHeader title="一對一交流" />
+          <SectionHeader title="對話" />
           <ChatPanel
             mentor={activeMentor}
             conversation={activeConversation}
@@ -1263,7 +1313,7 @@ function ChatPage({ conversations, activeChatId, setActiveChatId, sendChatMessag
           />
         </section>
       ) : (
-        <EmptyState title="尚未建立一對一聊天室" text="接受交流邀請後，一對一聊天室會出現在這裡。" />
+        <EmptyState title="尚未建立對話" text="從好友搜尋直接開啟對話後，聊天內容會出現在這裡。" />
       )}
       <section className="mt-8 rounded-card bg-white p-5 shadow-card">
         <h2 className="text-xl font-black">聊天室使用原則</h2>
@@ -1288,8 +1338,8 @@ function EmployeeInviteSearch({ conversations, onInvite, setActiveChatId }) {
   return (
     <section className="rounded-[28px] border border-line bg-white p-5 shadow-card lg:p-6">
       <div>
-        <h2 className="text-2xl font-black">搜尋同仁並邀請交流</h2>
-        <p className="mt-2 text-slate-600">可輸入姓名、員工編號、部門或職位，找到想延續討論或確認細節的同仁。</p>
+        <h2 className="text-2xl font-black">好友</h2>
+        <p className="mt-2 text-slate-600">可輸入姓名、員工編號、部門或職位，直接開啟一對一對話。</p>
       </div>
       <input
         className="field mt-4"
@@ -1319,7 +1369,7 @@ function EmployeeInviteSearch({ conversations, onInvite, setActiveChatId }) {
                   onInvite(mentor)
                 }}
               >
-                {hasConversation ? '開啟聊天室' : '邀請交流'}
+                {hasConversation ? '開啟對話' : '開始對話'}
               </button>
             </article>
           )
@@ -1329,38 +1379,35 @@ function EmployeeInviteSearch({ conversations, onInvite, setActiveChatId }) {
   )
 }
 
-function IncomingInvites({ invites, onAccept, onDismiss }) {
-  if (!invites.length) return null
+function CommunityOwnerReviewPanel({ community, requests, onApprove, onReject }) {
   return (
-    <section className="mb-6 rounded-card border border-line bg-white p-5 shadow-card">
+    <section className="mt-6 rounded-card border border-line bg-white p-5 shadow-card">
       <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-end">
         <div>
-          <p className="eyebrow">Pending Invites</p>
-          <h2 className="mt-1 text-2xl font-black">待確認的交流邀請</h2>
+          <p className="eyebrow">Moderator Review</p>
+          <h2 className="mt-1 text-xl font-black">版主加入審核</h2>
         </div>
-        <span className="pill-dark w-fit">{invites.length} 則待回覆</span>
+        <span className="pill-dark w-fit">{requests.length} 件待確認</span>
       </div>
-      <div className="mt-4 grid gap-4 lg:grid-cols-2">
-        {invites.map((invite) => {
-          const mentor = mentorSeed.find((item) => item.id === invite.mentorId)
-          if (!mentor) return null
-          return (
-            <article key={invite.id} className="rounded-card bg-mist p-4">
-              <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-start">
-                <div>
-                  <h3 className="text-lg font-black text-ink">{mentor.name} 邀請你交流</h3>
-                  <p className="mt-1 text-sm font-semibold text-slate-500">{mentor.department} · {mentor.role} · {invite.time}</p>
-                </div>
-                <span className="pill whitespace-nowrap">{invite.topic}</span>
+      <p className="mt-3 leading-7 text-slate-600">此社群由你擔任版主，若設定為人工審核，加入申請會集中在這裡確認。</p>
+      <div className="mt-4 space-y-3">
+        {requests.map((request) => (
+          <article key={request.id} className="rounded-card bg-mist p-4">
+            <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-start">
+              <div>
+                <h3 className="font-black text-ink">{request.requester}</h3>
+                <p className="mt-1 text-sm font-semibold text-slate-500">{request.employeeId || '員工編號待同步'} · {request.department} · {request.role}</p>
               </div>
-              <p className="mt-3 leading-7 text-slate-650">{invite.message}</p>
-              <div className="mt-4 grid gap-2 sm:grid-cols-2">
-                <button className="btn-primary justify-center" onClick={() => onAccept(invite)}>接受並開啟聊天室</button>
-                <button className="btn-secondary justify-center" onClick={() => onDismiss(invite)}>拒絕邀請</button>
-              </div>
-            </article>
-          )
-        })}
+              <span className="pill whitespace-nowrap">{community.name}</span>
+            </div>
+            <p className="mt-3 text-sm font-semibold text-slate-600">{request.eligibility || request.reason || '等待版主確認是否可加入社群。'}</p>
+            <div className="mt-4 grid gap-2 sm:grid-cols-2">
+              <button className="btn-primary justify-center" onClick={() => onApprove(request)}>核准加入</button>
+              <button className="btn-secondary justify-center" onClick={() => onReject(request)}>退回申請</button>
+            </div>
+          </article>
+        ))}
+        {!requests.length && <EmptyState title="目前沒有待審核申請" text="有人申請加入這個社群時，版主可以在這裡核准或退回。" />}
       </div>
     </section>
   )
@@ -1812,7 +1859,7 @@ function MentorCard({ mentor, profile, setProfile, navigate, notify, inviteMento
         {!hideFavorite && <button className="btn-secondary justify-center" onClick={toggleFavorite}>{isFav ? '已收藏' : '收藏'}</button>}
         <button className="btn-primary justify-center" onClick={() => navigate(`/mentor/${mentor.id}`)}>查看同仁頁</button>
       </div>
-      {compact && <button className="mt-2 w-full rounded-full px-4 py-3 text-sm font-bold text-navy hover:bg-mist" onClick={() => inviteMentor(mentor)}>邀請交流</button>}
+      {compact && <button className="mt-2 w-full rounded-full px-4 py-3 text-sm font-bold text-navy hover:bg-mist" onClick={() => inviteMentor(mentor)}>開始對話</button>}
     </article>
   )
 }
