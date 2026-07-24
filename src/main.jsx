@@ -750,7 +750,7 @@ function App() {
   const isBulletinDetail = route.startsWith('/bulletin/')
   const isMentorDetail = route.startsWith('/mentor/')
   const isCommunityDetail = route.startsWith('/community/')
-  const isAdminRoute = adminRoutes.includes(route) || route.startsWith('/admin/post/')
+  const isAdminRoute = adminRoutes.includes(route) || route.startsWith('/admin/post/') || route.startsWith('/admin/community/')
   const showShell = isAuthed && !isAdminRoute && (authedRoutes.includes(route) || isBulletinDetail || isMentorDetail || isCommunityDetail)
   const showAdminShell = isAuthed && isAdminRoute && isHrAdmin(profile)
 
@@ -775,6 +775,7 @@ function Router({ route, appState }) {
   if (route === '/choose') return <RoleChoice {...appState} />
   if (route.startsWith('/admin')) {
     if (!isHrAdmin(appState.profile)) return <Dashboard {...appState} />
+    if (route.startsWith('/admin/community/')) return <CommunityDetail id={route.split('/').pop()} adminMode {...appState} />
     if (route.startsWith('/admin/post/')) return <AdminPostDetail postId={route.split('/').pop()} {...appState} />
     if (route === '/admin') return <AdminOverview {...appState} />
     if (route === '/admin/communities') return <AdminCommunities {...appState} />
@@ -1137,7 +1138,7 @@ function CommunitiesPage({ communities, setCommunities, profile, setProfile, set
   )
 }
 
-function CommunityDetail({ id, communities, setCommunities, profile, setProfile, setJoinRequests, navigate, notify }) {
+function CommunityDetail({ id, communities, setCommunities, profile, setProfile, setJoinRequests, navigate, notify, adminMode = false }) {
   const community = communities.find((item) => item.id === id) || communities[0]
   const [content, setContent] = useState('')
   const joined = profile.joinedCommunities.includes(community.id)
@@ -1147,7 +1148,7 @@ function CommunityDetail({ id, communities, setCommunities, profile, setProfile,
     toggleCommunityMembership({ community, profile, setProfile, notify, setJoinRequests })
   }
   const publish = () => {
-    if (!joined) {
+    if (!joined && !adminMode) {
       notify('加入社群後才能發布貼文。')
       return
     }
@@ -1155,14 +1156,22 @@ function CommunityDetail({ id, communities, setCommunities, profile, setProfile,
       notify('先寫一點想分享的內容吧。')
       return
     }
-    const post = { id: `p${Date.now()}`, author: profile.name, meta: `${profile.department} · ${profile.role}`, time: '剛剛', content, saves: 0, comments: 0 }
+    const post = {
+      id: `p${Date.now()}`,
+      author: adminMode ? '平台管理小組' : profile.name,
+      meta: adminMode ? '台塑 Connect 官方發文' : `${profile.department} · ${profile.role}`,
+      time: '剛剛',
+      content,
+      saves: 0,
+      comments: 0,
+    }
     setCommunities((prev) => prev.map((item) => item.id === community.id ? { ...item, posts: [post, ...item.posts] } : item))
     setContent('')
-    notify('貼文已發布。')
+    notify(adminMode ? '平台發文已發布。' : '貼文已發布。')
   }
   return (
     <PageWrap>
-      <button className="mb-5 text-sm font-bold text-navy hover:underline" onClick={() => navigate('/communities')}>返回社群列表</button>
+      <button className="mb-5 text-sm font-bold text-navy hover:underline" onClick={() => navigate(adminMode ? '/admin/communities' : '/communities')}>{adminMode ? '返回社群管理' : '返回社群列表'}</button>
       <section className="rounded-[28px] bg-white p-6 shadow-card lg:p-8">
         <div className="flex flex-col justify-between gap-5 lg:flex-row lg:items-start">
           <div>
@@ -1176,9 +1185,15 @@ function CommunityDetail({ id, communities, setCommunities, profile, setProfile,
               {community.tags.map((tag) => <span key={tag} className="pill">{tag}</span>)}
             </div>
           </div>
-          <button className={joined ? 'btn-secondary justify-center' : 'btn-primary justify-center'} onClick={toggleJoin}>{joined ? '退出社群' : '加入社群'}</button>
+          {!adminMode && <button className={joined ? 'btn-secondary justify-center' : 'btn-primary justify-center'} onClick={toggleJoin}>{joined ? '退出社群' : '加入社群'}</button>}
         </div>
       </section>
+      {adminMode && (
+        <section className="mt-6 rounded-card border border-line bg-white p-5 shadow-card">
+          <h2 className="text-xl font-black">後台發文身份</h2>
+          <p className="mt-2 leading-7 text-slate-600">你目前以人資後台查看此社群，發布貼文會顯示為「平台管理小組｜台塑 Connect 官方發文」，不會顯示個人姓名。</p>
+        </section>
+      )}
       <section className="mt-6 rounded-card border border-line bg-white p-5 shadow-card">
         <h2 className="text-xl font-black">社群加入與瀏覽規則</h2>
         <div className="mt-4 grid gap-3 md:grid-cols-3">
@@ -1200,9 +1215,9 @@ function CommunityDetail({ id, communities, setCommunities, profile, setProfile,
           </p>
         )}
       </section>
-      {joined ? (
+      {joined || adminMode ? (
         <section className="mt-6 rounded-card border border-line bg-white p-5 shadow-card">
-          <h2 className="mb-3 text-xl font-black">發布貼文</h2>
+          <h2 className="mb-3 text-xl font-black">{adminMode ? '發布平台貼文' : '發布貼文'}</h2>
           <textarea value={content} onChange={(e) => setContent(e.target.value)} placeholder="寫下想問的問題、用過的方法、流程提醒或給同仁參考的內容..." className="field min-h-28" />
           <div className="mt-3 flex justify-end"><button className="btn-primary" onClick={publish}>發布</button></div>
         </section>
@@ -1216,8 +1231,8 @@ function CommunityDetail({ id, communities, setCommunities, profile, setProfile,
         <section className="mt-6">
           <SectionHeader title="社群貼文" />
           <div className="space-y-4">
-            {community.posts.map((post) => <PostCard key={post.id} post={post} canComment={joined} />)}
-          </div>
+          {community.posts.map((post) => <PostCard key={post.id} post={post} canComment={joined && !adminMode} />)}
+        </div>
           {hrAdmin && !joined && <p className="mt-4 rounded-card bg-white p-4 text-sm font-semibold text-slate-500 shadow-card">人資後台權限：你可查看此社群貼文，但仍需加入社群才可用員工身份留言。</p>}
         </section>
       ) : (
@@ -1534,7 +1549,7 @@ function AdminCommunities({ communities, profile, navigate }) {
                   <span className="pill">{communityJoinPolicyLabel(community)}</span>
                 </div>
               </div>
-              <button className="btn-secondary justify-center" onClick={() => navigate(`/community/${community.id}`)}>以人資查看</button>
+              <button className="btn-secondary justify-center" onClick={() => navigate(`/admin/community/${community.id}`)}>以人資查看</button>
             </div>
             {community.visibility === 'members' && isHrAdmin(profile) && <p className="mt-4 rounded-card bg-mist p-4 text-sm font-semibold text-slate-500">此社群為成員可見，但人資後台仍可查看內容以利平台管理。</p>}
           </article>
