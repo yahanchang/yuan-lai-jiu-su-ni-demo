@@ -242,9 +242,10 @@ const communitySeed = [
     category: '職涯',
     intro: '把新人常遇到的問題問出來，也把適應公司、理解流程與找資源的方法留下來。',
     members: 238,
-    tags: ['新人', '職涯探索', '問題解決'],
+    tags: ['新人訓', '同梯交流', '問題解決'],
     visibility: 'public',
     joinPolicy: 'approval',
+    eligibilityRule: '員工編號 FP-0001 至 FP-0030，或屬於 2026 七月新人訓梯次',
     posts: [
       { id: 'p1', author: '張庭安', meta: '人才發展部', time: '今天 10:20', content: '新人剛進公司時，最常卡住的是「不知道要問誰」。大家通常怎麼判斷問題該問主管、同部門同事，還是跨部門窗口？', saves: 34, comments: 12 },
       { id: 'p2', author: '周明翰', meta: '採購專員', time: '昨天 18:05', content: '我把新人期常問的問題整理成一份「前 30 天問題清單」，包含系統權限、流程窗口、常用表單位置，給剛報到的同仁參考。', saves: 28, comments: 8 },
@@ -443,9 +444,11 @@ const joinRequestSeed = [
     id: 'jr-1',
     communityId: 'c1',
     requester: '周明翰',
+    employeeId: 'FP-0021',
+    cohort: '2026 七月新人訓',
     department: '採購部',
     role: '採購專員',
-    reason: '新人報到時常不知道流程窗口，希望加入新人職涯探索社群整理前 30 天常見問題。',
+    eligibility: '員工編號符合 FP-0001 至 FP-0030 梯次範圍',
     time: '今天 09:25',
     status: '待審核',
   },
@@ -453,9 +456,11 @@ const joinRequestSeed = [
     id: 'jr-2',
     communityId: 'c1',
     requester: '劉怡君',
+    employeeId: 'FP-0027',
+    cohort: '2026 七月新人訓',
     department: '法遵室',
     role: '法遵專員',
-    reason: '想了解新進同仁常見的適應問題，協助補充公司規範與問答整理。',
+    eligibility: '員工編號符合 FP-0001 至 FP-0030 梯次範圍',
     time: '昨天 16:40',
     status: '待審核',
   },
@@ -480,7 +485,7 @@ const incomingInviteSeed = [
     time: '昨天 16:15',
   },
 ]
-const demoStorageVersion = '2026-07-24-admin-analytics-platform-community'
+const demoStorageVersion = '2026-07-24-newcomer-cohort-approval'
 
 function storageGet(key, fallback) {
   try {
@@ -580,16 +585,18 @@ function toggleCommunityMembership({ community, profile, setProfile, notify, set
           id: `jr-${Date.now()}`,
           communityId: community.id,
           requester: profile.name,
+          employeeId: profile.employeeId || 'FP-0028',
+          cohort: community.id === 'c1' ? '2026 七月新人訓' : '系統判定',
           department: profile.department,
           role: profile.role,
-          reason: `想加入「${community.name}」延伸討論與整理經驗。`,
+          eligibility: community.id === 'c1' ? '員工編號符合新人訓梯次範圍' : '符合社群審核條件',
           time: '剛剛',
           status: '待審核',
         },
         ...prev,
       ]
     })
-    notify('已送出版主審核申請。')
+    notify(community.id === 'c1' ? '已送出新人訓梯次資格確認。' : '已送出版主審核申請。')
     return
   }
   if (!canJoinCommunity(profile, community)) {
@@ -1187,6 +1194,11 @@ function CommunityDetail({ id, communities, setCommunities, profile, setProfile,
             {community.restrictions?.minSeniority ? ` 年資 ${community.restrictions.minSeniority} 年以上。` : ' 不限年資。'}
           </p>
         )}
+        {community.eligibilityRule && (
+          <p className="mt-4 rounded-card bg-mist p-4 text-sm font-semibold leading-7 text-slate-600">
+            加入資格：{community.eligibilityRule}。系統會依公司匯入資料判斷，不需要另外填寫加入動機。
+          </p>
+        )}
       </section>
       {joined ? (
         <section className="mt-6 rounded-card border border-line bg-white p-5 shadow-card">
@@ -1197,7 +1209,7 @@ function CommunityDetail({ id, communities, setCommunities, profile, setProfile,
       ) : (
         <section className="mt-6 rounded-card border border-dashed border-line bg-white p-5 text-center shadow-card">
           <h2 className="text-xl font-black">加入社群後即可發文與留言</h2>
-          <p className="mt-2 text-slate-500">{community.joinPolicy === 'approval' ? '此社群需要版主審核，送出申請後等待確認。' : '先加入社群，再一起把問題問出來、把經驗留下來。'}</p>
+          <p className="mt-2 text-slate-500">{community.eligibilityRule ? '此社群依新人訓梯次與員工編號確認資格，送出後等待系統或管理者確認。' : community.joinPolicy === 'approval' ? '此社群需要版主審核，送出申請後等待確認。' : '先加入社群，再一起把問題問出來、把經驗留下來。'}</p>
         </section>
       )}
       {postsVisible ? (
@@ -1541,7 +1553,7 @@ function AdminRequests({ joinRequests, setJoinRequests, communities, notify }) {
   }
   return (
     <PageWrap>
-      <PageTitle eyebrow="Join Requests" title="加入申請" text="只處理版主設定為人工審核的加入申請；社群創建本身不需要審核。" />
+      <PageTitle eyebrow="Join Requests" title="加入申請" text="新人訓社群以員工編號與梯次名單判斷資格，不需要填寫加入動機；社群創建本身不需要審核。" />
       <section className="rounded-card border border-line bg-white p-5 shadow-card">
         <SectionHeader title="待審核" />
         <div className="space-y-3">
@@ -1651,11 +1663,16 @@ function AdminRequestRow({ request, communities, onApprove, onReject, compact = 
       <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-start">
         <div>
           <h3 className="font-black text-ink">{request.requester} 申請加入 {community?.name || '社群'}</h3>
-          <p className="mt-1 text-sm font-semibold text-slate-500">{request.department} · {request.role} · {request.time}</p>
+          <p className="mt-1 text-sm font-semibold text-slate-500">{request.employeeId || '員工編號待同步'} · {request.department} · {request.role} · {request.time}</p>
         </div>
         <span className={request.status === '待審核' ? 'pill-dark' : 'pill'}>{request.status}</span>
       </div>
-      {!compact && <p className="mt-3 leading-7 text-slate-650">{request.reason}</p>}
+      {!compact && (
+        <div className="mt-3 grid gap-3 sm:grid-cols-2">
+          <Info label="新人訓梯次" value={request.cohort || '系統判定'} />
+          <Info label="資格判定" value={request.eligibility || request.reason || '符合社群審核條件'} />
+        </div>
+      )}
       {onApprove && onReject && (
         <div className="mt-4 grid gap-2 sm:grid-cols-2">
           <button className="btn-primary justify-center" onClick={onApprove}>核准加入</button>
