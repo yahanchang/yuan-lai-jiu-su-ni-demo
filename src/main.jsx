@@ -1052,10 +1052,10 @@ function AuthLayout({ title, subtitle, children }) {
       <button onClick={() => (location.hash = '/')} className="mx-auto mb-8 block max-w-4xl text-2xl font-black text-navy">台塑 Connect</button>
       <section className="mx-auto grid max-w-5xl overflow-hidden rounded-[28px] border border-white bg-white shadow-soft lg:grid-cols-[.8fr_1.2fr]">
         <div className="bg-navy p-8 text-white lg:p-10">
-          <p className="text-sm font-semibold uppercase tracking-[.2em] text-skysoft">Employee Connection</p>
+          <p className="text-sm font-semibold uppercase tracking-[.2em] text-skysoft">Formosa Connect</p>
           <h1 className="mt-5 text-4xl font-black leading-tight">{title}</h1>
           <p className="mt-4 leading-7 text-slate-200">{subtitle}</p>
-          <p className="mt-10 rounded-card bg-white/10 p-5 leading-7 text-slate-100">從 Connect News、Connect Chat｜群組網到 Connect Hub，讓經驗在組織裡真正流動。</p>
+          <p className="mt-10 rounded-card bg-white/10 p-5 leading-7 text-slate-100">讓問題找到回應，讓經驗連成資源。從 Connect News、Connect Chat｜群組網到 Connect Hub，讓同仁更快找到公司內可用的答案。</p>
         </div>
         <div className="p-6 sm:p-8 lg:p-10">{children}</div>
       </section>
