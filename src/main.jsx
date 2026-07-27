@@ -259,7 +259,20 @@ const communitySeed = [
     members: 186,
     tags: ['HeyGen', '影音工具', '教學素材'],
     posts: [
-      { id: 'p3', author: '許哲維', meta: '資料平台部', time: '今天 09:12', content: '我整理了一份 HeyGen 影片製作流程：先寫 90 秒腳本，再做角色設定，最後統一字幕格式，給要做內訓素材的同仁參考。', saves: 46, comments: 15 },
+      {
+        id: 'p3',
+        author: '許哲維',
+        meta: '資料平台部',
+        time: '今天 09:12',
+        content: '我整理了一份 HeyGen 影片製作流程：先寫 90 秒腳本，再做角色設定，最後統一字幕格式，給要做內訓素材的同仁參考。',
+        attachments: [
+          { type: 'image', name: 'HeyGen_字幕設定範例.png', size: 420000 },
+          { type: 'file', name: 'HeyGen_內訓影片製作流程.pdf', size: 1380000 },
+          { type: 'link', title: 'HeyGen 官方更新說明', url: 'https://www.heygen.com/' },
+        ],
+        saves: 46,
+        comments: 15,
+      },
     ],
   },
   {
@@ -352,7 +365,18 @@ const communitySeed = [
     visibility: 'public',
     joinPolicy: 'open',
     posts: [
-      { id: 'p12', author: '林若涵', meta: '產品策略部', time: '今天 13:20', content: '分享一個我常用的提示詞格式：先寫角色、任務、輸入資料、輸出格式，再補充限制條件，產出的內容會穩很多。', saves: 61, comments: 18 },
+      {
+        id: 'p12',
+        author: '林若涵',
+        meta: '產品策略部',
+        time: '今天 13:20',
+        content: '分享一個我常用的提示詞格式：先寫角色、任務、輸入資料、輸出格式，再補充限制條件，產出的內容會穩很多。',
+        attachments: [
+          { type: 'file', name: 'AI提示詞格式範本.docx', size: 760000 },
+        ],
+        saves: 61,
+        comments: 18,
+      },
       { id: 'p13', author: '吳品萱', meta: 'ESG 策略部', time: '昨天 17:45', content: '想請問大家用企業 AI 平台整理會議紀錄時，會怎麼避免放入不適合上傳的敏感資訊？', saves: 39, comments: 12 },
     ],
   },
@@ -535,7 +559,7 @@ const groupChatSeed = [
     ],
   },
 ]
-const demoStorageVersion = '2026-07-24-chat-groups-owner-approval-ai'
+const demoStorageVersion = '2026-07-27-community-attachments'
 
 function storageGet(key, fallback) {
   try {
@@ -1191,6 +1215,9 @@ function CommunitiesPage({ communities, setCommunities, profile, setProfile, set
 function CommunityDetail({ id, communities, setCommunities, profile, setProfile, joinRequests, setJoinRequests, navigate, notify, adminMode = false }) {
   const community = communities.find((item) => item.id === id) || communities[0]
   const [content, setContent] = useState('')
+  const [imageAttachments, setImageAttachments] = useState([])
+  const [fileAttachments, setFileAttachments] = useState([])
+  const [linkAttachment, setLinkAttachment] = useState('')
   const joined = profile.joinedCommunities.includes(community.id)
   const hrAdmin = isHrAdmin(profile)
   const postsVisible = hrAdmin || joined || community.visibility !== 'members'
@@ -1210,8 +1237,14 @@ function CommunityDetail({ id, communities, setCommunities, profile, setProfile,
       notify('加入社群後才能發布貼文。')
       return
     }
-    if (!content.trim()) {
-      notify('先寫一點想分享的內容吧。')
+    const cleanLink = linkAttachment.trim()
+    const attachments = [
+      ...imageAttachments.map((file) => ({ type: 'image', name: file.name, size: file.size })),
+      ...fileAttachments.map((file) => ({ type: 'file', name: file.name, size: file.size })),
+      ...(cleanLink ? [{ type: 'link', url: cleanLink, title: cleanLink.replace(/^https?:\/\//, '') }] : []),
+    ]
+    if (!content.trim() && !attachments.length) {
+      notify('先寫一點內容，或附上圖片、檔案、連結。')
       return
     }
     const post = {
@@ -1219,12 +1252,16 @@ function CommunityDetail({ id, communities, setCommunities, profile, setProfile,
       author: adminMode ? '平台管理小組' : profile.name,
       meta: adminMode ? '台塑 Connect 官方發文' : `${profile.department} · ${profile.role}`,
       time: '剛剛',
-      content,
+      content: content.trim(),
+      attachments,
       saves: 0,
       comments: 0,
     }
     setCommunities((prev) => prev.map((item) => item.id === community.id ? { ...item, posts: [post, ...item.posts] } : item))
     setContent('')
+    setImageAttachments([])
+    setFileAttachments([])
+    setLinkAttachment('')
     notify(adminMode ? '平台發文已發布。' : '貼文已發布。')
   }
   return (
@@ -1285,6 +1322,44 @@ function CommunityDetail({ id, communities, setCommunities, profile, setProfile,
         <section className="mt-6 rounded-card border border-line bg-white p-5 shadow-card">
           <h2 className="mb-3 text-xl font-black">{adminMode ? '發布平台貼文' : '發布貼文'}</h2>
           <textarea value={content} onChange={(e) => setContent(e.target.value)} placeholder="寫下想問的問題、用過的方法、流程提醒或給同仁參考的內容..." className="field min-h-28" />
+          <div className="mt-4 grid gap-3 md:grid-cols-3">
+            <label className="rounded-card border border-line bg-mist p-4">
+              <span className="text-sm font-black text-ink">上傳圖片</span>
+              <span className="mt-1 block text-xs font-semibold text-slate-500">可放操作截圖、畫面問題或流程照片</span>
+              <input
+                type="file"
+                accept="image/*"
+                multiple
+                className="mt-3 block w-full text-sm text-slate-500 file:mr-3 file:rounded-full file:border-0 file:bg-white file:px-4 file:py-2 file:text-sm file:font-bold file:text-navy"
+                onChange={(event) => setImageAttachments(Array.from(event.target.files || []))}
+              />
+            </label>
+            <label className="rounded-card border border-line bg-mist p-4">
+              <span className="text-sm font-black text-ink">上傳檔案</span>
+              <span className="mt-1 block text-xs font-semibold text-slate-500">可放範本、簡報、教學文件或參考資料</span>
+              <input
+                type="file"
+                multiple
+                className="mt-3 block w-full text-sm text-slate-500 file:mr-3 file:rounded-full file:border-0 file:bg-white file:px-4 file:py-2 file:text-sm file:font-bold file:text-navy"
+                onChange={(event) => setFileAttachments(Array.from(event.target.files || []))}
+              />
+            </label>
+            <label className="rounded-card border border-line bg-mist p-4">
+              <span className="text-sm font-black text-ink">附上連結</span>
+              <span className="mt-1 block text-xs font-semibold text-slate-500">可貼教學文章、內部文件或工具頁面</span>
+              <input
+                value={linkAttachment}
+                onChange={(event) => setLinkAttachment(event.target.value)}
+                placeholder="https://..."
+                className="field mt-3 bg-white"
+              />
+            </label>
+          </div>
+          <AttachmentPreview attachments={[
+            ...imageAttachments.map((file) => ({ type: 'image', name: file.name, size: file.size })),
+            ...fileAttachments.map((file) => ({ type: 'file', name: file.name, size: file.size })),
+            ...(linkAttachment.trim() ? [{ type: 'link', url: linkAttachment.trim(), title: linkAttachment.trim().replace(/^https?:\/\//, '') }] : []),
+          ]} />
           <div className="mt-3 flex justify-end"><button className="btn-primary" onClick={publish}>發布</button></div>
         </section>
       ) : (
@@ -2311,6 +2386,36 @@ function TagList({ tags }) {
   return <div className="flex flex-wrap gap-2">{tags.map((tag) => <span key={tag} className="pill">{tag}</span>)}</div>
 }
 
+function formatFileSize(size = 0) {
+  if (!size) return ''
+  if (size < 1024 * 1024) return `${Math.max(1, Math.round(size / 1024))} KB`
+  return `${(size / 1024 / 1024).toFixed(1)} MB`
+}
+
+function AttachmentPreview({ attachments = [] }) {
+  if (!attachments.length) return null
+  return (
+    <div className="mt-4 grid gap-2 md:grid-cols-2">
+      {attachments.map((item, index) => {
+        if (item.type === 'link') {
+          const safeUrl = item.url?.startsWith('http') ? item.url : `https://${item.url}`
+          return (
+            <a key={`${item.type}-${index}`} href={safeUrl} target="_blank" rel="noreferrer" className="rounded-2xl border border-line bg-skysoft p-3 text-sm font-bold text-navy hover:bg-white">
+              連結｜{item.title || item.url}
+            </a>
+          )
+        }
+        return (
+          <div key={`${item.type}-${index}`} className="rounded-2xl border border-line bg-mist p-3 text-sm font-bold text-slate-600">
+            {item.type === 'image' ? '圖片' : '檔案'}｜{item.name}
+            {item.size ? <span className="ml-2 text-xs text-slate-400">{formatFileSize(item.size)}</span> : null}
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
 function getPostReplies(post) {
   const replies = {
     p1: [
@@ -2362,7 +2467,8 @@ function PostCard({ post, canComment = true }) {
           <p className="text-sm text-slate-500">{post.meta} · {post.time}</p>
         </div>
       </div>
-      <p className="mt-4 leading-7 text-slate-700">{post.content}</p>
+      {post.content ? <p className="mt-4 leading-7 text-slate-700">{post.content}</p> : null}
+      <AttachmentPreview attachments={post.attachments} />
       <div className="mt-4 flex gap-4 text-sm font-bold text-slate-500">
         <button className={saved ? 'text-navy' : 'hover:text-navy'} onClick={() => setSaved((value) => !value)}>{saved ? '已收藏' : '收藏'} {saveCount}</button>
         <button className="hover:text-navy" onClick={() => setShowComments((value) => !value)}>留言 {commentCount}</button>
