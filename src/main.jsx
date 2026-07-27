@@ -559,7 +559,7 @@ const groupChatSeed = [
     ],
   },
 ]
-const demoStorageVersion = '2026-07-27-community-attachments'
+const demoStorageVersion = '2026-07-27-comment-attachments'
 
 function storageGet(key, fallback) {
   try {
@@ -2392,21 +2392,21 @@ function formatFileSize(size = 0) {
   return `${(size / 1024 / 1024).toFixed(1)} MB`
 }
 
-function AttachmentPreview({ attachments = [] }) {
+function AttachmentPreview({ attachments = [], compact = false }) {
   if (!attachments.length) return null
   return (
-    <div className="mt-4 grid gap-2 md:grid-cols-2">
+    <div className={`${compact ? 'mt-2' : 'mt-4'} grid gap-2 ${compact ? '' : 'md:grid-cols-2'}`}>
       {attachments.map((item, index) => {
         if (item.type === 'link') {
           const safeUrl = item.url?.startsWith('http') ? item.url : `https://${item.url}`
           return (
-            <a key={`${item.type}-${index}`} href={safeUrl} target="_blank" rel="noreferrer" className="rounded-2xl border border-line bg-skysoft p-3 text-sm font-bold text-navy hover:bg-white">
+            <a key={`${item.type}-${index}`} href={safeUrl} target="_blank" rel="noreferrer" className={`${compact ? 'px-3 py-2 text-xs' : 'p-3 text-sm'} rounded-2xl border border-line bg-skysoft font-bold text-navy hover:bg-white`}>
               連結｜{item.title || item.url}
             </a>
           )
         }
         return (
-          <div key={`${item.type}-${index}`} className="rounded-2xl border border-line bg-mist p-3 text-sm font-bold text-slate-600">
+          <div key={`${item.type}-${index}`} className={`${compact ? 'px-3 py-2 text-xs' : 'p-3 text-sm'} rounded-2xl border border-line bg-mist font-bold text-slate-600`}>
             {item.type === 'image' ? '圖片' : '檔案'}｜{item.name}
             {item.size ? <span className="ml-2 text-xs text-slate-400">{formatFileSize(item.size)}</span> : null}
           </div>
@@ -2428,8 +2428,23 @@ function getPostReplies(post) {
       { id: 'p2-r2', author: '陳柏宇', text: '建議可以加一欄「負責窗口」，未來查找會更快。' },
     ],
     p3: [
-      { id: 'p3-r1', author: '塑寶', text: '想知道現金流表要先追哪些項目，期待模板。' },
-      { id: 'p3-r2', author: '劉怡君', text: '簡單可持續很重要，初版不用太複雜。' },
+      {
+        id: 'p3-r1',
+        author: '塑寶',
+        text: '這份流程很清楚，我補一張我們人資組測試字幕位置的截圖，大家可以看一下安全區域。',
+        attachments: [
+          { type: 'image', name: 'HeyGen_字幕安全區截圖.png', size: 360000 },
+          { type: 'link', title: 'HeyGen 教學中心', url: 'https://www.heygen.com/' },
+        ],
+      },
+      {
+        id: 'p3-r2',
+        author: '劉怡君',
+        text: '簡單可持續很重要，初版不用太複雜。我放一份審稿清單給做內訓影片的同仁參考。',
+        attachments: [
+          { type: 'file', name: '內訓影片審稿清單.xlsx', size: 540000 },
+        ],
+      },
     ],
     p4: [
       { id: 'p4-r1', author: '張庭安', text: 'Project Brief 很適合給新人理解專案全貌。' },
@@ -2446,6 +2461,9 @@ function PostCard({ post, canComment = true }) {
   const [saved, setSaved] = useState(false)
   const [showComments, setShowComments] = useState(false)
   const [commentText, setCommentText] = useState('')
+  const [commentImages, setCommentImages] = useState([])
+  const [commentFiles, setCommentFiles] = useState([])
+  const [commentLink, setCommentLink] = useState('')
   const [localComments, setLocalComments] = useState([])
   const existingReplies = getPostReplies(post)
   const allReplies = [...existingReplies, ...localComments]
@@ -2453,9 +2471,18 @@ function PostCard({ post, canComment = true }) {
   const commentCount = (post.comments ?? existingReplies.length) + localComments.length
   const submitComment = () => {
     if (!canComment) return
-    if (!commentText.trim()) return
-    setLocalComments((prev) => [...prev, { id: `local-${Date.now()}`, author: '塑寶', text: commentText.trim() }])
+    const cleanLink = commentLink.trim()
+    const attachments = [
+      ...commentImages.map((file) => ({ type: 'image', name: file.name, size: file.size })),
+      ...commentFiles.map((file) => ({ type: 'file', name: file.name, size: file.size })),
+      ...(cleanLink ? [{ type: 'link', url: cleanLink, title: cleanLink.replace(/^https?:\/\//, '') }] : []),
+    ]
+    if (!commentText.trim() && !attachments.length) return
+    setLocalComments((prev) => [...prev, { id: `local-${Date.now()}`, author: '塑寶', text: commentText.trim(), attachments }])
     setCommentText('')
+    setCommentImages([])
+    setCommentFiles([])
+    setCommentLink('')
     setShowComments(true)
   }
 
@@ -2478,12 +2505,13 @@ function PostCard({ post, canComment = true }) {
           <div className="space-y-3">
             {allReplies.map((reply) => (
               <div key={reply.id} className="rounded-2xl bg-white p-3 text-sm text-slate-700">
-                <p className="leading-6"><span className="font-black text-ink">{reply.author}：</span>{reply.text}</p>
+                {reply.text ? <p className="leading-6"><span className="font-black text-ink">{reply.author}：</span>{reply.text}</p> : <p className="font-black text-ink">{reply.author}</p>}
+                <AttachmentPreview attachments={reply.attachments} compact />
               </div>
             ))}
           </div>
           {canComment ? (
-            <div className="mt-3 flex flex-col gap-2 sm:flex-row">
+            <div className="mt-3 rounded-2xl bg-white p-3">
               <input
                 className="field mt-0 bg-white"
                 value={commentText}
@@ -2491,9 +2519,46 @@ function PostCard({ post, canComment = true }) {
                 onKeyDown={(event) => {
                   if (event.key === 'Enter') submitComment()
                 }}
-                placeholder="寫下你的留言..."
+                placeholder="寫下你的留言，或附上截圖、檔案、連結..."
               />
-              <button className="btn-primary justify-center sm:min-w-24" onClick={submitComment}>送出</button>
+              <div className="mt-3 grid gap-2 md:grid-cols-3">
+                <label className="rounded-2xl border border-line bg-mist px-3 py-2 text-xs font-bold text-slate-600">
+                  圖片
+                  <input
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    className="mt-2 block w-full text-xs file:mr-2 file:rounded-full file:border-0 file:bg-white file:px-3 file:py-1.5 file:text-xs file:font-bold file:text-navy"
+                    onChange={(event) => setCommentImages(Array.from(event.target.files || []))}
+                  />
+                </label>
+                <label className="rounded-2xl border border-line bg-mist px-3 py-2 text-xs font-bold text-slate-600">
+                  檔案
+                  <input
+                    type="file"
+                    multiple
+                    className="mt-2 block w-full text-xs file:mr-2 file:rounded-full file:border-0 file:bg-white file:px-3 file:py-1.5 file:text-xs file:font-bold file:text-navy"
+                    onChange={(event) => setCommentFiles(Array.from(event.target.files || []))}
+                  />
+                </label>
+                <label className="rounded-2xl border border-line bg-mist px-3 py-2 text-xs font-bold text-slate-600">
+                  連結
+                  <input
+                    value={commentLink}
+                    onChange={(event) => setCommentLink(event.target.value)}
+                    placeholder="https://..."
+                    className="field mt-2 bg-white text-sm"
+                  />
+                </label>
+              </div>
+              <AttachmentPreview attachments={[
+                ...commentImages.map((file) => ({ type: 'image', name: file.name, size: file.size })),
+                ...commentFiles.map((file) => ({ type: 'file', name: file.name, size: file.size })),
+                ...(commentLink.trim() ? [{ type: 'link', url: commentLink.trim(), title: commentLink.trim().replace(/^https?:\/\//, '') }] : []),
+              ]} compact />
+              <div className="mt-3 flex justify-end">
+                <button className="btn-primary justify-center sm:min-w-24" onClick={submitComment}>送出</button>
+              </div>
             </div>
           ) : (
             <p className="mt-3 rounded-2xl bg-white p-3 text-sm font-semibold text-slate-500">加入社群後才能留言。</p>
