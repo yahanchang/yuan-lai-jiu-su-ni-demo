@@ -351,7 +351,7 @@ const communitySeed = [
     visibility: 'public',
     joinPolicy: 'open',
     posts: [
-      { id: 'p10', author: '塑寶', meta: '人資組', time: '今天 11:05', content: '歡迎把平台使用問題、功能建議或操作上不清楚的地方留在這裡，平台管理小組會定期整理常見問題。', saves: 22, comments: 9 },
+      { id: 'p10', author: '塑醬', meta: '人資組', time: '今天 11:05', content: '歡迎把平台使用問題、功能建議或操作上不清楚的地方留在這裡，平台管理小組會定期整理常見問題。', saves: 22, comments: 9 },
       { id: 'p11', author: '許哲維', meta: '資料平台部', time: '昨天 15:30', content: '建議社群搜尋可以支援用標籤快速篩選，這樣找工具教學或流程問題會更快。', saves: 17, comments: 5 },
     ],
   },
@@ -448,7 +448,7 @@ const bulletinSeed = [
 ]
 
 const defaultProfile = {
-  name: '塑寶',
+  name: '塑醬',
   email: 'subao',
   password: 'demo123',
   age: '28',
@@ -527,19 +527,19 @@ const groupChatSeed = [
   {
     id: 'g1',
     name: '新人訓 2026 七月梯',
-    members: ['塑寶', '周明翰', '劉怡君', '張庭安'],
+    members: ['塑醬', '周明翰', '劉怡君', '張庭安'],
     topic: '新人訓同梯問題整理',
     unread: 3,
     messages: [
       { id: 'g1-m1', author: '張庭安', meta: '人才發展部', text: '大家如果今天系統權限還沒開，可以先把缺的項目列在這串，我下午一起整理給 IT。', time: '09:18' },
       { id: 'g1-m2', author: '周明翰', meta: '採購部', text: '我缺採購系統和差勤系統，已經先整理截圖。', time: '09:26' },
-      { id: 'g1-m3', author: '塑寶', meta: '人資組', text: '收到，這串我會整理成新人常見問題放到 Connect News。', time: '09:31' },
+      { id: 'g1-m3', author: '塑醬', meta: '人資組', text: '收到，這串我會整理成新人常見問題放到 Connect News。', time: '09:31' },
     ],
   },
   {
     id: 'g2',
     name: 'AI 工具導入小組',
-    members: ['塑寶', '林若涵', '許哲維', '吳品萱'],
+    members: ['塑醬', '林若涵', '許哲維', '吳品萱'],
     topic: '企業 AI 平台試用與安全提醒',
     unread: 1,
     messages: [
@@ -550,7 +550,7 @@ const groupChatSeed = [
   {
     id: 'g3',
     name: 'HeyGen 內訓影片小組',
-    members: ['塑寶', '許哲維', '張庭安'],
+    members: ['塑醬', '許哲維', '張庭安'],
     topic: '內訓影片腳本、字幕與審稿',
     unread: 0,
     messages: [
@@ -559,7 +559,7 @@ const groupChatSeed = [
     ],
   },
 ]
-const demoStorageVersion = '2026-07-27-comment-attachments'
+const demoStorageVersion = '2026-07-27-sujiang-slogan'
 
 function storageGet(key, fallback) {
   try {
@@ -570,7 +570,7 @@ function storageGet(key, fallback) {
 }
 
 function normalizeProfile(profile) {
-  const demoNames = ['Yahan', 'YA', '雅涵', 'Yahan Chang']
+  const demoNames = ['塑寶', 'Yahan', 'YA', '雅涵', 'Yahan Chang']
   const demoEmails = ['demo@yuanlai.com', 'subao@yuanlai.com']
   return {
     ...defaultProfile,
@@ -885,7 +885,7 @@ function Landing({ navigate }) {
           <div className="relative z-10">
             <p className="mb-5 inline-flex rounded-full border border-white/80 bg-white/70 px-4 py-2 text-sm font-semibold text-navy shadow-card">台塑企業員工交流與共學平台</p>
             <h1 className="max-w-3xl text-5xl font-black leading-tight tracking-tight text-ink sm:text-6xl lg:text-7xl">台塑 Connect</h1>
-            <p className="mt-4 max-w-3xl text-2xl font-black leading-tight text-ink sm:text-3xl">把問題問出來，把經驗留下來。</p>
+            <p className="mt-4 max-w-3xl text-2xl font-black leading-tight text-ink sm:text-3xl">讓問題找到回應，讓經驗連成資源。</p>
             <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-600">台塑 Connect 是台塑企業內部的實名制員工學習交流平台，讓同仁可以在社群中發問、回覆、分享使用經驗，並把常見問題與解決方式留下來給後續同仁參考。</p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <button onClick={() => navigate('/login')} className="btn-primary h-13 justify-center px-8 text-base">登入平台</button>
@@ -1372,7 +1372,7 @@ function CommunityDetail({ id, communities, setCommunities, profile, setProfile,
       ) : (
         <section className="mt-6 rounded-card border border-dashed border-line bg-white p-5 text-center shadow-card">
           <h2 className="text-xl font-black">加入社群後即可發文與留言</h2>
-          <p className="mt-2 text-slate-500">{community.eligibilityRule ? '此社群依新人訓梯次與員工編號確認資格，送出後等待系統或管理者確認。' : community.joinPolicy === 'approval' ? '此社群需要版主審核，送出申請後等待確認。' : '先加入社群，再一起把問題問出來、把經驗留下來。'}</p>
+          <p className="mt-2 text-slate-500">{community.eligibilityRule ? '此社群依新人訓梯次與員工編號確認資格，送出後等待系統或管理者確認。' : community.joinPolicy === 'approval' ? '此社群需要版主審核，送出申請後等待確認。' : '先加入社群，再一起讓問題找到回應，讓經驗連成資源。'}</p>
         </section>
       )}
       {postsVisible ? (
@@ -1424,7 +1424,7 @@ function ChatPage({ conversations, activeChatId, setActiveChatId, sendChatMessag
       ...group,
       messages: [
         ...group.messages,
-        { id: `group-msg-${Date.now()}`, author: '塑寶', meta: '人資組', text: cleanText, time: '剛剛' },
+        { id: `group-msg-${Date.now()}`, author: '塑醬', meta: '人資組', text: cleanText, time: '剛剛' },
       ],
     } : group))
   }
@@ -1510,11 +1510,11 @@ function GroupChatPanel({ group, onSend }) {
       </div>
       <div className="mt-5 max-h-[28rem] space-y-3 overflow-y-auto rounded-[22px] bg-mist p-4">
         {group.messages.map((item) => (
-          <div key={item.id} className={`flex ${item.author === '塑寶' ? 'justify-end' : 'justify-start'}`}>
-            <div className={`max-w-[86%] rounded-[20px] px-4 py-3 shadow-sm ${item.author === '塑寶' ? 'bg-blueprint text-white' : 'bg-white text-ink'}`}>
-              <p className={`text-xs font-black ${item.author === '塑寶' ? 'text-white/75' : 'text-navy'}`}>{item.author} · {item.meta}</p>
+          <div key={item.id} className={`flex ${item.author === '塑醬' ? 'justify-end' : 'justify-start'}`}>
+            <div className={`max-w-[86%] rounded-[20px] px-4 py-3 shadow-sm ${item.author === '塑醬' ? 'bg-blueprint text-white' : 'bg-white text-ink'}`}>
+              <p className={`text-xs font-black ${item.author === '塑醬' ? 'text-white/75' : 'text-navy'}`}>{item.author} · {item.meta}</p>
               <p className="mt-1 leading-7">{item.text}</p>
-              <p className={`mt-1 text-xs font-semibold ${item.author === '塑寶' ? 'text-white/70' : 'text-slate-400'}`}>{item.time}</p>
+              <p className={`mt-1 text-xs font-semibold ${item.author === '塑醬' ? 'text-white/70' : 'text-slate-400'}`}>{item.time}</p>
             </div>
           </div>
         ))}
@@ -2445,7 +2445,7 @@ function getPostReplies(post) {
     p3: [
       {
         id: 'p3-r1',
-        author: '塑寶',
+        author: '塑醬',
         text: '這份流程很清楚，我補一張我們人資組測試字幕位置的截圖，大家可以看一下安全區域。',
         attachments: [
           { type: 'image', name: 'HeyGen_字幕安全區截圖.png', size: 360000 },
@@ -2493,7 +2493,7 @@ function PostCard({ post, canComment = true }) {
       ...(cleanLink ? [{ type: 'link', url: cleanLink, title: cleanLink.replace(/^https?:\/\//, '') }] : []),
     ]
     if (!commentText.trim() && !attachments.length) return
-    setLocalComments((prev) => [...prev, { id: `local-${Date.now()}`, author: '塑寶', text: commentText.trim(), attachments }])
+    setLocalComments((prev) => [...prev, { id: `local-${Date.now()}`, author: '塑醬', text: commentText.trim(), attachments }])
     setCommentText('')
     setCommentImages([])
     setCommentFiles([])
