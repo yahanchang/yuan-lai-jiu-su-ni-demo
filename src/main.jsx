@@ -513,7 +513,7 @@ const bulletinSeed = [
 
 const defaultProfile = {
   name: '塑醬',
-  email: 'subao',
+  email: 'sujiang',
   password: 'demo123',
   age: '28',
   gender: '',
@@ -623,7 +623,7 @@ const groupChatSeed = [
     ],
   },
 ]
-const demoStorageVersion = '2026-07-27-forwarded-events'
+const demoStorageVersion = '2026-07-27-sujiang-account'
 
 function storageGet(key, fallback) {
   try {
