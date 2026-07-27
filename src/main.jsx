@@ -410,7 +410,7 @@ const bulletinSeed = [
       '平台採公司帳號實名制，發文、留言與聊天室都會顯示公司匯入的姓名與部門職位。',
       '社群貼文改為單一發文入口，讓同仁直接留下問題、使用經驗、流程提醒或常見錯誤。',
       '聊天室作為延續討論的空間，可示意支援文字、圖片、檔案與連結分享。',
-      'Connect News 目前只放系統更新與常見問題，避免資訊過度分散。',
+      'Connect News 目前整理系統更新、常見問題與活動分享，避免重要資訊過度分散。',
     ],
     tags: ['實名制', '發文', '收藏'],
     cta: '查看完整內文',
@@ -444,6 +444,54 @@ const bulletinSeed = [
     ],
     tags: ['聊天室', '附件', '資訊安全'],
     cta: '查看完整內文',
+  },
+  {
+    id: 'b4',
+    type: '活動分享',
+    title: '台塑生醫員工優惠資訊：夏季保健與生活用品分享',
+    date: '2026/07/28',
+    owner: '福利資訊小組',
+    location: '員工福利平台／指定門市',
+    summary: '整理近期台塑生醫保健、清潔與生活用品優惠資訊，提供同仁作為員工福利與生活採購參考。',
+    body: [
+      '本則為活動資訊分享，內容包含保健食品、居家清潔、個人照護與生活用品等品項方向。',
+      '同仁可依需求自行查閱福利平台或指定通路公告，實際品項、折扣與期間以主辦單位公告為準。',
+      'Connect News 僅作為資訊彙整入口，不提供報名、下單或付款功能。',
+    ],
+    tags: ['員工福利', '台塑生醫', '生活用品'],
+    cta: '查看活動資訊',
+  },
+  {
+    id: 'b5',
+    type: '活動分享',
+    title: '企業 AI 與數位工具線上講座資訊整理',
+    date: '2026/08/02',
+    owner: '數位學習小組',
+    location: '線上課程',
+    summary: '彙整近期與 AI 工具、影音生成、提示詞應用相關的外部講座資訊，供有興趣的同仁自行參考。',
+    body: [
+      '近期外部課程與論壇持續分享 AI 工具導入、影音生成、資料治理與提示詞設計等主題。',
+      '建議同仁參考時留意公司資訊安全原則，避免在外部工具或課程範例中使用真實客戶、營運或機密資料。',
+      '如課後整理出適合公司情境的做法，歡迎回到 Connect Hub 的 HeyGen 或企業 AI 平台交流社群分享。',
+    ],
+    tags: ['AI工具', 'HeyGen', '線上講座'],
+    cta: '查看活動資訊',
+  },
+  {
+    id: 'b6',
+    type: '活動分享',
+    title: '永續與公益活動紀錄：把企業關懷帶進在地',
+    date: '2026/08/06',
+    owner: '企業永續小組',
+    location: '各廠區與在地社區',
+    summary: '分享近期永續、公益與社區互動活動紀錄，讓同仁了解不同廠區如何把企業資源與在地需求連結起來。',
+    body: [
+      '本活動分享聚焦企業永續、社區互動與員工參與案例，協助同仁看見跨單位合作如何落地。',
+      '活動紀錄可作為後續 ESG、志工服務、地方關懷或員工參與方案的參考素材。',
+      '若同仁有相關經驗或改善建議，可至 Connect Hub 的 ESG 與永續社群延伸討論。',
+    ],
+    tags: ['ESG', '公益', '在地連結'],
+    cta: '查看活動資訊',
   },
 ]
 
@@ -559,7 +607,7 @@ const groupChatSeed = [
     ],
   },
 ]
-const demoStorageVersion = '2026-07-27-sujiang-slogan'
+const demoStorageVersion = '2026-07-27-news-events'
 
 function storageGet(key, fallback) {
   try {
@@ -903,10 +951,10 @@ function Landing({ navigate }) {
                 </div>
                 <p className="mt-8 text-2xl font-bold leading-snug">發問、回覆、收藏，讓答案不只停在一次對話裡。</p>
                 <div className="mt-8 grid grid-cols-2 gap-3">
-                  {['Connect News｜公告與常見問題', 'Connect Chat｜群組網', 'Connect Hub｜學習社群', 'Connect Guide｜交流守則'].map((tag) => <span key={tag} className="pill">{tag}</span>)}
+                  {['Connect News｜公告與活動', 'Connect Chat｜群組網', 'Connect Hub｜學習社群', 'Connect Guide｜交流守則'].map((tag) => <span key={tag} className="pill">{tag}</span>)}
                 </div>
               </div>
-              <div className="floating-note">公司帳號登入 → 查看系統更新與常見問題 → 到社群發問或分享經驗 → 用群組網延續一對一與多人討論。</div>
+              <div className="floating-note">公司帳號登入 → 查看公告、FAQ 與活動分享 → 到社群發問或分享經驗 → 用群組網延續一對一與多人討論。</div>
             </div>
           </div>
         </div>
@@ -917,7 +965,7 @@ function Landing({ navigate }) {
           <h2 className="section-title">四個核心功能，讓問題更快被解決、經驗更容易被找到</h2>
         </div>
         <div className="grid gap-5 md:grid-cols-4">
-          <FeatureCard title="Connect News｜公告與常見問題" text="只保留系統更新與常見問題，讓平台重要資訊清楚集中。" />
+          <FeatureCard title="Connect News｜公告與活動" text="集中整理系統更新、常見問題與活動分享，讓重要資訊清楚可查。" />
           <FeatureCard title="Connect Chat｜群組網" text="搜尋同仁開啟一對一對話，也能進入多人群組討論，示意分享文字、圖片、檔案與連結。" />
           <FeatureCard title="Connect Hub｜學習社群" text="用發文、留言與收藏，累積可搜尋、可回看的工作知識。" />
           <FeatureCard title="Connect Guide｜交流守則" text="採公司帳號實名制，清楚說明資訊安全、發文與留言原則。" />
@@ -932,7 +980,7 @@ function Landing({ navigate }) {
           <div className="grid gap-4 lg:grid-cols-4">
             {[
               ['01', '確認員工資料', '登入後確認公司匯入的基本資料。'],
-              ['02', '查看 Connect News', '掌握公告與常見問題。'],
+              ['02', '查看 Connect News', '掌握公告、FAQ 與活動分享。'],
               ['03', '進入 Connect Hub', '用發文與留言留下可被搜尋的內容。'],
               ['04', '進入 Connect Chat', '需要補充細節時，用群組網延續一對一或多人討論。'],
             ].map(([step, title, text]) => (
@@ -1070,22 +1118,23 @@ function ProfileBuilder(props) {
 function Dashboard({ profile, navigate }) {
   return (
     <PageWrap>
-      <PageTitle eyebrow="Bulletin" title={`Hi，${profile.name}！Connect News｜公告與常見問題`} text="集中查看系統更新與常見問題，避免重要平台資訊散落在聊天室或社群貼文裡。" />
+      <PageTitle eyebrow="Bulletin" title={`Hi，${profile.name}！Connect News｜公告、常見問題與活動分享`} text="集中查看系統更新、常見問題與活動資訊，避免重要平台資訊散落在聊天室或社群貼文裡。" />
       <section className="rounded-[28px] bg-gradient-to-br from-white to-skysoft p-6 shadow-card lg:p-8">
         <div className="grid gap-5 lg:grid-cols-[1.1fr_.9fr] lg:items-center">
           <div>
             <p className="eyebrow">Today</p>
-            <h2 className="mt-2 text-3xl font-black">系統更新與常見問題放在這裡</h2>
-            <p className="mt-4 max-w-2xl leading-7 text-slate-600">Connect News 只放平台相關的系統更新與常見問題，讓同仁快速掌握功能變更、使用方式與資訊安全提醒。</p>
+            <h2 className="mt-2 text-3xl font-black">重要資訊放在這裡集中查看</h2>
+            <p className="mt-4 max-w-2xl leading-7 text-slate-600">Connect News 整理系統更新、平台常見問題與活動分享，讓同仁快速掌握功能變更、使用方式、資訊安全提醒與可參考的活動資訊。</p>
           </div>
           <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-1">
             <Info label="系統更新" value={`${bulletinSeed.filter((item) => item.type === '系統更新').length} 則`} />
             <Info label="常見問題" value={`${bulletinSeed.filter((item) => item.type === '常見問題').length} 則`} />
+            <Info label="活動分享" value={`${bulletinSeed.filter((item) => item.type === '活動分享').length} 則`} />
           </div>
         </div>
       </section>
       <section className="mt-6">
-        <SectionHeader title="系統更新與常見問題" />
+        <SectionHeader title="最新公告、常見問題與活動分享" />
         <div className="grid gap-5 lg:grid-cols-3">
           {bulletinSeed.map((item) => (
             <article key={item.id} className="rounded-card border border-line bg-white p-5 shadow-card transition hover:-translate-y-1 hover:shadow-soft">
@@ -1120,9 +1169,15 @@ function BulletinDetail({ id, navigate }) {
             <h1 className="mt-2 max-w-3xl text-4xl font-black leading-tight">{item.title}</h1>
             <p className="mt-3 font-semibold text-slate-500">{item.owner} · {item.date}</p>
           </div>
-          <span className="pill-dark w-fit">Connect News｜公告與常見問題</span>
+          <span className="pill-dark w-fit">Connect News｜公告、FAQ、活動</span>
         </div>
         <p className="mt-6 rounded-card bg-mist p-5 text-lg font-semibold leading-8 text-slate-700">{item.summary}</p>
+        {item.location && (
+          <div className="mt-4 rounded-card border border-line bg-white p-4">
+            <p className="text-xs font-bold text-slate-500">活動地點／形式</p>
+            <p className="mt-1 font-black text-ink">{item.location}</p>
+          </div>
+        )}
         <div className="mt-6 space-y-4 leading-8 text-slate-650">
           {item.body.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
         </div>
@@ -1959,7 +2014,7 @@ function AdminRequestRow({ request, communities, onApprove, onReject, compact = 
 
 function AppNav({ route, profile, navigate, logout }) {
   const items = [
-    ['Connect News', '公告與常見問題', '/dashboard'],
+    ['Connect News', '公告與活動', '/dashboard'],
     ['Connect Chat', '群組網', '/chat'],
     ['Connect Hub', '學習社群', '/communities'],
     ['Connect Guide', '交流守則', '/rules'],
