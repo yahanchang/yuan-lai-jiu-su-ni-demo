@@ -1218,10 +1218,17 @@ function CommunityDetail({ id, communities, setCommunities, profile, setProfile,
   const [imageAttachments, setImageAttachments] = useState([])
   const [fileAttachments, setFileAttachments] = useState([])
   const [linkAttachment, setLinkAttachment] = useState('')
+  const [postQuery, setPostQuery] = useState('')
   const joined = profile.joinedCommunities.includes(community.id)
   const hrAdmin = isHrAdmin(profile)
   const postsVisible = hrAdmin || joined || community.visibility !== 'members'
   const isOwner = community.owner === profile.name
+  const postSearchText = postQuery.trim().toLowerCase()
+  const filteredPosts = community.posts.filter((post) => {
+    if (!postSearchText) return true
+    const attachmentText = (post.attachments || []).map((item) => `${item.name || ''}${item.title || ''}${item.url || ''}`).join(' ')
+    return `${post.author || ''} ${post.meta || ''} ${post.content || ''} ${attachmentText}`.toLowerCase().includes(postSearchText)
+  })
   const toggleJoin = () => {
     toggleCommunityMembership({ community, profile, setProfile, notify, setJoinRequests })
   }
@@ -1371,9 +1378,17 @@ function CommunityDetail({ id, communities, setCommunities, profile, setProfile,
       {postsVisible ? (
         <section className="mt-6">
           <SectionHeader title="社群貼文" />
-          <div className="space-y-4">
-          {community.posts.map((post) => <PostCard key={post.id} post={post} canComment={joined && !adminMode} />)}
-        </div>
+          <div className="mb-4 rounded-card border border-line bg-white p-5 shadow-card">
+            <Input label="搜尋社群內貼文" value={postQuery} onChange={setPostQuery} dense />
+            <p className="mt-2 text-sm font-semibold text-slate-500">可搜尋貼文內容、發文者、部門職位、附件名稱或連結。</p>
+          </div>
+          {filteredPosts.length ? (
+            <div className="space-y-4">
+              {filteredPosts.map((post) => <PostCard key={post.id} post={post} canComment={joined && !adminMode} />)}
+            </div>
+          ) : (
+            <EmptyState title="找不到符合的貼文" text="試著換一個關鍵字，例如 HeyGen、字幕、範本、部門名稱或附件檔名。" />
+          )}
           {hrAdmin && !joined && <p className="mt-4 rounded-card bg-white p-4 text-sm font-semibold text-slate-500 shadow-card">人資後台權限：你可查看此社群貼文，但仍需加入社群才可用員工身份留言。</p>}
         </section>
       ) : (
