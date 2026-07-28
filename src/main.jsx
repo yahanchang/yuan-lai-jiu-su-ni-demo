@@ -351,7 +351,7 @@ const communitySeed = [
     visibility: 'public',
     joinPolicy: 'open',
     posts: [
-      { id: 'p10', author: '塑醬', meta: '人資組', time: '今天 11:05', content: '歡迎把平台使用問題、功能建議或操作上不清楚的地方留在這裡，平台管理小組會定期整理常見問題。', saves: 22, comments: 9 },
+      { id: 'p10', author: '平台管理小組', meta: '台塑 Connect 官方發文', time: '今天 11:05', content: '歡迎把平台使用問題、功能建議或操作上不清楚的地方留在這裡，平台管理小組會定期整理常見問題。', saves: 22, comments: 9 },
       { id: 'p11', author: '許哲維', meta: '資料平台部', time: '昨天 15:30', content: '建議社群搜尋可以支援用標籤快速篩選，這樣找工具教學或流程問題會更快。', saves: 17, comments: 5 },
     ],
   },
@@ -650,7 +650,7 @@ const groupChatSeed = [
     ],
   },
 ]
-const demoStorageVersion = '2026-07-28-profile-saved-communities'
+const demoStorageVersion = '2026-07-28-remove-sujiang-nonmember-comments'
 
 function storageGet(key, fallback) {
   try {
@@ -2601,8 +2601,8 @@ function getPostReplies(post) {
     p3: [
       {
         id: 'p3-r1',
-        author: '塑醬',
-        text: '這份流程很清楚，我補一張我們人資組測試字幕位置的截圖，大家可以看一下安全區域。',
+        author: '張庭安',
+        text: '這份流程很清楚，我補一張人才發展部測試字幕位置的截圖，大家可以看一下安全區域。',
         attachments: [
           { type: 'image', name: 'HeyGen_字幕安全區截圖.png', size: 360000 },
           { type: 'link', title: 'HeyGen 教學中心', url: 'https://www.heygen.com/' },
