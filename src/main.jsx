@@ -564,6 +564,7 @@ const defaultProfile = {
     showSeniority: true,
   },
   favorites: [],
+  savedPosts: ['p3', 'p10', 'p14'],
   joinedCommunities: ['c1', 'c4'],
 }
 
@@ -649,7 +650,7 @@ const groupChatSeed = [
     ],
   },
 ]
-const demoStorageVersion = '2026-07-28-interest-communities'
+const demoStorageVersion = '2026-07-28-profile-saved-communities'
 
 function storageGet(key, fallback) {
   try {
@@ -1053,7 +1054,7 @@ function Register({ setProfile, setIsAuthed, navigate, notify }) {
   const [form] = useState(defaultProfile)
 
   const submit = () => {
-    setProfile({ ...form, favorites: [], joinedCommunities: ['c1'] })
+    setProfile({ ...form, favorites: [], savedPosts: ['p3', 'p10', 'p14'], joinedCommunities: ['c1'] })
     setIsAuthed(true)
     notify('員工資料確認完成，歡迎來到台塑 Connect。')
     navigate(isHrAdmin(form) ? '/choose' : '/dashboard')
@@ -1722,7 +1723,7 @@ function CommunityOwnerReviewPanel({ community, requests, onApprove, onReject })
   )
 }
 
-function ProfilePage({ profile }) {
+function ProfilePage({ profile, communities, navigate }) {
   const importedFields = [
     ['姓名', profile.name],
     ['帳號', profile.email],
@@ -1734,6 +1735,11 @@ function ProfilePage({ profile }) {
     ['年資', `${profile.seniority} 年`],
     ['工作地點', profile.location],
   ]
+  const savedPostIds = profile.savedPosts || ['p3', 'p10', 'p14']
+  const savedPosts = communities
+    .flatMap((community) => community.posts.map((post) => ({ ...post, communityId: community.id, communityName: community.name, category: community.category })))
+    .filter((post) => savedPostIds.includes(post.id))
+  const joinedCommunities = communities.filter((community) => profile.joinedCommunities.includes(community.id))
 
   return (
     <PageWrap>
@@ -1763,6 +1769,59 @@ function ProfilePage({ profile }) {
           </div>
         </section>
       </div>
+      <section className="mt-6 grid gap-6 lg:grid-cols-2">
+        <section className="rounded-[28px] bg-white p-6 shadow-card">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <p className="eyebrow">Saved Posts</p>
+              <h2 className="mt-2 text-2xl font-black text-ink">我的收藏</h2>
+            </div>
+            <span className="pill w-fit">{savedPosts.length} 篇貼文</span>
+          </div>
+          <div className="mt-5 space-y-3">
+            {savedPosts.map((post) => (
+              <button
+                key={post.id}
+                onClick={() => navigate(`/community/${post.communityId}`)}
+                className="w-full rounded-card bg-mist p-4 text-left transition hover:bg-skysoft"
+              >
+                <p className="text-sm font-black text-navy">{post.communityName} · {post.category}</p>
+                <p className="mt-2 line-clamp-2 font-bold leading-7 text-ink">{post.content}</p>
+                <p className="mt-2 text-xs font-bold text-slate-500">收藏 {(post.saves ?? post.likes ?? 0)} · 留言 {post.comments ?? 0}</p>
+              </button>
+            ))}
+            {!savedPosts.length && <EmptyState title="尚未收藏貼文" text="看到想回頭看的問題或經驗，可以先收藏起來。" />}
+          </div>
+        </section>
+        <section className="rounded-[28px] bg-white p-6 shadow-card">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <p className="eyebrow">Joined Communities</p>
+              <h2 className="mt-2 text-2xl font-black text-ink">我加入的社群</h2>
+            </div>
+            <span className="pill w-fit">{joinedCommunities.length} 個社群</span>
+          </div>
+          <div className="mt-5 space-y-3">
+            {joinedCommunities.map((community) => (
+              <button
+                key={community.id}
+                onClick={() => navigate(`/community/${community.id}`)}
+                className="w-full rounded-card border border-line bg-white p-4 text-left transition hover:-translate-y-0.5 hover:shadow-card"
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <p className="text-sm font-bold text-azure">{community.category}</p>
+                    <h3 className="mt-1 text-lg font-black text-ink">{community.name}</h3>
+                  </div>
+                  <span className="pill whitespace-nowrap">{community.members} 人</span>
+                </div>
+                <p className="mt-3 line-clamp-2 leading-7 text-slate-600">{community.intro}</p>
+              </button>
+            ))}
+            {!joinedCommunities.length && <EmptyState title="尚未加入社群" text="加入感興趣的學習社群後，會顯示在這裡。" />}
+          </div>
+        </section>
+      </section>
     </PageWrap>
   )
 }
