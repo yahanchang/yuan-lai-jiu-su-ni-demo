@@ -380,6 +380,32 @@ const communitySeed = [
       { id: 'p13', author: '吳品萱', meta: 'ESG 策略部', time: '昨天 17:45', content: '想請問大家用企業 AI 平台整理會議紀錄時，會怎麼避免放入不適合上傳的敏感資訊？', saves: 39, comments: 12 },
     ],
   },
+  {
+    id: 'c11',
+    name: '閱讀交流社群',
+    category: '興趣',
+    intro: '分享最近讀到的好書、文章與學習筆記，把生活裡的輸入轉成可以互相參考的觀點。',
+    members: 128,
+    tags: ['閱讀', '書單', '學習筆記'],
+    visibility: 'public',
+    joinPolicy: 'open',
+    posts: [
+      { id: 'p14', author: '陳柏宇', meta: '智慧製造部', time: '週一 19:30', content: '最近讀到一本關於提問方法的書，覺得很適合用在跨部門會議前整理問題，我把重點整理成三個提問句型。', saves: 31, comments: 7 },
+    ],
+  },
+  {
+    id: 'c12',
+    name: '運動健康社群',
+    category: '興趣',
+    intro: '交流運動習慣、健康管理與下班後的生活節奏，讓同仁找到適合自己的放鬆方式。',
+    members: 176,
+    tags: ['運動', '健康', '生活節奏'],
+    visibility: 'public',
+    joinPolicy: 'open',
+    posts: [
+      { id: 'p15', author: '周明翰', meta: '採購部', time: '週三 18:10', content: '想請問久坐辦公的同仁，下班後比較容易持續的運動方式是什麼？我最近想從每週兩次快走開始。', saves: 24, comments: 10 },
+    ],
+  },
 ]
 
 const activeUserAnalytics = {
@@ -623,7 +649,7 @@ const groupChatSeed = [
     ],
   },
 ]
-const demoStorageVersion = '2026-07-28-first-cohort-community'
+const demoStorageVersion = '2026-07-28-interest-communities'
 
 function storageGet(key, fallback) {
   try {
