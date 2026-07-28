@@ -238,14 +238,14 @@ const mentorSeed = [
 const communitySeed = [
   {
     id: 'c1',
-    name: '新人職涯探索社群',
+    name: '2026第一梯次新人訓',
     category: '職涯',
     intro: '把新人常遇到的問題問出來，也把適應公司、理解流程與找資源的方法留下來。',
     members: 238,
     tags: ['新人訓', '同梯交流', '問題解決'],
     visibility: 'members',
     joinPolicy: 'approval',
-    eligibilityRule: '員工編號 FP-0001 至 FP-0030，或屬於 2026 七月新人訓梯次',
+    eligibilityRule: '員工編號 FP-0001 至 FP-0030，或屬於 2026第一梯次新人訓',
     posts: [
       { id: 'p1', author: '張庭安', meta: '人才發展部', time: '今天 10:20', content: '新人剛進公司時，最常卡住的是「不知道要問誰」。大家通常怎麼判斷問題該問主管、同部門同事，還是跨部門窗口？', saves: 34, comments: 12 },
       { id: 'p2', author: '周明翰', meta: '採購專員', time: '昨天 18:05', content: '我把新人期常問的問題整理成一份「前 30 天問題清單」，包含系統權限、流程窗口、常用表單位置，給剛報到的同仁參考。', saves: 28, comments: 8 },
@@ -547,7 +547,7 @@ const joinRequestSeed = [
     communityId: 'c1',
     requester: '周明翰',
     employeeId: 'FP-0021',
-    cohort: '2026 七月新人訓',
+    cohort: '2026第一梯次新人訓',
     department: '採購部',
     role: '採購專員',
     eligibility: '員工編號符合 FP-0001 至 FP-0030 梯次範圍',
@@ -559,7 +559,7 @@ const joinRequestSeed = [
     communityId: 'c1',
     requester: '劉怡君',
     employeeId: 'FP-0027',
-    cohort: '2026 七月新人訓',
+    cohort: '2026第一梯次新人訓',
     department: '法遵室',
     role: '法遵專員',
     eligibility: '員工編號符合 FP-0001 至 FP-0030 梯次範圍',
@@ -590,7 +590,7 @@ const incomingInviteSeed = [
 const groupChatSeed = [
   {
     id: 'g1',
-    name: '新人訓 2026 七月梯',
+    name: '2026第一梯次新人訓',
     members: ['塑醬', '周明翰', '劉怡君', '張庭安'],
     topic: '新人訓同梯問題整理',
     unread: 3,
@@ -623,7 +623,7 @@ const groupChatSeed = [
     ],
   },
 ]
-const demoStorageVersion = '2026-07-27-sujiang-account'
+const demoStorageVersion = '2026-07-28-first-cohort-community'
 
 function storageGet(key, fallback) {
   try {
@@ -724,7 +724,7 @@ function toggleCommunityMembership({ community, profile, setProfile, notify, set
           communityId: community.id,
           requester: profile.name,
           employeeId: profile.employeeId || 'FP-0028',
-          cohort: community.id === 'c1' ? '2026 七月新人訓' : '系統判定',
+          cohort: community.id === 'c1' ? '2026第一梯次新人訓' : '系統判定',
           department: profile.department,
           role: profile.role,
           eligibility: community.id === 'c1' ? '員工編號符合新人訓梯次範圍' : '符合社群審核條件',
